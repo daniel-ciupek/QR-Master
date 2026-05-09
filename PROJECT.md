@@ -37,10 +37,10 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 *Cel: Działający szkielet aplikacji z testami, CI, monitoringiem i security baseline.*
 
-- [ ] **0.1** Inicjalizacja projektu Laravel 13 (`composer create-project`), PHP 8.3+
-- [ ] **0.1a** **Utworzenie pliku `.gitignore`** z bazową zawartością (Laravel + Vue + IDE + cache narzędzi) — szablon w [CLAUDE.md sekcja 5a](./CLAUDE.md#5a-plik-gitignore--zasady)
-- [ ] **0.1b** **Utworzenie `.env.example`** ze wszystkimi wymaganymi zmiennymi (placeholdery, NIGDY realnych credentiali)
-- [ ] **0.1c** **Utworzenie `.claude/settings.json`** — permissions (allow/deny) + hook `git-reminder.sh` (PreToolUse)
+- [x] **0.1** Inicjalizacja projektu Laravel 13 (`composer create-project`), PHP 8.3+
+- [x] **0.1a** **Utworzenie pliku `.gitignore`** z bazową zawartością (Laravel + Vue + IDE + cache narzędzi) — szablon w [CLAUDE.md sekcja 5a](./CLAUDE.md#5a-plik-gitignore--zasady)
+- [x] **0.1b** **Utworzenie `.env.example`** ze wszystkimi wymaganymi zmiennymi (placeholdery, NIGDY realnych credentiali)
+- [x] **0.1c** **Utworzenie `.claude/settings.json`** — permissions (allow/deny) + hook `git-reminder.sh` (PreToolUse)
 - [ ] **0.1d** `git init` + utworzenie pierwszego commitu z `.gitignore` + push do nowego repo na GitHubie (origin)
 - [ ] **0.2** Docker Compose dla lokalnego dev (PostgreSQL 17, Redis 7, Reverb, Typesense, Mailpit) + `.dockerignore`
 - [ ] **0.3** Konfiguracja FrankenPHP + Laravel Octane (driver `frankenphp`)

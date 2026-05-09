@@ -89,6 +89,8 @@ Każda zmiana musi przejść te bramki:
 
 **ZASADA MIKRO-COMMITÓW (BARDZO WAŻNE):** Bezwzględnie nie czekaj na ukończenie pełnego etapu z PROJECT.md. Musisz pytać o zgodę na commit po KAŻDYM pojedynczym podpunkcie (np. po 2.1, po 2.2, po 3.1 itd.). Każda najmniejsza logiczna zmiana musi być osobnym commitem zatwierdzonym przez usera. Zasada ta obowiązuje we wszystkich etapach projektu.
 
+**ODZNACZANIE ZADAŃ (OBOWIĄZKOWE):** Po ukończeniu każdego podpunktu natychmiast zaktualizuj `PROJECT.md` — zmień `- [ ]` na `- [x]` przy wykonanym zadaniu. Rób to przed każdym commitem, tak aby stan checkboxów w repo zawsze odzwierciedlał rzeczywisty postęp.
+
 **Weryfikacja testów:** Po zakończeniu każdego najmniejszego etapu prac bezwzględnie uruchamiamy pełną suitę testów (Pest + Vitest + Playwright), aby potwierdzić stabilność systemu przed wykonaniem commita.
 
 **ZAKAZ SAMOWOLNEGO STARTU (BARDZO WAŻNE):** Po każdym commicie (lub gdy kończysz logiczną część pracy), musisz ZATRZYMAĆ SIĘ i zapytać o zgodę na rozpoczęcie kolejnego podpunkta (np. "Czy mogę zacząć pracę nad zadaniem 2.2?"). Nie wykonuj żadnych tool-calls ani nie pisz kodu dla nowego zadania bez wyraźnego "tak" od usera.
