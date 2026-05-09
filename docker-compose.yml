@@ -10,14 +10,23 @@ services:
       target: dev
     volumes:
       - .:/app
-      - vendor:/app/vendor
     ports:
       - "8000:8000"
-    command: php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8000 --watch
+    command: >
+      sh -c "composer install --no-interaction --prefer-dist &&
+             php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8000 --watch"
     environment:
       APP_ENV: local
+      DB_CONNECTION: pgsql
       DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: qrmaster
+      DB_USERNAME: qrmaster
+      DB_PASSWORD: secret
       REDIS_HOST: redis
+      SESSION_DRIVER: redis
+      CACHE_STORE: redis
+      QUEUE_CONNECTION: redis
       TYPESENSE_HOST: typesense
       MAIL_HOST: mailpit
       MAIL_PORT: 1025
@@ -40,12 +49,17 @@ services:
       target: dev
     volumes:
       - .:/app
-      - vendor:/app/vendor
     command: php artisan horizon
     environment:
       APP_ENV: local
+      DB_CONNECTION: pgsql
       DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: qrmaster
+      DB_USERNAME: qrmaster
+      DB_PASSWORD: secret
       REDIS_HOST: redis
+      QUEUE_CONNECTION: redis
     depends_on:
       - app
     networks:
@@ -62,13 +76,17 @@ services:
       target: dev
     volumes:
       - .:/app
-      - vendor:/app/vendor
     ports:
       - "8080:8080"
     command: php artisan reverb:start --host=0.0.0.0 --port=8080
     environment:
       APP_ENV: local
+      DB_CONNECTION: pgsql
       DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: qrmaster
+      DB_USERNAME: qrmaster
+      DB_PASSWORD: secret
       REDIS_HOST: redis
     depends_on:
       - app
@@ -146,7 +164,6 @@ volumes:
   postgres_data:
   redis_data:
   typesense_data:
-  vendor:
 
 networks:
   qrmaster:
