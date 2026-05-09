@@ -91,7 +91,13 @@ Każda zmiana musi przejść te bramki:
 
 **ODZNACZANIE ZADAŃ (OBOWIĄZKOWE):** Po ukończeniu każdego podpunktu natychmiast zaktualizuj `PROJECT.md` — zmień `- [ ]` na `- [x]` przy wykonanym zadaniu. Rób to przed każdym commitem, tak aby stan checkboxów w repo zawsze odzwierciedlał rzeczywisty postęp.
 
-**Weryfikacja testów:** Po zakończeniu każdego najmniejszego etapu prac bezwzględnie uruchamiamy pełną suitę testów (Pest + Vitest + Playwright), aby potwierdzić stabilność systemu przed wykonaniem commita.
+**ZAKAZ COMMITA I PUSHA BEZ ZIELONYCH TESTÓW (BEZWZGLĘDNE):** Przed każdym `git commit` i `git push` uruchamiamy pełną suitę testów. Jeśli choćby jeden test failuje — STOP, najpierw napraw, dopiero potem commit. Nie ma wyjątków. Kolejność weryfikacji:
+1. `php artisan test --parallel` (Pest) — zero failów
+2. `npm run test` (Vitest) — zero failów
+3. `./vendor/bin/phpstan analyse` — zero błędów
+4. `./vendor/bin/pint --test` — zero naruszeń stylu
+
+Playwright (e2e) uruchamiamy przed każdym push na `develop` i obowiązkowo przed merge do `main`.
 
 **ZAKAZ SAMOWOLNEGO STARTU (BARDZO WAŻNE):** Po każdym commicie (lub gdy kończysz logiczną część pracy), musisz ZATRZYMAĆ SIĘ i zapytać o zgodę na rozpoczęcie kolejnego podpunkta (np. "Czy mogę zacząć pracę nad zadaniem 2.2?"). Nie wykonuj żadnych tool-calls ani nie pisz kodu dla nowego zadania bez wyraźnego "tak" od usera.
 
