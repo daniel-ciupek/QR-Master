@@ -1,0 +1,57 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Sekrety i lokalna konfiguracja
+.env
+.env.*
+!.env.example
+secrets.*
+*.pem
+*.key
+*.crt
+
+# Zależności (instalowane wewnątrz kontenera)
+/vendor
+/node_modules
+
+# Build assets (generowane przez Vite)
+/public/build
+/public/hot
+
+# Logi i cache
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*
+
+# Narzędzia deweloperskie
+/.phpstan-cache
+/.rector-cache
+/.pest.cache
+/coverage
+/.nyc_output
+/playwright-report
+/test-results
+*.sw[po]
+
+# Claude Code (lokalna konfiguracja AI)
+.claude
+
+# IDE
+/.idea
+/.vscode
+/.fleet
+/.zed
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dokumentacja developerska
+CLAUDE.md
+GEMINI.md
+PROJECT.md
+README.md

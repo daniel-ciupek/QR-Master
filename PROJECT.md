@@ -41,8 +41,8 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **0.1a** **Utworzenie pliku `.gitignore`** z bazową zawartością (Laravel + Vue + IDE + cache narzędzi) — szablon w [CLAUDE.md sekcja 5a](./CLAUDE.md#5a-plik-gitignore--zasady)
 - [x] **0.1b** **Utworzenie `.env.example`** ze wszystkimi wymaganymi zmiennymi (placeholdery, NIGDY realnych credentiali)
 - [x] **0.1c** **Utworzenie `.claude/settings.json`** — permissions (allow/deny) + hook `git-reminder.sh` (PreToolUse)
-- [ ] **0.1d** `git init` + utworzenie pierwszego commitu z `.gitignore` + push do nowego repo na GitHubie (origin)
-- [ ] **0.2** Docker Compose dla lokalnego dev (PostgreSQL 17, Redis 7, Reverb, Typesense, Mailpit) + `.dockerignore`
+- [x] **0.1d** `git init` + utworzenie pierwszego commitu z `.gitignore` + push do nowego repo na GitHubie (origin)
+- [x] **0.2** Docker Compose dla lokalnego dev (PostgreSQL 17, Redis 7, Reverb, Typesense, Mailpit) + `.dockerignore`
 - [ ] **0.3** Konfiguracja FrankenPHP + Laravel Octane (driver `frankenphp`)
 - [ ] **0.4** Inertia.js 3 + Vue 3 + Vite 6 + TypeScript strict mode
 - [ ] **0.5** Tailwind CSS 4 z design tokens (CSS variables, `@theme inline`)
