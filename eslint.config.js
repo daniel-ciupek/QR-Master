@@ -30,6 +30,10 @@ export default [
         rules: {
             ...tsPlugin.configs.recommended.rules,
             'vue/multi-word-component-names': 'off',
+            'vue/html-indent': ['warn', 4],
+            'vue/singleline-html-element-content-newline': 'off',
+            'vue/multiline-html-element-content-newline': 'off',
+            'vue/max-attributes-per-line': ['warn', { singleline: 3, multiline: 1 }],
             '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
             '@typescript-eslint/no-explicit-any': 'warn',
         },
