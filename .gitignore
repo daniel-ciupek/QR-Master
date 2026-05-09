@@ -62,3 +62,7 @@ Thumbs.db
 *.key
 *.crt
 secrets.*
+
+**/caddy
+frankenphp
+frankenphp-worker.php
