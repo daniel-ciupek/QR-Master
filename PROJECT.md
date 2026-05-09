@@ -53,7 +53,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **0.10** GitHub Actions CI: lint, phpstan, pest (z coverage gate ≥ 80%), vitest, playwright smoke
 - [x] **0.11** Security headers (spatie/laravel-csp), HSTS, CSP z nonce
 - [x] **0.12** Sentry + Laravel Pulse + Telescope (z gate na produkcji)
-- [ ] **0.13** Seedery + Faker dla danych testowych (DemoSeeder z przykładowymi userami i QR)
+- [x] **0.13** Seedery + Faker dla danych testowych (DemoSeeder z przykładowymi userami i QR)
 
 **Kryterium ukończenia:** `composer run dev` startuje aplikację, CI zielone na pustym PR.
 
