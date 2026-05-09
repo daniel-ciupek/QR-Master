@@ -22,6 +22,9 @@ pre-commit:
       fail_text: "Plik przekracza limit 5MB — nie commituj dużych plików"
 
 pre-push:
+  # PATH rozszerzony o typowe lokalizacje PHP/Node — fix dla GitHub Desktop
+  env:
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
   commands:
     phpstan:
       run: ./vendor/bin/phpstan analyse app/ --level=8 --memory-limit=512M --no-ansi
