@@ -46,7 +46,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **0.3** Konfiguracja FrankenPHP + Laravel Octane (driver `frankenphp`)
 - [x] **0.4** Inertia.js 3 + Vue 3 + Vite 6 + TypeScript strict mode
 - [x] **0.5** Tailwind CSS 4 z design tokens (CSS variables, `@theme inline`)
-- [ ] **0.6** shadcn-vue setup — kopiowanie bazowych komponentów (Button, Input, Dialog, Sheet, Tabs, DataTable, Toast, Command)
+- [x] **0.6** shadcn-vue setup — kopiowanie bazowych komponentów (Button, Input, Dialog, Sheet, Tabs, DataTable, Toast, Command)
 - [ ] **0.7** Struktura folderów: `Actions/`, `Services/`, `Data/`, `Enums/` (zgodnie z CLAUDE.md)
 - [ ] **0.8** Pest 3 + Larastan level 8 + Laravel Pint + Rector — wszystkie skonfigurowane
 - [ ] **0.9** **lefthook** — pre-commit (Pint + ESLint + sprawdzenie max 5MB) i pre-push (PHPStan + Pest smoke + sprawdzenie `.gitignore`)

@@ -1,4 +1,7 @@
+
 @import 'tailwindcss';
+
+@import "tw-animate-css";
 
 /* ============================================================
    Sources — Tailwind content detection
@@ -71,8 +74,9 @@
 @theme inline {
 
     /* ---- Typography ---- */
-    --font-sans: 'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-mono: 'Geist Mono', ui-monospace, 'Cascadia Code', monospace;
+    --font-sans:    'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', ui-monospace, 'Cascadia Code', monospace;
+    --font-heading: var(--font-sans);
 
     /* ---- Border radius (4px grid) ---- */
     --radius-sm:  4px;
@@ -81,7 +85,35 @@
     --radius-xl:  16px;
     --radius-2xl: 24px;
 
-    /* ---- Colors: Primary (indigo) ---- */
+    /* ---- shadcn-vue semantic colors (mapped from CSS variables) ---- */
+    --color-background:         var(--background);
+    --color-foreground:         var(--foreground);
+    --color-card:               var(--card);
+    --color-card-foreground:    var(--card-foreground);
+    --color-popover:            var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary:            var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary:          var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted:              var(--muted);
+    --color-muted-foreground:   var(--muted-foreground);
+    --color-accent:             var(--accent);
+    --color-accent-foreground:  var(--accent-foreground);
+    --color-destructive:        var(--destructive);
+    --color-border:             var(--border);
+    --color-input:              var(--input);
+    --color-ring:               var(--ring);
+    --color-sidebar:            var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary:    var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent:     var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border:     var(--sidebar-border);
+    --color-sidebar-ring:       var(--sidebar-ring);
+
+    /* ---- QR-Master brand colors: Primary (indigo) ---- */
     --color-primary-50:  oklch(97% 0.02 264);
     --color-primary-100: oklch(93% 0.04 264);
     --color-primary-200: oklch(86% 0.09 264);
@@ -94,34 +126,32 @@
     --color-primary-900: oklch(27% 0.11 264);
     --color-primary-950: oklch(19% 0.07 264);
 
-    /* ---- Colors: Accent (violet) ---- */
-    --color-accent-50:  oklch(97% 0.02 292);
-    --color-accent-100: oklch(93% 0.05 292);
-    --color-accent-200: oklch(86% 0.10 292);
-    --color-accent-300: oklch(76% 0.16 292);
-    --color-accent-400: oklch(65% 0.22 292);
-    --color-accent-500: oklch(56% 0.26 292);
-    --color-accent-600: oklch(49% 0.24 292);
-    --color-accent-700: oklch(41% 0.20 292);
-    --color-accent-800: oklch(33% 0.15 292);
-    --color-accent-900: oklch(27% 0.11 292);
-    --color-accent-950: oklch(18% 0.07 292);
+    /* ---- QR-Master brand colors: Accent (violet) ---- */
+    --color-violet-50:  oklch(97% 0.02 292);
+    --color-violet-100: oklch(93% 0.05 292);
+    --color-violet-200: oklch(86% 0.10 292);
+    --color-violet-300: oklch(76% 0.16 292);
+    --color-violet-400: oklch(65% 0.22 292);
+    --color-violet-500: oklch(56% 0.26 292);
+    --color-violet-600: oklch(49% 0.24 292);
+    --color-violet-700: oklch(41% 0.20 292);
+    --color-violet-800: oklch(33% 0.15 292);
+    --color-violet-900: oklch(27% 0.11 292);
+    --color-violet-950: oklch(18% 0.07 292);
 
-    /* ---- Colors: Success (emerald) ---- */
+    /* ---- QR-Master brand colors: Status ---- */
     --color-success-50:  oklch(97% 0.03 162);
     --color-success-100: oklch(93% 0.06 162);
     --color-success-500: oklch(56% 0.18 162);
     --color-success-600: oklch(49% 0.16 162);
     --color-success-700: oklch(40% 0.13 162);
 
-    /* ---- Colors: Warning (amber) ---- */
     --color-warning-50:  oklch(98% 0.03 85);
     --color-warning-100: oklch(95% 0.06 85);
     --color-warning-500: oklch(75% 0.18 85);
     --color-warning-600: oklch(65% 0.17 85);
     --color-warning-700: oklch(54% 0.14 85);
 
-    /* ---- Colors: Danger (rose) ---- */
     --color-danger-50:  oklch(97% 0.02 15);
     --color-danger-100: oklch(93% 0.05 15);
     --color-danger-500: oklch(60% 0.22 15);
@@ -142,5 +172,77 @@
 }
 
 /* ============================================================
-   Copy Geist fonts to public/fonts via Vite public dir
+   shadcn-vue CSS variables — light mode
    ============================================================ */
+:root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+}
+
+/* ============================================================
+   shadcn-vue CSS variables — dark mode
+   ============================================================ */
+.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* ============================================================
+   Base styles — shadcn-vue global resets
+   ============================================================ */
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
