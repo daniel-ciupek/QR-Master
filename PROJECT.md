@@ -33,63 +33,65 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### ✅ Etap 0: Fundament Projektu i CI/CD *(ukończony 2026-05-07)*
+### Etap 0: Fundament Projektu i CI/CD
 
 *Cel: Działający szkielet aplikacji z testami, CI, monitoringiem i security baseline.*
 
-- [x] **0.1** Inicjalizacja projektu Laravel 13 (`composer create-project`), PHP 8.3+
-- [x] **0.1a** **Utworzenie pliku `.gitignore`** z bazową zawartością (Laravel + Vue + IDE + cache narzędzi) — szablon w [CLAUDE.md sekcja 5a](./CLAUDE.md#5a-plik-gitignore--zasady)
-- [x] **0.1b** **Utworzenie `.env.example`** ze wszystkimi wymaganymi zmiennymi (placeholdery, NIGDY realnych credentiali)
-- [x] **0.1c** `git init` + utworzenie pierwszego commitu z `.gitignore` + push do nowego repo na GitHubie (origin)
-- [x] **0.2** Konfiguracja FrankenPHP + Laravel Octane (driver `frankenphp`)
-- [x] **0.3** Inertia.js 3 + Vue 3 + Vite 6 + TypeScript strict mode
-- [x] **0.4** Tailwind CSS 4 z design tokens (CSS variables, `@theme inline`)
-- [x] **0.5** shadcn-vue setup — kopiowanie bazowych komponentów (Button, Input, Dialog, Sheet, Tabs, DataTable, Toast, Command)
-- [x] **0.6** Struktura folderów: `Actions/`, `Services/`, `Data/`, `Enums/` (zgodnie z CLAUDE.md)
-- [x] **0.7** Pest 3 + Larastan level 8 + Laravel Pint + Rector — wszystkie skonfigurowane
-- [x] **0.8** GitHub Actions CI: lint, phpstan, pest (z coverage gate ≥ 80%), vitest, playwright smoke
-- [x] **0.9** Security headers (spatie/laravel-csp), HSTS, CSP z nonce
-- [x] **0.10** Sentry + Laravel Pulse + Telescope (z gate na produkcji)
-- [x] **0.11** Docker Compose dla lokalnego dev (PostgreSQL 17, Redis 7, Reverb, Typesense, Mailpit)
-- [x] **0.12** Seedery + Faker dla danych testowych (DemoSeeder z przykładowymi userami i QR)
+- [ ] **0.1** Inicjalizacja projektu Laravel 13 (`composer create-project`), PHP 8.3+
+- [ ] **0.1a** **Utworzenie pliku `.gitignore`** z bazową zawartością (Laravel + Vue + IDE + cache narzędzi) — szablon w [CLAUDE.md sekcja 5a](./CLAUDE.md#5a-plik-gitignore--zasady)
+- [ ] **0.1b** **Utworzenie `.env.example`** ze wszystkimi wymaganymi zmiennymi (placeholdery, NIGDY realnych credentiali)
+- [ ] **0.1c** **Utworzenie `.claude/settings.json`** — permissions (allow/deny) + hook `git-reminder.sh` (PreToolUse)
+- [ ] **0.1d** `git init` + utworzenie pierwszego commitu z `.gitignore` + push do nowego repo na GitHubie (origin)
+- [ ] **0.2** Docker Compose dla lokalnego dev (PostgreSQL 17, Redis 7, Reverb, Typesense, Mailpit) + `.dockerignore`
+- [ ] **0.3** Konfiguracja FrankenPHP + Laravel Octane (driver `frankenphp`)
+- [ ] **0.4** Inertia.js 3 + Vue 3 + Vite 6 + TypeScript strict mode
+- [ ] **0.5** Tailwind CSS 4 z design tokens (CSS variables, `@theme inline`)
+- [ ] **0.6** shadcn-vue setup — kopiowanie bazowych komponentów (Button, Input, Dialog, Sheet, Tabs, DataTable, Toast, Command)
+- [ ] **0.7** Struktura folderów: `Actions/`, `Services/`, `Data/`, `Enums/` (zgodnie z CLAUDE.md)
+- [ ] **0.8** Pest 3 + Larastan level 8 + Laravel Pint + Rector — wszystkie skonfigurowane
+- [ ] **0.9** **lefthook** — pre-commit (Pint + ESLint + sprawdzenie max 5MB) i pre-push (PHPStan + Pest smoke + sprawdzenie `.gitignore`)
+- [ ] **0.10** GitHub Actions CI: lint, phpstan, pest (z coverage gate ≥ 80%), vitest, playwright smoke
+- [ ] **0.11** Security headers (spatie/laravel-csp), HSTS, CSP z nonce
+- [ ] **0.12** Sentry + Laravel Pulse + Telescope (z gate na produkcji)
+- [ ] **0.13** Seedery + Faker dla danych testowych (DemoSeeder z przykładowymi userami i QR)
 
 **Kryterium ukończenia:** `composer run dev` startuje aplikację, CI zielone na pustym PR.
 
 ---
 
-### ✅ Etap 1: Auth, UI Fundament, i18n, Dark Mode *(ukończony 2026-05-07)*
+### Etap 1: Auth, UI Fundament, i18n, Dark Mode
 
 *Cel: System uwierzytelniania klasy enterprise + szkielet UX dashboardu.*
 
-- [x] **1.1** Laravel Fortify (login, register, password reset, email verification)
-- [x] **1.2** **2FA TOTP** — flow setup + recovery codes + middleware `EnsureTwoFactor` dla Pro/Business
-- [x] **1.3** **Passkeys / WebAuthn** (laragear/webauthn) jako opcja
-- [x] **1.4** Cloudflare Turnstile na rejestracji + reset hasła
-- [x] **1.5** spatie/laravel-permission — role: `admin`, `user`; permissions per feature
-- [x] **1.6** Session management — lista aktywnych sesji, możliwość revocation
-- [x] **1.7** Layout aplikacji: Sidebar collapsible + Topbar + Command Palette (Cmd+K)
-- [x] **1.8** **Dark mode** (light / dark / system) — persistowany w localStorage
-- [x] **1.9** **i18n PL + EN** — vue-i18n + laravel-translatable, wszystkie stringi w plikach `lang/`
-- [x] **1.10** Strona profilu: zmiana hasła, 2FA, dane osobowe, eksport RODO, usunięcie konta
-- [x] **1.11** Email templates (Markdown) dla wszystkich powiadomień systemowych — branded
-- [x] **1.12** Onboarding wizard po pierwszym logowaniu (3 kroki, Lottie animations)
+- [ ] **1.1** Laravel Fortify (login, register, password reset, email verification)
+- [ ] **1.2** **2FA TOTP** — flow setup + recovery codes + middleware `EnsureTwoFactor` dla Pro/Business
+- [ ] **1.3** **Passkeys / WebAuthn** (laragear/webauthn) jako opcja
+- [ ] **1.4** Cloudflare Turnstile na rejestracji + reset hasła
+- [ ] **1.5** spatie/laravel-permission — role: `admin`, `user`; permissions per feature
+- [ ] **1.6** Session management — lista aktywnych sesji, możliwość revocation
+- [ ] **1.7** Layout aplikacji: Sidebar collapsible + Topbar + Command Palette (Cmd+K)
+- [ ] **1.8** **Dark mode** (light / dark / system) — persistowany w localStorage
+- [ ] **1.9** **i18n PL + EN** — vue-i18n + laravel-translatable, wszystkie stringi w plikach `lang/`
+- [ ] **1.10** Strona profilu: zmiana hasła, 2FA, dane osobowe, eksport RODO, usunięcie konta
+- [ ] **1.11** Email templates (Markdown) dla wszystkich powiadomień systemowych — branded
+- [ ] **1.12** Onboarding wizard po pierwszym logowaniu (3 kroki, Lottie animations)
 
 **Kryterium ukończenia:** User może się zarejestrować z 2FA, zalogować, zmienić motyw, język, eksportować swoje dane.
 
 ---
 
-### ✅ Etap 2: Statyczny Generator QR + Live Preview *(ukończony 2026-05-08)*
+### Etap 2: Statyczny Generator QR + Live Preview
 
 *Cel: Pierwsza wartość biznesowa — generowanie i pobieranie QR z pięknym podglądem.*
 
-- [x] **2.1** `chillerlan/php-qrcode` — wrapper jako `app/Services/QrRendering/QrRenderer.php`
-- [x] **2.2** Frontend: `qr-code-styling.js` w komponencie `LivePreview.vue` (Canvas API)
-- [x] **2.3** Formularz generatora: tekst / URL / email / telefon / SMS (Tab-based UI)
-- [x] **2.4** Live preview z debounced update (150ms)
-- [x] **2.5** Walidacja URL (whitelist schemes), długość treści, error correction level
-- [x] **2.6** Eksport: **PNG, SVG, PDF, EPS** (PDF przez `dompdf` + SVG embed)
-- [x] **2.7** Modal eksportu z preview każdego formatu i wyborem rozdzielczości
-- [x] **2.8** Color contrast checker — ostrzeżenie jeśli QR będzie nieczytelny
+- [ ] **2.1** `chillerlan/php-qrcode` — wrapper jako `app/Services/QrRendering/QrRenderer.php`
+- [ ] **2.2** Frontend: `qr-code-styling.js` w komponencie `LivePreview.vue` (Canvas API)
+- [ ] **2.3** Formularz generatora: tekst / URL / email / telefon / SMS (Tab-based UI)
+- [ ] **2.4** Live preview z debounced update (150ms)
+- [ ] **2.5** Walidacja URL (whitelist schemes), długość treści, error correction level
+- [ ] **2.6** Eksport: **PNG, SVG, PDF, EPS** (PDF przez `dompdf` + SVG embed)
+- [ ] **2.7** Modal eksportu z preview każdego formatu i wyborem rozdzielczości
+- [ ] **2.8** Color contrast checker — ostrzeżenie jeśli QR będzie nieczytelny
 
 **Kryterium ukończenia:** User generuje QR z URL, zmienia tekst → preview odświeża się płynnie, pobiera w 4 formatach.
 
@@ -99,9 +101,9 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 *Cel: Kluczowa wartość B2B — możliwość zmiany linku bez przedrukowywania kodu.*
 
-- [x] **3.1** Migracja `qr_codes`: `id, user_id, type, title, slug, short_hash, destination_url, settings (jsonb), is_active, expires_at, password_hash, created_at, updated_at, deleted_at`
-- [x] **3.2** Model `QrCode` z relacjami (`user`, `scanLogs`, `tags`), polymorphic media (logo)
-- [x] **3.3** `app/Services/HashGenerator.php` — bezpieczny `short_hash` (8 znaków, base62, kolizja-resistant)
+- [ ] **3.1** Migracja `qr_codes`: `id, user_id, type, title, slug, short_hash, destination_url, settings (jsonb), is_active, expires_at, password_hash, created_at, updated_at, deleted_at`
+- [ ] **3.2** Model `QrCode` z relacjami (`user`, `scanLogs`, `tags`), polymorphic media (logo)
+- [ ] **3.3** `app/Services/HashGenerator.php` — bezpieczny `short_hash` (8 znaków, base62, kolizja-resistant)
 - [ ] **3.4** `app/Actions/QrCode/CreateQrCodeAction.php` + `UpdateQrCodeAction.php` + `DeleteQrCodeAction.php`
 - [ ] **3.5** Routing: `GET /q/{hash}` → `PublicRedirectController` (kontroler najwyższego priorytetu bezpieczeństwa)
 - [ ] **3.6** Soft delete + queued purge job (30 dni)

@@ -1,0 +1,64 @@
+# ============================================================
+# Laravel
+# ============================================================
+/vendor
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*
+.env*
+!.env.example
+.phpunit.result.cache
+/.phpunit.cache
+/public/fonts-manifest.dev.json
+Homestead.json
+Homestead.yaml
+/auth.json
+_ide_helper.php
+
+# ============================================================
+# IDE / OS
+# ============================================================
+/.idea
+/.vscode
+/.fleet
+/.zed
+/.nova
+/.cursor/
+/.codex
+.DS_Store
+Thumbs.db
+*.sw[po]
+
+# ============================================================
+# Narzędzia jakości
+# ============================================================
+/.phpstan-cache
+/.rector-cache
+/.pest.cache
+/.phpactor.json
+/coverage
+/.nyc_output
+/playwright-report
+/test-results
+*-debug.log*
+
+# ============================================================
+# Lokalne
+# ============================================================
+*.local
+
+# ============================================================
+# Sekrety
+# ============================================================
+*.pem
+*.key
+*.crt
+secrets.*
