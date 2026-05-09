@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3'
+import { Head, router, useForm } from '@inertiajs/vue3'
 import { Button } from '@/components/ui/button'
 
 defineProps<{ status?: string }>()
@@ -39,11 +39,13 @@ function submit() {
                 </Button>
             </form>
 
-            <a
-                class="block text-sm text-muted-foreground underline-offset-4 hover:underline"
-                href="/logout"
-                @click.prevent="$inertia.post('/logout')"
-            >Wyloguj się</a>
+            <button
+                class="block w-full text-sm text-muted-foreground underline-offset-4 hover:underline"
+                type="button"
+                @click="router.post('/logout')"
+            >
+                Wyloguj się
+            </button>
         </div>
     </div>
 </template>

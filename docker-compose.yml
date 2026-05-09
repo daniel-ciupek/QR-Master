@@ -26,7 +26,7 @@ services:
       REDIS_HOST: redis
       SESSION_DRIVER: redis
       CACHE_STORE: redis
-      QUEUE_CONNECTION: redis
+      QUEUE_CONNECTION: sync
       TYPESENSE_HOST: typesense
       MAIL_HOST: mailpit
       MAIL_PORT: 1025
