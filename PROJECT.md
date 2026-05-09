@@ -45,7 +45,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **0.2** Docker Compose dla lokalnego dev (PostgreSQL 17, Redis 7, Reverb, Typesense, Mailpit) + `.dockerignore`
 - [x] **0.3** Konfiguracja FrankenPHP + Laravel Octane (driver `frankenphp`)
 - [x] **0.4** Inertia.js 3 + Vue 3 + Vite 6 + TypeScript strict mode
-- [ ] **0.5** Tailwind CSS 4 z design tokens (CSS variables, `@theme inline`)
+- [x] **0.5** Tailwind CSS 4 z design tokens (CSS variables, `@theme inline`)
 - [ ] **0.6** shadcn-vue setup — kopiowanie bazowych komponentów (Button, Input, Dialog, Sheet, Tabs, DataTable, Toast, Command)
 - [ ] **0.7** Struktura folderów: `Actions/`, `Services/`, `Data/`, `Enums/` (zgodnie z CLAUDE.md)
 - [ ] **0.8** Pest 3 + Larastan level 8 + Laravel Pint + Rector — wszystkie skonfigurowane
