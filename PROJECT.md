@@ -65,7 +65,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 - [x] **1.1** Laravel Fortify (login, register, password reset, email verification)
 - [x] **1.2** **2FA TOTP** — flow setup + recovery codes + middleware `EnsureTwoFactor` dla Pro/Business
-- [ ] **1.3** **Passkeys / WebAuthn** (laragear/webauthn) jako opcja
+- [x] **1.3** **Passkeys / WebAuthn** (laragear/webauthn) jako opcja
 - [ ] **1.4** Cloudflare Turnstile na rejestracji + reset hasła
 - [ ] **1.5** spatie/laravel-permission — role: `admin`, `user`; permissions per feature
 - [ ] **1.6** Session management — lista aktywnych sesji, możliwość revocation
