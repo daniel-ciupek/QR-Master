@@ -48,7 +48,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **0.5** Tailwind CSS 4 z design tokens (CSS variables, `@theme inline`)
 - [x] **0.6** shadcn-vue setup — kopiowanie bazowych komponentów (Button, Input, Dialog, Sheet, Tabs, DataTable, Toast, Command)
 - [x] **0.7** Struktura folderów: `Actions/`, `Services/`, `Data/`, `Enums/` (zgodnie z CLAUDE.md)
-- [ ] **0.8** Pest 3 + Larastan level 8 + Laravel Pint + Rector — wszystkie skonfigurowane
+- [x] **0.8** Pest 3 + Larastan level 8 + Laravel Pint + Rector — wszystkie skonfigurowane
 - [ ] **0.9** **lefthook** — pre-commit (Pint + ESLint + sprawdzenie max 5MB) i pre-push (PHPStan + Pest smoke + sprawdzenie `.gitignore`)
 - [ ] **0.10** GitHub Actions CI: lint, phpstan, pest (z coverage gate ≥ 80%), vitest, playwright smoke
 - [ ] **0.11** Security headers (spatie/laravel-csp), HSTS, CSP z nonce
