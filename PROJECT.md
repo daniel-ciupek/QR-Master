@@ -51,7 +51,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **0.8** Pest 3 + Larastan level 8 + Laravel Pint + Rector — wszystkie skonfigurowane
 - [x] **0.9** **lefthook** — pre-commit (Pint + ESLint + sprawdzenie max 5MB) i pre-push (PHPStan + Pest smoke + sprawdzenie `.gitignore`)
 - [x] **0.10** GitHub Actions CI: lint, phpstan, pest (z coverage gate ≥ 80%), vitest, playwright smoke
-- [ ] **0.11** Security headers (spatie/laravel-csp), HSTS, CSP z nonce
+- [x] **0.11** Security headers (spatie/laravel-csp), HSTS, CSP z nonce
 - [ ] **0.12** Sentry + Laravel Pulse + Telescope (z gate na produkcji)
 - [ ] **0.13** Seedery + Faker dla danych testowych (DemoSeeder z przykładowymi userami i QR)
 
