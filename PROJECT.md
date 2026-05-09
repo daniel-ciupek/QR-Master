@@ -64,7 +64,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 *Cel: System uwierzytelniania klasy enterprise + szkielet UX dashboardu.*
 
 - [x] **1.1** Laravel Fortify (login, register, password reset, email verification)
-- [ ] **1.2** **2FA TOTP** — flow setup + recovery codes + middleware `EnsureTwoFactor` dla Pro/Business
+- [x] **1.2** **2FA TOTP** — flow setup + recovery codes + middleware `EnsureTwoFactor` dla Pro/Business
 - [ ] **1.3** **Passkeys / WebAuthn** (laragear/webauthn) jako opcja
 - [ ] **1.4** Cloudflare Turnstile na rejestracji + reset hasła
 - [ ] **1.5** spatie/laravel-permission — role: `admin`, `user`; permissions per feature

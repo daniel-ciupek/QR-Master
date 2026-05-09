@@ -1,25 +1,27 @@
 import type { PageProps as InertiaPageProps } from '@inertiajs/core'
 
-export interface User {
+export interface AuthUser {
     id: number
     name: string
     email: string
     email_verified_at: string | null
-    created_at: string
-    updated_at: string
+    two_factor_enabled: boolean
+    two_factor_confirmed_at: string | null
 }
 
-export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
+export interface SharedData {
     auth: {
-        user: User | null
+        user: AuthUser | null
     }
     flash: {
-        success?: string
-        error?: string
-        warning?: string
+        success?: string | null
+        error?: string | null
+        warning?: string | null
     }
 }
 
+export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & SharedData
+
 declare module '@inertiajs/core' {
-    interface PageProps extends InertiaPageProps, PageProps {}
+    interface PageProps extends InertiaPageProps, SharedData {}
 }

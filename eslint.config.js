@@ -30,6 +30,7 @@ export default [
         rules: {
             ...tsPlugin.configs.recommended.rules,
             'vue/multi-word-component-names': 'off',
+            'vue/no-v-html': 'off',
             'vue/html-indent': ['warn', 4],
             'vue/singleline-html-element-content-newline': 'off',
             'vue/multiline-html-element-content-newline': 'off',
