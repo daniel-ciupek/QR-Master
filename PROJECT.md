@@ -33,7 +33,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### Etap 0: Fundament Projektu i CI/CD
+### ✅ Etap 0: Fundament Projektu i CI/CD *(ukończony 2026-05-09)*
 
 *Cel: Działający szkielet aplikacji z testami, CI, monitoringiem i security baseline.*
 
