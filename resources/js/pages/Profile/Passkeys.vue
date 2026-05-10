@@ -2,6 +2,9 @@
 import { Head, router } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import { Button } from '@/components/ui/button'
+import AppLayout from '@/layouts/AppLayout.vue'
+
+defineOptions({ layout: AppLayout })
 
 const webAuthnSupported = computed(() => typeof window !== 'undefined' && !!window.PublicKeyCredential)
 

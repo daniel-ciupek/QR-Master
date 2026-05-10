@@ -2,6 +2,9 @@
 import { Head, router } from '@inertiajs/vue3'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import AppLayout from '@/layouts/AppLayout.vue'
+
+defineOptions({ layout: AppLayout })
 
 interface SessionData {
     id: number

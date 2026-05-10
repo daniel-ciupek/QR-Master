@@ -69,7 +69,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **1.4** Cloudflare Turnstile na rejestracji + reset hasła
 - [x] **1.5** spatie/laravel-permission — role: `admin`, `user`; permissions per feature
 - [x] **1.6** Session management — lista aktywnych sesji, możliwość revocation
-- [ ] **1.7** Layout aplikacji: Sidebar collapsible + Topbar + Command Palette (Cmd+K)
+- [x] **1.7** Layout aplikacji: Sidebar collapsible + Topbar + Command Palette (Cmd+K)
 - [ ] **1.8** **Dark mode** (light / dark / system) — persistowany w localStorage
 - [ ] **1.9** **i18n PL + EN** — vue-i18n + laravel-translatable, wszystkie stringi w plikach `lang/`
 - [ ] **1.10** Strona profilu: zmiana hasła, 2FA, dane osobowe, eksport RODO, usunięcie konta

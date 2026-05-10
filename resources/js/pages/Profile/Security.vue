@@ -3,7 +3,10 @@ import { Head, router, useForm, usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import AppLayout from '@/layouts/AppLayout.vue'
 import type { PageProps } from '@/types'
+
+defineOptions({ layout: AppLayout })
 
 const page = usePage<PageProps>()
 const user = computed(() => page.props.auth.user)
