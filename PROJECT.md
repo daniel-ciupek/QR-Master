@@ -59,7 +59,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### Etap 1: Auth, UI Fundament, i18n, Dark Mode
+### ✅ Etap 1: Auth, UI Fundament, i18n, Dark Mode *(ukończony 2026-05-10)*
 
 *Cel: System uwierzytelniania klasy enterprise + szkielet UX dashboardu.*
 
