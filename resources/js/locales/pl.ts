@@ -215,4 +215,42 @@ export default {
             notSupported: 'Twoja przeglądarka nie obsługuje WebAuthn / Passkeys.',
         },
     },
+
+    qr: {
+        create: {
+            headTitle: 'Nowy kod QR',
+            title: 'Utwórz kod QR',
+            subtitle: 'Wypełnij formularz, a podgląd zaktualizuje się automatycznie.',
+        },
+        tabs: {
+            url: 'URL',
+            text: 'Tekst',
+            email: 'E-mail',
+            phone: 'Telefon',
+            sms: 'SMS',
+        },
+        fields: {
+            url: { label: 'Adres URL', placeholder: 'https://example.com' },
+            text: { label: 'Treść', placeholder: 'Wpisz dowolny tekst…' },
+            email: {
+                address: 'Adres e-mail',
+                addressPlaceholder: 'odbiorca@example.com',
+                subject: 'Temat (opcjonalnie)',
+                subjectPlaceholder: 'Temat wiadomości',
+                body: 'Treść wiadomości (opcjonalnie)',
+                bodyPlaceholder: 'Treść…',
+            },
+            phone: { label: 'Numer telefonu', placeholder: '+48123456789' },
+            sms: {
+                number: 'Numer telefonu',
+                numberPlaceholder: '+48123456789',
+                message: 'Treść SMS (opcjonalnie)',
+                messagePlaceholder: 'Treść wiadomości…',
+            },
+        },
+        preview: {
+            title: 'Podgląd',
+            empty: 'Wpisz dane po lewej, aby wygenerować kod QR.',
+        },
+    },
 }

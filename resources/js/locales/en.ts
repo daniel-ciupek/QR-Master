@@ -215,4 +215,42 @@ export default {
             notSupported: 'Your browser does not support WebAuthn / Passkeys.',
         },
     },
+
+    qr: {
+        create: {
+            headTitle: 'New QR Code',
+            title: 'Create QR Code',
+            subtitle: 'Fill in the form and the preview will update automatically.',
+        },
+        tabs: {
+            url: 'URL',
+            text: 'Text',
+            email: 'E-mail',
+            phone: 'Phone',
+            sms: 'SMS',
+        },
+        fields: {
+            url: { label: 'URL address', placeholder: 'https://example.com' },
+            text: { label: 'Content', placeholder: 'Enter any text…' },
+            email: {
+                address: 'E-mail address',
+                addressPlaceholder: 'recipient@example.com',
+                subject: 'Subject (optional)',
+                subjectPlaceholder: 'Message subject',
+                body: 'Message body (optional)',
+                bodyPlaceholder: 'Body…',
+            },
+            phone: { label: 'Phone number', placeholder: '+48123456789' },
+            sms: {
+                number: 'Phone number',
+                numberPlaceholder: '+48123456789',
+                message: 'SMS message (optional)',
+                messagePlaceholder: 'Message…',
+            },
+        },
+        preview: {
+            title: 'Preview',
+            empty: 'Enter data on the left to generate a QR code.',
+        },
+    },
 }

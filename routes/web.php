@@ -7,6 +7,7 @@ use App\Http\Controllers\Profile\PasskeysController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Profile\SecurityController;
 use App\Http\Controllers\Profile\SessionsController;
+use App\Http\Controllers\QrCode\QrCodeController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
 use App\Http\Controllers\WebAuthn\WebAuthnRegisterController;
 use Illuminate\Http\Request;
@@ -31,6 +32,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    Route::prefix('qr')->name('qr.')->group(function () {
+        Route::get('/create', [QrCodeController::class, 'create'])->name('create');
+    });
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::get('/profile/export-data', [ProfileController::class, 'exportData'])->name('profile.export');
