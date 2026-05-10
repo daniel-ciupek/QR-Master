@@ -5,7 +5,9 @@ export default {
         dashboard: 'Dashboard',
         qrCodes: 'Kody QR',
         analytics: 'Analityka',
+        account: 'Konto',
         profile: 'Profil',
+        security: 'Bezpieczeństwo (2FA)',
         sessions: 'Sesje',
         passkeys: 'Klucze dostępu',
         soon: 'wkrótce',
@@ -108,6 +110,44 @@ export default {
     },
 
     profile: {
+        index: {
+            headTitle: 'Mój profil',
+            personalInfo: {
+                title: 'Dane osobowe',
+                subtitle: 'Zaktualizuj swoje imię i adres e-mail.',
+                name: 'Imię i nazwisko',
+                email: 'Adres e-mail',
+                emailNote: 'Zmiana e-maila wymaga ponownej weryfikacji adresu.',
+                emailPending: 'E-mail oczekuje na weryfikację.',
+                save: 'Zapisz zmiany',
+                saved: 'Zmiany zostały zapisane.',
+            },
+            password: {
+                title: 'Zmiana hasła',
+                subtitle: 'Upewnij się, że używasz silnego, unikalnego hasła.',
+                current: 'Aktualne hasło',
+                new: 'Nowe hasło',
+                confirm: 'Potwierdź nowe hasło',
+                save: 'Zmień hasło',
+                saved: 'Hasło zostało zmienione.',
+            },
+            gdpr: {
+                title: 'Eksport danych (RODO)',
+                subtitle: 'Pobierz kopię wszystkich Twoich danych przechowywanych w QR-Master w formacie JSON.',
+                download: 'Pobierz moje dane',
+            },
+            danger: {
+                title: 'Strefa niebezpieczna',
+                subtitle: 'Usunięcie konta jest nieodwracalne — wszystkie dane zostaną trwale usunięte.',
+                delete: 'Usuń konto',
+                dialogTitle: 'Usuń konto',
+                dialogDesc: 'Ta operacja jest nieodwracalna. Wprowadź hasło, aby potwierdzić usunięcie konta.',
+                passwordLabel: 'Hasło',
+                confirmButton: 'Tak, usuń moje konto',
+                cancel: 'Anuluj',
+            },
+        },
+
         security: {
             headTitle: 'Bezpieczeństwo konta',
             title: 'Bezpieczeństwo',

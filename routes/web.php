@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Profile\PasskeysController;
+use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Profile\SecurityController;
 use App\Http\Controllers\Profile\SessionsController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
@@ -26,6 +27,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::get('/profile/export-data', [ProfileController::class, 'exportData'])->name('profile.export');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/profile/security', SecurityController::class)->name('profile.security');
     Route::get('/profile/passkeys', PasskeysController::class)->name('profile.passkeys');

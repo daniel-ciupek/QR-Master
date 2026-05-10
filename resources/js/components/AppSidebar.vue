@@ -50,7 +50,8 @@ const navMain = [
 ]
 
 const navAccount = [
-    { titleKey: 'nav.profile', href: '/profile/security', icon: Shield },
+    { titleKey: 'nav.account', href: '/profile', icon: User },
+    { titleKey: 'nav.security', href: '/profile/security', icon: Shield },
     { titleKey: 'nav.sessions', href: '/profile/sessions', icon: Monitor },
     { titleKey: 'nav.passkeys', href: '/profile/passkeys', icon: KeyRound },
 ]
@@ -168,9 +169,9 @@ function isActive(href: string) {
                             class="w-56"
                         >
                             <DropdownMenuItem as-child>
-                                <Link href="/profile/security">
+                                <Link href="/profile">
                                     <User class="mr-2 size-4" />
-                                    {{ t('nav.profile') }}
+                                    {{ t('nav.account') }}
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />

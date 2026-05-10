@@ -5,7 +5,9 @@ export default {
         dashboard: 'Dashboard',
         qrCodes: 'QR Codes',
         analytics: 'Analytics',
+        account: 'Account',
         profile: 'Profile',
+        security: 'Security (2FA)',
         sessions: 'Sessions',
         passkeys: 'Passkeys',
         soon: 'soon',
@@ -108,6 +110,44 @@ export default {
     },
 
     profile: {
+        index: {
+            headTitle: 'My profile',
+            personalInfo: {
+                title: 'Personal information',
+                subtitle: 'Update your name and email address.',
+                name: 'Full name',
+                email: 'Email address',
+                emailNote: 'Changing your email requires re-verification.',
+                emailPending: 'Email is pending verification.',
+                save: 'Save changes',
+                saved: 'Changes saved.',
+            },
+            password: {
+                title: 'Change password',
+                subtitle: 'Make sure you use a strong, unique password.',
+                current: 'Current password',
+                new: 'New password',
+                confirm: 'Confirm new password',
+                save: 'Change password',
+                saved: 'Password changed.',
+            },
+            gdpr: {
+                title: 'Data export (GDPR)',
+                subtitle: 'Download a copy of all your data stored in QR-Master as JSON.',
+                download: 'Download my data',
+            },
+            danger: {
+                title: 'Danger zone',
+                subtitle: 'Deleting your account is irreversible — all data will be permanently removed.',
+                delete: 'Delete account',
+                dialogTitle: 'Delete account',
+                dialogDesc: 'This action is irreversible. Enter your password to confirm account deletion.',
+                passwordLabel: 'Password',
+                confirmButton: 'Yes, delete my account',
+                cancel: 'Cancel',
+            },
+        },
+
         security: {
             headTitle: 'Account security',
             title: 'Security',
