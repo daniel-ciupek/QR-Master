@@ -1,14 +1,23 @@
 <script setup lang="ts">
-import { Search } from 'lucide-vue-next'
+import { Monitor, Moon, Search, Sun } from 'lucide-vue-next'
 import { onMounted, onUnmounted, ref } from 'vue'
 import AppSidebar from '@/components/AppSidebar.vue'
 import CommandPalette from '@/components/CommandPalette.vue'
 import { Button } from '@/components/ui/button'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
+import { useColorMode } from '@/composables/useColorMode'
 
 defineProps<{ title?: string }>()
+
+const { mode, setMode } = useColorMode()
 
 const commandOpen = ref(false)
 
@@ -38,6 +47,45 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 
                 <div class="flex-1" />
 
+                <!-- Dark mode toggle -->
+                <DropdownMenu>
+                    <DropdownMenuTrigger as-child>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            class="size-8"
+                        >
+                            <Sun
+                                v-if="mode === 'light'"
+                                class="size-4"
+                            />
+                            <Moon
+                                v-else-if="mode === 'dark'"
+                                class="size-4"
+                            />
+                            <Monitor
+                                v-else
+                                class="size-4"
+                            />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem @click="setMode('light')">
+                            <Sun class="mr-2 size-4" />
+                            Jasny
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="setMode('dark')">
+                            <Moon class="mr-2 size-4" />
+                            Ciemny
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="setMode('system')">
+                            <Monitor class="mr-2 size-4" />
+                            System
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+                <!-- Cmd+K trigger -->
                 <Button
                     variant="outline"
                     size="sm"
