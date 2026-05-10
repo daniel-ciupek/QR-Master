@@ -81,6 +81,12 @@ onMounted(() => {
     qr.append(container.value)
 })
 
+async function download(extension: 'png' | 'svg' | 'jpeg' | 'webp' = 'png', name = 'qrcode'): Promise<void> {
+    await qr?.download({ extension, name })
+}
+
+defineExpose({ download })
+
 onUnmounted(() => {
     qr = null
 })

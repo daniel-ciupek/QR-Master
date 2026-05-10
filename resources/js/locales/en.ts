@@ -264,5 +264,13 @@ export default {
             tooLong: 'Content is too long ({count}/{max} chars). The QR code may be unreadable.',
             nearLimit: '{count}/{max} chars',
         },
+        export: {
+            title: 'Download',
+            png: 'PNG',
+            svg: 'SVG',
+            pdf: 'PDF',
+            eps: 'EPS',
+            downloading: 'Downloading…',
+        },
     },
 }

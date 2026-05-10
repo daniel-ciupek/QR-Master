@@ -35,6 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('qr')->name('qr.')->group(function () {
         Route::get('/create', [QrCodeController::class, 'create'])->name('create');
+        Route::post('/export', [QrCodeController::class, 'export'])->name('export');
     });
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');

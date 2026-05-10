@@ -264,5 +264,13 @@ export default {
             tooLong: 'Treść jest zbyt długa ({count}/{max} znaków). Kod QR może być nieczytelny.',
             nearLimit: '{count}/{max} znaków',
         },
+        export: {
+            title: 'Pobierz',
+            png: 'PNG',
+            svg: 'SVG',
+            pdf: 'PDF',
+            eps: 'EPS',
+            downloading: 'Pobieranie…',
+        },
     },
 }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\QrRendering;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Output\QREps;
 use chillerlan\QRCode\Output\QRGdImagePNG;
 use chillerlan\QRCode\Output\QRMarkupSVG;
 use chillerlan\QRCode\QRCode;
@@ -66,6 +68,62 @@ final class QrRenderer
         ]);
 
         return (new QRCode($options))->render($data);
+    }
+
+    /**
+     * Render QR code as EPS string.
+     *
+     * @throws InvalidArgumentException
+     * @throws QRCodeException
+     */
+    public function eps(string $data, string $ecc = 'M'): string
+    {
+        $this->guardData($data);
+
+        $options = new QROptions([
+            'outputInterface' => QREps::class,
+            'eccLevel' => $this->eccLevel($ecc),
+            'addQuietzone' => true,
+            'quietzoneSize' => 4,
+            'outputBase64' => false,
+            'moduleValues' => [
+                // dark modules: black RGB
+                1520 => [0, 0, 0],
+                // light modules: white RGB
+                6 => [255, 255, 255],
+            ],
+        ]);
+
+        return (new QRCode($options))->render($data);
+    }
+
+    /**
+     * Render QR code as PDF binary string (SVG embedded in PDF via dompdf).
+     *
+     * @throws InvalidArgumentException
+     * @throws QRCodeException
+     */
+    public function pdf(string $data, string $ecc = 'M', int $sizeMm = 60): string
+    {
+        $svg = $this->svg($data, $ecc);
+
+        $html = sprintf(
+            '<!DOCTYPE html><html><head><meta charset="utf-8">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { display: flex; align-items: center; justify-content: center;
+                       width: %1$dmm; height: %1$dmm; }
+                .qr { width: %1$dmm; height: %1$dmm; }
+            </style></head><body>
+            <div class="qr">%2$s</div>
+            </body></html>',
+            $sizeMm,
+            $svg
+        );
+
+        return Pdf::loadHTML($html)
+            ->setPaper([$sizeMm, $sizeMm], 'portrait')
+            ->output();
     }
 
     /**
