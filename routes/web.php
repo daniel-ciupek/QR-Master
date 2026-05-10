@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Profile\PasskeysController;
 use App\Http\Controllers\Profile\SecurityController;
+use App\Http\Controllers\Profile\SessionsController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
 use App\Http\Controllers\WebAuthn\WebAuthnRegisterController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/profile/security', SecurityController::class)->name('profile.security');
     Route::get('/profile/passkeys', PasskeysController::class)->name('profile.passkeys');
+
+    Route::get('/profile/sessions', [SessionsController::class, 'index'])->name('profile.sessions');
+    Route::delete('/profile/sessions/others', [SessionsController::class, 'destroyOthers'])->name('profile.sessions.destroyOthers');
+    Route::delete('/profile/sessions/{userSession}', [SessionsController::class, 'destroy'])->name('profile.sessions.destroy');
 
     // WebAuthn passkey registration (wymaga auth)
     Route::prefix('webauthn')->name('webauthn.')->group(function () {
