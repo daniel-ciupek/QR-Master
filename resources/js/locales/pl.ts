@@ -104,6 +104,29 @@ export default {
         },
     },
 
+    onboarding: {
+        step: 'Krok :current z :total',
+        next: 'Dalej',
+        finish: 'Zacznij korzystać',
+        steps: {
+            welcome: {
+                title: 'Witaj w QR-Master!',
+                subtitle: 'Platforma do tworzenia i zarządzania dynamicznymi kodami QR. Zacznijmy!',
+            },
+            personalize: {
+                title: 'Personalizacja',
+                subtitle: 'Dostosuj wygląd aplikacji do swoich preferencji.',
+                theme: 'Motyw',
+                language: 'Język',
+            },
+            ready: {
+                title: 'Wszystko gotowe!',
+                subtitle: 'Twoje konto jest skonfigurowane. Możesz teraz tworzyć swoje pierwsze kody QR.',
+                cta: 'Przejdź do panelu',
+            },
+        },
+    },
+
     dashboard: {
         title: 'Dashboard',
         subtitle: 'Witaj w QR-Master — Etap 1 w budowie.',

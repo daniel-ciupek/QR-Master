@@ -25,6 +25,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property Carbon|null $two_factor_confirmed_at
+ * @property Carbon|null $onboarding_completed_at
  */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
@@ -38,6 +39,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
     {
         return [
             'email_verified_at' => 'datetime',
+            'onboarding_completed_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

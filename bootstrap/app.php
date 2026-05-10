@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\EnsureOnboardingComplete;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetLocale;
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             ValidateTurnstile::class,
             TrackUserSession::class,
+            EnsureOnboardingComplete::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\Profile\PasskeysController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Profile\SecurityController;
@@ -24,6 +25,9 @@ Route::post('/locale', function (Request $request) {
 })->name('locale.set');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/onboarding', [OnboardingController::class, 'show'])->name('onboarding');
+    Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
+
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
