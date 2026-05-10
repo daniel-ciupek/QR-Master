@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Sentry\State\Scope;
 
@@ -20,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureSentry();
         $this->configurePulseGate();
+        $this->configureRateLimiters();
     }
 
     private function configureSentry(): void
@@ -36,9 +40,15 @@ class AppServiceProvider extends ServiceProvider
     private function configurePulseGate(): void
     {
         Gate::define('viewPulse', function (): bool {
-            // Pulse dostępny tylko w local/staging
-            // Na produkcji: rozszerzyć o $user->hasRole('admin') po instalacji spatie/laravel-permission
             return ! app()->isProduction();
+        });
+    }
+
+    private function configureRateLimiters(): void
+    {
+        // /q/{hash} — anti-DDoS, 60 req/min per IP
+        RateLimiter::for('public-redirect', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
         });
     }
 }

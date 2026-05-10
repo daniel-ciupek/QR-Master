@@ -105,7 +105,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **3.2** Model `QrCode` z relacjami (`user`, `scanLogs`, `tags`), polymorphic media (logo)
 - [x] **3.3** `app/Services/HashGenerator.php` — bezpieczny `short_hash` (8 znaków, base62, kolizja-resistant)
 - [x] **3.4** `app/Actions/QrCode/CreateQrCodeAction.php` + `UpdateQrCodeAction.php` + `DeleteQrCodeAction.php`
-- [ ] **3.5** Routing: `GET /q/{hash}` → `PublicRedirectController` (kontroler najwyższego priorytetu bezpieczeństwa)
+- [x] **3.5** Routing: `GET /q/{hash}` → `PublicRedirectController` (kontroler najwyższego priorytetu bezpieczeństwa)
 - [ ] **3.6** Soft delete + queued purge job (30 dni)
 - [ ] **3.7** Dashboard: DataTable kodów (TanStack Table) z filtrowaniem, sortowaniem, search
 - [ ] **3.8** Akcje: edytuj, duplikuj, wstrzymaj (`is_active`), usuń, kopiuj link, pobierz QR

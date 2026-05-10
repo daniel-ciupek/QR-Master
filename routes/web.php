@@ -7,6 +7,7 @@ use App\Http\Controllers\Profile\PasskeysController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Profile\SecurityController;
 use App\Http\Controllers\Profile\SessionsController;
+use App\Http\Controllers\PublicRedirectController;
 use App\Http\Controllers\QrCode\QrCodeController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
 use App\Http\Controllers\WebAuthn\WebAuthnRegisterController;
@@ -17,6 +18,11 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+// Public QR redirect — rate limited, no auth required
+Route::get('/q/{hash}', PublicRedirectController::class)
+    ->middleware('throttle:public-redirect')
+    ->name('qr.redirect');
 
 Route::post('/locale', function (Request $request) {
     $locale = in_array($request->input('locale'), ['pl', 'en']) ? $request->input('locale') : 'pl';
