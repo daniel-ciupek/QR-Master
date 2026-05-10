@@ -2,12 +2,16 @@
 import { Head, useForm } from '@inertiajs/vue3'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import TurnstileWidget from '@/components/TurnstileWidget.vue'
+
+const siteKey = import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY as string
 
 const form = useForm({
     name: '',
     email: '',
     password: '',
     password_confirmation: '',
+    turnstile_token: '',
 })
 
 function submit() {
@@ -99,9 +103,19 @@ function submit() {
                     />
                 </div>
 
+                <TurnstileWidget
+                    :site-key="siteKey"
+                    @token="form.turnstile_token = $event"
+                    @expire="form.turnstile_token = ''"
+                />
+                <p
+                    v-if="form.errors.turnstile_token"
+                    class="text-xs text-destructive"
+                >{{ form.errors.turnstile_token }}</p>
+
                 <Button
                     class="w-full"
-                    :disabled="form.processing"
+                    :disabled="form.processing || !form.turnstile_token"
                     type="submit"
                 >
                     {{ form.processing ? 'Rejestrowanie…' : 'Zarejestruj się' }}
