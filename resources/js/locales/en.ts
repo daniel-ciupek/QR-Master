@@ -36,7 +36,7 @@ export default {
 
     auth: {
         emailLabel: 'Email',
-        emailPlaceholder: 'you@company.com',
+        emailPlaceholder: "you{'@'}company.com",
         passwordLabel: 'Password',
         newPasswordLabel: 'New password',
         passwordConfirmLabel: 'Confirm password',
