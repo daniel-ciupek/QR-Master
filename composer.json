@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "chillerlan/php-qrcode": "^6.0",
         "inertiajs/inertia-laravel": "^3.1",
         "laragear/webauthn": "^5.0",
         "laravel/fortify": "^1.36",

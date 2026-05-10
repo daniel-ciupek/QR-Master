@@ -84,7 +84,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 *Cel: Pierwsza wartość biznesowa — generowanie i pobieranie QR z pięknym podglądem.*
 
-- [ ] **2.1** `chillerlan/php-qrcode` — wrapper jako `app/Services/QrRendering/QrRenderer.php`
+- [x] **2.1** `chillerlan/php-qrcode` — wrapper jako `app/Services/QrRendering/QrRenderer.php`
 - [ ] **2.2** Frontend: `qr-code-styling.js` w komponencie `LivePreview.vue` (Canvas API)
 - [ ] **2.3** Formularz generatora: tekst / URL / email / telefon / SMS (Tab-based UI)
 - [ ] **2.4** Live preview z debounced update (150ms)
