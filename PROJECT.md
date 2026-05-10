@@ -103,7 +103,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 - [x] **3.1** Migracja `qr_codes`: `id, user_id, type, title, slug, short_hash, destination_url, settings (jsonb), is_active, expires_at, password_hash, created_at, updated_at, deleted_at`
 - [x] **3.2** Model `QrCode` z relacjami (`user`, `scanLogs`, `tags`), polymorphic media (logo)
-- [ ] **3.3** `app/Services/HashGenerator.php` — bezpieczny `short_hash` (8 znaków, base62, kolizja-resistant)
+- [x] **3.3** `app/Services/HashGenerator.php` — bezpieczny `short_hash` (8 znaków, base62, kolizja-resistant)
 - [ ] **3.4** `app/Actions/QrCode/CreateQrCodeAction.php` + `UpdateQrCodeAction.php` + `DeleteQrCodeAction.php`
 - [ ] **3.5** Routing: `GET /q/{hash}` → `PublicRedirectController` (kontroler najwyższego priorytetu bezpieczeństwa)
 - [ ] **3.6** Soft delete + queued purge job (30 dni)
