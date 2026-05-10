@@ -12,14 +12,17 @@ use Spatie\Csp\Value;
 
 final class CspPolicy implements Preset
 {
+    private const TURNSTILE_ORIGIN = 'https://challenges.cloudflare.com';
+
     public function configure(Policy $policy): void
     {
         $policy
             ->add(Directive::DEFAULT, Keyword::SELF)
-            ->add(Directive::SCRIPT, Keyword::SELF)
+            ->add(Directive::SCRIPT, [Keyword::SELF, self::TURNSTILE_ORIGIN])
             ->add(Directive::STYLE, Keyword::SELF)
             ->add(Directive::IMG, [Keyword::SELF, 'data:', 'blob:'])
             ->add(Directive::FONT, Keyword::SELF)
+            ->add(Directive::FRAME, self::TURNSTILE_ORIGIN)
             ->add(Directive::CONNECT, $this->connectSources())
             ->add(Directive::MANIFEST, Keyword::SELF)
             ->add(Directive::OBJECT, Keyword::NONE)
@@ -30,7 +33,6 @@ final class CspPolicy implements Preset
             ->addNonce(Directive::SCRIPT)
             ->addNonce(Directive::STYLE);
 
-        // W trybie deweloperskim: pozwól Vite HMR serwować zasoby
         if (app()->isLocal()) {
             $policy
                 ->add(Directive::SCRIPT, ['http://localhost:5173', Keyword::UNSAFE_EVAL])
@@ -41,7 +43,7 @@ final class CspPolicy implements Preset
     /** @return non-empty-list<Keyword|string> */
     private function connectSources(): array
     {
-        $sources = [Keyword::SELF];
+        $sources = [Keyword::SELF, self::TURNSTILE_ORIGIN];
 
         if (app()->isLocal()) {
             $sources[] = 'ws://localhost:5173';
