@@ -265,12 +265,16 @@ export default {
             nearLimit: '{count}/{max} znaków',
         },
         export: {
-            title: 'Pobierz',
+            title: 'Pobierz kod QR',
+            trigger: 'Pobierz',
             png: 'PNG',
             svg: 'SVG',
             pdf: 'PDF',
             eps: 'EPS',
             downloading: 'Pobieranie…',
+            resolution: 'Rozdzielczość PNG',
+            resolutionHint: 'Wyższa rozdzielczość = większy plik, lepsza jakość przy druku.',
+            download: 'Pobierz {format}',
         },
     },
 }

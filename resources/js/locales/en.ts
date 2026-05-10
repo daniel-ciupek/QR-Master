@@ -265,12 +265,16 @@ export default {
             nearLimit: '{count}/{max} chars',
         },
         export: {
-            title: 'Download',
+            title: 'Download QR Code',
+            trigger: 'Download',
             png: 'PNG',
             svg: 'SVG',
             pdf: 'PDF',
             eps: 'EPS',
             downloading: 'Downloading…',
+            resolution: 'PNG resolution',
+            resolutionHint: 'Higher resolution = larger file, better print quality.',
+            download: 'Download {format}',
         },
     },
 }

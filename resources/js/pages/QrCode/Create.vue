@@ -3,7 +3,9 @@ import { Head } from '@inertiajs/vue3'
 import type { ErrorCorrectionLevel } from 'qr-code-styling'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import ExportModal from '@/components/qr/ExportModal.vue'
 import LivePreview from '@/components/qr/LivePreview.vue'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import AppLayout from '@/layouts/AppLayout.vue'
@@ -74,48 +76,8 @@ const showCharCounter = computed(() => charCount.value > MAX_CHARS * 0.7)
 const hasError = computed(() => urlError.value !== null || isTooLong.value)
 const canPreview = computed(() => qrData.value.length > 0 && !hasError.value)
 
-// Export
-const preview = ref<InstanceType<typeof LivePreview>>()
-const downloading = ref(false)
-
-type ExportFormat = 'png' | 'svg' | 'pdf' | 'eps'
-
-async function exportQr(format: ExportFormat): Promise<void> {
-    if (!canPreview.value || downloading.value) return
-    downloading.value = true
-
-    try {
-        if (format === 'png' || format === 'svg') {
-            await preview.value?.download(format)
-        } else {
-            // PDF and EPS: backend renders via QrRenderer
-            const form = document.createElement('form')
-            form.method = 'POST'
-            form.action = '/qr/export'
-
-            const fields: Record<string, string> = {
-                _token: (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ?? '',
-                data: qrData.value,
-                ecc: eccLevel.value,
-                format,
-            }
-
-            for (const [key, val] of Object.entries(fields)) {
-                const input = document.createElement('input')
-                input.type = 'hidden'
-                input.name = key
-                input.value = val
-                form.appendChild(input)
-            }
-
-            document.body.appendChild(form)
-            form.submit()
-            document.body.removeChild(form)
-        }
-    } finally {
-        setTimeout(() => { downloading.value = false }, 1000)
-    }
-}
+// Export modal
+const exportOpen = ref(false)
 </script>
 
 <template>
@@ -268,7 +230,6 @@ async function exportQr(format: ExportFormat): Promise<void> {
                 <div class="rounded-xl border border-border bg-card p-4 flex items-center justify-center w-full min-h-[300px]">
                     <template v-if="canPreview">
                         <LivePreview
-                            ref="preview"
                             :data="qrData"
                             :size="260"
                             :error-correction-level="eccLevel"
@@ -279,20 +240,21 @@ async function exportQr(format: ExportFormat): Promise<void> {
                     </p>
                 </div>
 
-                <!-- Export buttons -->
-                <div v-if="canPreview" class="flex gap-2 w-full">
-                    <button
-                        v-for="fmt in (['png', 'svg', 'pdf', 'eps'] as ExportFormat[])"
-                        :key="fmt"
-                        type="button"
-                        :disabled="downloading"
-                        class="flex-1 rounded-md border border-border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed"
-                        @click="exportQr(fmt)"
-                    >
-                        {{ downloading ? t('qr.export.downloading') : t(`qr.export.${fmt}`) }}
-                    </button>
-                </div>
+                <!-- Export trigger -->
+                <Button
+                    v-if="canPreview"
+                    class="w-full"
+                    @click="exportOpen = true"
+                >
+                    {{ t('qr.export.trigger') }}
+                </Button>
             </div>
         </div>
     </div>
+
+    <ExportModal
+        v-model:open="exportOpen"
+        :data="qrData"
+        :ecc-level="eccLevel"
+    />
 </template>
