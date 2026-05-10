@@ -80,7 +80,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### Etap 2: Statyczny Generator QR + Live Preview
+### ✅ Etap 2: Statyczny Generator QR + Live Preview *(ukończony 2026-05-10)*
 
 *Cel: Pierwsza wartość biznesowa — generowanie i pobieranie QR z pięknym podglądem.*
 
