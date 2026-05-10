@@ -40,6 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::prefix('qr')->name('qr.')->group(function () {
+        Route::get('/', [QrCodeController::class, 'index'])->name('index');
         Route::get('/create', [QrCodeController::class, 'create'])->name('create');
         Route::post('/export', [QrCodeController::class, 'export'])->name('export');
     });

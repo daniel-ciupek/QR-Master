@@ -107,7 +107,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **3.4** `app/Actions/QrCode/CreateQrCodeAction.php` + `UpdateQrCodeAction.php` + `DeleteQrCodeAction.php`
 - [x] **3.5** Routing: `GET /q/{hash}` → `PublicRedirectController` (kontroler najwyższego priorytetu bezpieczeństwa)
 - [x] **3.6** Soft delete + queued purge job (30 dni)
-- [ ] **3.7** Dashboard: DataTable kodów (TanStack Table) z filtrowaniem, sortowaniem, search
+- [x] **3.7** Dashboard: DataTable kodów (TanStack Table) z filtrowaniem, sortowaniem, search
 - [ ] **3.8** Akcje: edytuj, duplikuj, wstrzymaj (`is_active`), usuń, kopiuj link, pobierz QR
 - [ ] **3.9** Widok edycji kodu — formularz Inertia z walidacją SSR
 - [ ] **3.10** Folders / Tags — grupowanie kodów dla łatwiejszego zarządzania

@@ -45,7 +45,7 @@ const initials = user
 
 const navMain = [
     { titleKey: 'nav.dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { titleKey: 'nav.qrCodes', href: '/qr-codes', icon: QrCode, disabled: true },
+    { titleKey: 'nav.qrCodes', href: '/qr', icon: QrCode },
     { titleKey: 'nav.analytics', href: '/analytics', icon: BarChart2, disabled: true },
 ]
 
