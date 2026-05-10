@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
+import type { ErrorCorrectionLevel } from 'qr-code-styling'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LivePreview from '@/components/qr/LivePreview.vue'
@@ -11,9 +12,18 @@ defineOptions({ layout: AppLayout })
 
 const { t } = useI18n()
 
+// QR data capacity: conservative limit for good scannability at ECC M
+const MAX_CHARS = 900
+
+const ALLOWED_URL_SCHEMES = ['https://', 'http://']
+
 type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms'
+type EccLevel = ErrorCorrectionLevel
+
+const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
 
 const activeTab = ref<TabId>('url')
+const eccLevel = ref<EccLevel>('M')
 
 const url = ref('')
 const text = ref('')
@@ -50,6 +60,19 @@ const qrData = computed<string>(() => {
             return ''
     }
 })
+
+const urlError = computed<string | null>(() => {
+    const v = url.value.trim()
+    if (!v) return null
+    return ALLOWED_URL_SCHEMES.some((s) => v.startsWith(s)) ? null : t('qr.validation.urlScheme')
+})
+
+const charCount = computed(() => qrData.value.length)
+const isTooLong = computed(() => charCount.value > MAX_CHARS)
+const showCharCounter = computed(() => charCount.value > MAX_CHARS * 0.7)
+
+const hasError = computed(() => urlError.value !== null || isTooLong.value)
+const canPreview = computed(() => qrData.value.length > 0 && !hasError.value)
 </script>
 
 <template>
@@ -63,7 +86,7 @@ const qrData = computed<string>(() => {
 
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
             <!-- Form -->
-            <div class="lg:col-span-3">
+            <div class="lg:col-span-3 space-y-5">
                 <Tabs v-model="activeTab" class="w-full">
                     <TabsList class="w-full">
                         <TabsTrigger value="url" class="flex-1">{{ t('qr.tabs.url') }}</TabsTrigger>
@@ -80,8 +103,10 @@ const qrData = computed<string>(() => {
                             v-model="url"
                             type="url"
                             :placeholder="t('qr.fields.url.placeholder')"
+                            :aria-invalid="urlError !== null"
                             autocomplete="off"
                         />
+                        <p v-if="urlError" class="text-xs text-destructive">{{ urlError }}</p>
                     </TabsContent>
 
                     <!-- Text -->
@@ -158,16 +183,48 @@ const qrData = computed<string>(() => {
                         </div>
                     </TabsContent>
                 </Tabs>
+
+                <!-- Char counter -->
+                <p
+                    v-if="showCharCounter"
+                    :class="isTooLong ? 'text-destructive' : 'text-muted-foreground'"
+                    class="text-xs"
+                >
+                    {{
+                        isTooLong
+                            ? t('qr.validation.tooLong', { count: charCount, max: MAX_CHARS })
+                            : t('qr.validation.nearLimit', { count: charCount, max: MAX_CHARS })
+                    }}
+                </p>
+
+                <!-- ECC selector -->
+                <div class="flex items-center gap-3">
+                    <label class="text-sm font-medium shrink-0">{{ t('qr.ecc.label') }}</label>
+                    <div class="flex gap-1">
+                        <button
+                            v-for="level in ECC_LEVELS"
+                            :key="level"
+                            type="button"
+                            :class="[
+                                'px-3 py-1 rounded-md text-xs font-mono font-semibold border transition-colors',
+                                eccLevel === level
+                                    ? 'bg-primary text-primary-foreground border-primary'
+                                    : 'border-border text-muted-foreground hover:border-ring hover:text-foreground',
+                            ]"
+                            @click="eccLevel = level"
+                        >
+                            {{ t(`qr.ecc.${level}`) }}
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Preview -->
             <div class="lg:col-span-2 flex flex-col items-center gap-3">
                 <p class="text-sm font-medium self-start">{{ t('qr.preview.title') }}</p>
-                <div
-                    class="rounded-xl border border-border bg-card p-4 flex items-center justify-center w-full min-h-[300px]"
-                >
-                    <template v-if="qrData">
-                        <LivePreview :data="qrData" :size="260" />
+                <div class="rounded-xl border border-border bg-card p-4 flex items-center justify-center w-full min-h-[300px]">
+                    <template v-if="canPreview">
+                        <LivePreview :data="qrData" :size="260" :error-correction-level="eccLevel" />
                     </template>
                     <p v-else class="text-sm text-muted-foreground text-center px-6">
                         {{ t('qr.preview.empty') }}

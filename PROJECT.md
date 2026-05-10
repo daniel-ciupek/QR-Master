@@ -87,8 +87,8 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **2.1** `chillerlan/php-qrcode` — wrapper jako `app/Services/QrRendering/QrRenderer.php`
 - [x] **2.2** Frontend: `qr-code-styling.js` w komponencie `LivePreview.vue` (Canvas API)
 - [x] **2.3** Formularz generatora: tekst / URL / email / telefon / SMS (Tab-based UI)
-- [ ] **2.4** Live preview z debounced update (150ms)
-- [ ] **2.5** Walidacja URL (whitelist schemes), długość treści, error correction level
+- [x] **2.4** Live preview z debounced update (150ms)
+- [x] **2.5** Walidacja URL (whitelist schemes), długość treści, error correction level
 - [ ] **2.6** Eksport: **PNG, SVG, PDF, EPS** (PDF przez `dompdf` + SVG embed)
 - [ ] **2.7** Modal eksportu z preview każdego formatu i wyborem rozdzielczości
 - [ ] **2.8** Color contrast checker — ostrzeżenie jeśli QR będzie nieczytelny

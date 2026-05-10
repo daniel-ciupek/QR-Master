@@ -252,5 +252,17 @@ export default {
             title: 'Podgląd',
             empty: 'Wpisz dane po lewej, aby wygenerować kod QR.',
         },
+        ecc: {
+            label: 'Korekcja błędów',
+            L: 'L — 7%',
+            M: 'M — 15%',
+            Q: 'Q — 25%',
+            H: 'H — 30%',
+        },
+        validation: {
+            urlScheme: 'Adres URL musi zaczynać się od https:// lub http://.',
+            tooLong: 'Treść jest zbyt długa ({count}/{max} znaków). Kod QR może być nieczytelny.',
+            nearLimit: '{count}/{max} znaków',
+        },
     },
 }

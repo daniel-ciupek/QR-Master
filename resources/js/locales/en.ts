@@ -252,5 +252,17 @@ export default {
             title: 'Preview',
             empty: 'Enter data on the left to generate a QR code.',
         },
+        ecc: {
+            label: 'Error correction',
+            L: 'L — 7%',
+            M: 'M — 15%',
+            Q: 'Q — 25%',
+            H: 'H — 30%',
+        },
+        validation: {
+            urlScheme: 'URL must start with https:// or http://.',
+            tooLong: 'Content is too long ({count}/{max} chars). The QR code may be unreadable.',
+            nearLimit: '{count}/{max} chars',
+        },
     },
 }
