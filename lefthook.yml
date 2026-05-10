@@ -22,16 +22,15 @@ pre-commit:
       fail_text: "Plik przekracza limit 5MB — nie commituj dużych plików"
 
 pre-push:
-  # PATH rozszerzony o typowe lokalizacje PHP/Node — fix dla GitHub Desktop
   env:
     PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
   commands:
     phpstan:
-      run: ./vendor/bin/phpstan analyse app/ --level=8 --memory-limit=512M --no-ansi
+      run: docker compose exec -T app php vendor/bin/phpstan analyse app/ --level=8 --memory-limit=512M --no-ansi
       fail_text: "PHPStan: błędy statycznej analizy — napraw przed pushem"
 
     pest:
-      run: ./vendor/bin/pest --stop-on-failure
+      run: docker compose exec -T app php vendor/bin/pest --stop-on-failure
       fail_text: "Pest: testy nie przeszły — napraw przed pushem"
 
     gitignore-check:
