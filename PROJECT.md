@@ -73,7 +73,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **1.8** **Dark mode** (light / dark / system) — persistowany w localStorage
 - [x] **1.9** **i18n PL + EN** — vue-i18n + laravel-translatable, wszystkie stringi w plikach `lang/`
 - [x] **1.10** Strona profilu: zmiana hasła, 2FA, dane osobowe, eksport RODO, usunięcie konta
-- [ ] **1.11** Email templates (Markdown) dla wszystkich powiadomień systemowych — branded
+- [x] **1.11** Email templates (Markdown) dla wszystkich powiadomień systemowych — branded
 - [ ] **1.12** Onboarding wizard po pierwszym logowaniu (3 kroki, Lottie animations)
 
 **Kryterium ukończenia:** User może się zarejestrować z 2FA, zalogować, zmienić motyw, język, eksportować swoje dane.

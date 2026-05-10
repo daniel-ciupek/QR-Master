@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Notifications\Auth\ResetPasswordNotification;
+use App\Notifications\Auth\VerifyEmailNotification;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -38,5 +40,15 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification);
+    }
+
+    public function sendPasswordResetNotification(mixed $token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }
