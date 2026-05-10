@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
+const { t } = useI18n()
 const useRecovery = ref(false)
 
 const form = useForm({
@@ -19,14 +21,14 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Weryfikacja dwuetapowa" />
+    <Head :title="t('auth.twoFactor.headTitle')" />
 
     <div class="flex min-h-screen items-center justify-center bg-background px-4">
         <div class="w-full max-w-sm space-y-6">
             <div class="space-y-2 text-center">
-                <h1 class="text-2xl font-bold">Weryfikacja 2FA</h1>
+                <h1 class="text-2xl font-bold">{{ t('auth.twoFactor.title') }}</h1>
                 <p class="text-sm text-muted-foreground">
-                    {{ useRecovery ? 'Wprowadź kod odzyskiwania.' : 'Wprowadź kod z aplikacji uwierzytelniającej.' }}
+                    {{ useRecovery ? t('auth.twoFactor.recoveryDescription') : t('auth.twoFactor.codeDescription') }}
                 </p>
             </div>
 
@@ -41,7 +43,7 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="code"
-                    >Kod jednorazowy</label>
+                    >{{ t('auth.twoFactor.codeLabel') }}</label>
                     <Input
                         id="code"
                         v-model="form.code"
@@ -63,7 +65,7 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="recovery_code"
-                    >Kod odzyskiwania</label>
+                    >{{ t('auth.twoFactor.recoveryLabel') }}</label>
                     <Input
                         id="recovery_code"
                         v-model="form.recovery_code"
@@ -82,7 +84,7 @@ function submit() {
                     :disabled="form.processing"
                     type="submit"
                 >
-                    Zaloguj się
+                    {{ t('auth.twoFactor.submit') }}
                 </Button>
             </form>
 
@@ -92,7 +94,7 @@ function submit() {
                     type="button"
                     @click="useRecovery = !useRecovery"
                 >
-                    {{ useRecovery ? 'Użyj kodu z aplikacji' : 'Użyj kodu odzyskiwania' }}
+                    {{ useRecovery ? t('auth.twoFactor.switchToCode') : t('auth.twoFactor.switchToRecovery') }}
                 </button>
             </p>
         </div>

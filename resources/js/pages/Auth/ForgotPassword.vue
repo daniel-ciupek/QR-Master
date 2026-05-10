@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3'
+import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import TurnstileWidget from '@/components/TurnstileWidget.vue'
 
+const { t } = useI18n()
 const siteKey = import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY as string
 
 defineProps<{ status?: string }>()
@@ -19,15 +21,13 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Reset hasła" />
+    <Head :title="t('auth.forgotPassword.headTitle')" />
 
     <div class="flex min-h-screen items-center justify-center bg-background px-4">
         <div class="w-full max-w-sm space-y-6">
             <div class="space-y-2 text-center">
-                <h1 class="text-2xl font-bold">Nie pamiętasz hasła?</h1>
-                <p class="text-sm text-muted-foreground">
-                    Podaj email — wyślemy link do resetu hasła.
-                </p>
+                <h1 class="text-2xl font-bold">{{ t('auth.forgotPassword.title') }}</h1>
+                <p class="text-sm text-muted-foreground">{{ t('auth.forgotPassword.description') }}</p>
             </div>
 
             <div
@@ -45,7 +45,7 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="email"
-                    >Email</label>
+                    >{{ t('auth.emailLabel') }}</label>
                     <Input
                         id="email"
                         v-model="form.email"
@@ -74,7 +74,7 @@ function submit() {
                     :disabled="form.processing || !form.turnstile_token"
                     type="submit"
                 >
-                    Wyślij link resetujący
+                    {{ t('auth.forgotPassword.submit') }}
                 </Button>
             </form>
 
@@ -82,7 +82,7 @@ function submit() {
                 <a
                     class="text-muted-foreground underline-offset-4 hover:underline"
                     href="/login"
-                >Wróć do logowania</a>
+                >{{ t('auth.forgotPassword.backToLogin') }}</a>
             </p>
         </div>
     </div>

@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3'
+import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import AppLayout from '@/layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
+
+const { t } = useI18n()
 
 interface SessionData {
     id: number
@@ -27,14 +30,12 @@ function revokeOthers() {
 </script>
 
 <template>
-    <Head title="Aktywne sesje" />
+    <Head :title="t('profile.sessions.headTitle')" />
 
-    <div class="mx-auto max-w-2xl space-y-6 px-4 py-8">
+    <div class="mx-auto max-w-2xl space-y-6">
         <div>
-            <h1 class="text-2xl font-bold">Aktywne sesje</h1>
-            <p class="mt-1 text-sm text-muted-foreground">
-                Urządzenia zalogowane na Twoje konto. Zakończ sesje, których nie rozpoznajesz.
-            </p>
+            <h1 class="text-2xl font-bold">{{ t('profile.sessions.title') }}</h1>
+            <p class="mt-1 text-sm text-muted-foreground">{{ t('profile.sessions.description') }}</p>
         </div>
 
         <div class="divide-y rounded-lg border">
@@ -45,14 +46,14 @@ function revokeOthers() {
             >
                 <div class="space-y-1">
                     <div class="flex items-center gap-2">
-                        <span class="font-medium text-sm">{{ session.browser }} — {{ session.os }}</span>
+                        <span class="text-sm font-medium">{{ session.browser }} — {{ session.os }}</span>
                         <Badge
                             v-if="session.is_current"
                             variant="default"
-                        >Bieżąca</Badge>
+                        >{{ t('profile.sessions.current') }}</Badge>
                     </div>
                     <div class="text-xs text-muted-foreground">
-                        {{ session.ip_address ?? 'Nieznany IP' }} · {{ session.last_active_at }}
+                        {{ session.ip_address ?? t('profile.sessions.unknownIp') }} · {{ session.last_active_at }}
                     </div>
                 </div>
 
@@ -62,7 +63,7 @@ function revokeOthers() {
                     variant="destructive"
                     @click="revoke(session.id)"
                 >
-                    Zakończ
+                    {{ t('profile.sessions.revoke') }}
                 </Button>
             </div>
 
@@ -70,7 +71,7 @@ function revokeOthers() {
                 v-if="sessions.length === 0"
                 class="px-4 py-8 text-center text-sm text-muted-foreground"
             >
-                Brak aktywnych sesji.
+                {{ t('profile.sessions.empty') }}
             </div>
         </div>
 
@@ -80,7 +81,7 @@ function revokeOthers() {
                 :disabled="sessions.filter(s => !s.is_current).length === 0"
                 @click="revokeOthers"
             >
-                Zakończ wszystkie inne sesje
+                {{ t('profile.sessions.revokeOthers') }}
             </Button>
         </div>
     </div>

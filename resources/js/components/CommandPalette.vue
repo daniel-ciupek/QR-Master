@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3'
 import { BarChart2, KeyRound, LayoutDashboard, LogOut, Monitor, Shield } from 'lucide-vue-next'
+import { useI18n } from 'vue-i18n'
 import {
     CommandDialog,
     CommandEmpty,
@@ -12,6 +13,7 @@ import {
 } from '@/components/ui/command'
 
 const open = defineModel<boolean>('open', { default: false })
+const { t } = useI18n()
 
 function navigate(href: string) {
     open.value = false
@@ -26,59 +28,59 @@ function logout() {
 
 <template>
     <CommandDialog v-model:open="open">
-        <CommandInput placeholder="Szukaj lub wpisz komendę…" />
+        <CommandInput :placeholder="t('ui.searchPlaceholder')" />
         <CommandList>
-            <CommandEmpty>Brak wyników.</CommandEmpty>
+            <CommandEmpty>{{ t('ui.noResults') }}</CommandEmpty>
 
-            <CommandGroup heading="Nawigacja">
+            <CommandGroup :heading="t('command.navigation')">
                 <CommandItem
                     value="dashboard"
                     @select="navigate('/dashboard')"
                 >
                     <LayoutDashboard class="mr-2 size-4" />
-                    Dashboard
+                    {{ t('nav.dashboard') }}
                 </CommandItem>
                 <CommandItem
-                    value="profil bezpieczenstwo"
+                    value="profil bezpieczenstwo security"
                     @select="navigate('/profile/security')"
                 >
                     <Shield class="mr-2 size-4" />
-                    Profil — Bezpieczeństwo
+                    {{ t('command.securityProfile') }}
                 </CommandItem>
                 <CommandItem
-                    value="sesje"
+                    value="sesje sessions"
                     @select="navigate('/profile/sessions')"
                 >
                     <Monitor class="mr-2 size-4" />
-                    Aktywne sesje
+                    {{ t('command.activeSessions') }}
                 </CommandItem>
                 <CommandItem
                     value="klucze dostepu passkeys"
                     @select="navigate('/profile/passkeys')"
                 >
                     <KeyRound class="mr-2 size-4" />
-                    Klucze dostępu
+                    {{ t('nav.passkeys') }}
                 </CommandItem>
                 <CommandItem
-                    value="analityka"
+                    value="analityka analytics"
                     disabled
                 >
                     <BarChart2 class="mr-2 size-4" />
-                    Analityka
-                    <span class="ml-auto text-xs text-muted-foreground">wkrótce</span>
+                    {{ t('nav.analytics') }}
+                    <span class="ml-auto text-xs text-muted-foreground">{{ t('nav.soon') }}</span>
                 </CommandItem>
             </CommandGroup>
 
             <CommandSeparator />
 
-            <CommandGroup heading="Konto">
+            <CommandGroup :heading="t('command.account')">
                 <CommandItem
                     value="wyloguj logout"
                     class="text-destructive data-[selected]:text-destructive"
                     @select="logout"
                 >
                     <LogOut class="mr-2 size-4" />
-                    Wyloguj się
+                    {{ t('nav.logout') }}
                 </CommandItem>
             </CommandGroup>
         </CommandList>

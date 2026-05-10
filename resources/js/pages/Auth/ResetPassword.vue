@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3'
+import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
+const { t } = useI18n()
 const props = defineProps<{ token: string; email: string }>()
 
 const form = useForm({
@@ -20,12 +22,12 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Ustaw nowe hasło" />
+    <Head :title="t('auth.resetPassword.headTitle')" />
 
     <div class="flex min-h-screen items-center justify-center bg-background px-4">
         <div class="w-full max-w-sm space-y-6">
             <div class="space-y-2 text-center">
-                <h1 class="text-2xl font-bold">Nowe hasło</h1>
+                <h1 class="text-2xl font-bold">{{ t('auth.resetPassword.title') }}</h1>
             </div>
 
             <form
@@ -36,7 +38,7 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="email"
-                    >Email</label>
+                    >{{ t('auth.emailLabel') }}</label>
                     <Input
                         id="email"
                         v-model="form.email"
@@ -51,7 +53,7 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="password"
-                    >Nowe hasło</label>
+                    >{{ t('auth.newPasswordLabel') }}</label>
                     <Input
                         id="password"
                         v-model="form.password"
@@ -70,7 +72,7 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="password_confirmation"
-                    >Powtórz hasło</label>
+                    >{{ t('auth.passwordConfirmLabel') }}</label>
                     <Input
                         id="password_confirmation"
                         v-model="form.password_confirmation"
@@ -84,7 +86,7 @@ function submit() {
                     :disabled="form.processing"
                     type="submit"
                 >
-                    Ustaw hasło
+                    {{ t('auth.resetPassword.submit') }}
                 </Button>
             </form>
         </div>

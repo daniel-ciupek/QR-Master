@@ -7,12 +7,20 @@ use App\Http\Controllers\Profile\SecurityController;
 use App\Http\Controllers\Profile\SessionsController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
 use App\Http\Controllers\WebAuthn\WebAuthnRegisterController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+Route::post('/locale', function (Request $request) {
+    $locale = in_array($request->input('locale'), ['pl', 'en']) ? $request->input('locale') : 'pl';
+    session(['locale' => $locale]);
+
+    return back();
+})->name('locale.set');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {

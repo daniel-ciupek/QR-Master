@@ -18,6 +18,7 @@ export interface SharedData {
         error?: string | null
         warning?: string | null
     }
+    locale: 'pl' | 'en'
 }
 
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & SharedData

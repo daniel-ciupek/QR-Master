@@ -11,6 +11,7 @@ import {
     Shield,
     User,
 } from 'lucide-vue-next'
+import { useI18n } from 'vue-i18n'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
     DropdownMenu,
@@ -34,6 +35,7 @@ import {
 } from '@/components/ui/sidebar'
 import type { PageProps } from '@/types'
 
+const { t } = useI18n()
 const page = usePage<PageProps>()
 const user = page.props.auth.user
 
@@ -42,15 +44,15 @@ const initials = user
     : '??'
 
 const navMain = [
-    { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { title: 'Kody QR', href: '/qr-codes', icon: QrCode, disabled: true },
-    { title: 'Analityka', href: '/analytics', icon: BarChart2, disabled: true },
+    { titleKey: 'nav.dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { titleKey: 'nav.qrCodes', href: '/qr-codes', icon: QrCode, disabled: true },
+    { titleKey: 'nav.analytics', href: '/analytics', icon: BarChart2, disabled: true },
 ]
 
 const navAccount = [
-    { title: 'Profil', href: '/profile/security', icon: Shield },
-    { title: 'Sesje', href: '/profile/sessions', icon: Monitor },
-    { title: 'Klucze dostępu', href: '/profile/passkeys', icon: KeyRound },
+    { titleKey: 'nav.profile', href: '/profile/security', icon: Shield },
+    { titleKey: 'nav.sessions', href: '/profile/sessions', icon: Monitor },
+    { titleKey: 'nav.passkeys', href: '/profile/passkeys', icon: KeyRound },
 ]
 
 function isActive(href: string) {
@@ -73,8 +75,8 @@ function isActive(href: string) {
                                 <QrCode class="size-4" />
                             </div>
                             <div class="grid flex-1 text-left text-sm leading-tight">
-                                <span class="truncate font-semibold">QR-Master</span>
-                                <span class="truncate text-xs text-muted-foreground">SaaS Platform</span>
+                                <span class="truncate font-semibold">{{ t('app.name') }}</span>
+                                <span class="truncate text-xs text-muted-foreground">{{ t('app.tagline') }}</span>
                             </div>
                         </Link>
                     </SidebarMenuButton>
@@ -84,7 +86,7 @@ function isActive(href: string) {
 
         <SidebarContent>
             <SidebarGroup>
-                <SidebarGroupLabel>Nawigacja</SidebarGroupLabel>
+                <SidebarGroupLabel>{{ t('nav.dashboard') }}</SidebarGroupLabel>
                 <SidebarGroupContent>
                     <SidebarMenu>
                         <SidebarMenuItem
@@ -94,7 +96,7 @@ function isActive(href: string) {
                             <SidebarMenuButton
                                 as-child
                                 :is-active="isActive(item.href)"
-                                :tooltip="item.title"
+                                :tooltip="t(item.titleKey)"
                                 :class="{ 'pointer-events-none opacity-50': item.disabled }"
                             >
                                 <Link :href="item.disabled ? '#' : item.href">
@@ -102,7 +104,11 @@ function isActive(href: string) {
                                         :is="item.icon"
                                         class="size-4"
                                     />
-                                    <span>{{ item.title }}</span>
+                                    <span>{{ t(item.titleKey) }}</span>
+                                    <span
+                                        v-if="item.disabled"
+                                        class="ml-auto text-[10px] text-muted-foreground"
+                                    >{{ t('nav.soon') }}</span>
                                 </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -111,7 +117,7 @@ function isActive(href: string) {
             </SidebarGroup>
 
             <SidebarGroup>
-                <SidebarGroupLabel>Konto</SidebarGroupLabel>
+                <SidebarGroupLabel>{{ t('nav.profile') }}</SidebarGroupLabel>
                 <SidebarGroupContent>
                     <SidebarMenu>
                         <SidebarMenuItem
@@ -121,14 +127,14 @@ function isActive(href: string) {
                             <SidebarMenuButton
                                 as-child
                                 :is-active="isActive(item.href)"
-                                :tooltip="item.title"
+                                :tooltip="t(item.titleKey)"
                             >
                                 <Link :href="item.href">
                                     <component
                                         :is="item.icon"
                                         class="size-4"
                                     />
-                                    <span>{{ item.title }}</span>
+                                    <span>{{ t(item.titleKey) }}</span>
                                 </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -164,7 +170,7 @@ function isActive(href: string) {
                             <DropdownMenuItem as-child>
                                 <Link href="/profile/security">
                                     <User class="mr-2 size-4" />
-                                    Profil
+                                    {{ t('nav.profile') }}
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -173,7 +179,7 @@ function isActive(href: string) {
                                 @click="router.post('/logout')"
                             >
                                 <LogOut class="mr-2 size-4" />
-                                Wyloguj się
+                                {{ t('nav.logout') }}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

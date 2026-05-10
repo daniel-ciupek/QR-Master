@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Monitor, Moon, Search, Sun } from 'lucide-vue-next'
+import { Globe, Monitor, Moon, Search, Sun } from 'lucide-vue-next'
 import { onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AppSidebar from '@/components/AppSidebar.vue'
 import CommandPalette from '@/components/CommandPalette.vue'
 import { Button } from '@/components/ui/button'
@@ -8,16 +9,20 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
 import { useColorMode } from '@/composables/useColorMode'
+import { useLocale } from '@/composables/useLocale'
 
 defineProps<{ title?: string }>()
 
+const { t } = useI18n()
 const { mode, setMode } = useColorMode()
+const { locale, setLocale } = useLocale()
 
 const commandOpen = ref(false)
 
@@ -72,15 +77,43 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem @click="setMode('light')">
                             <Sun class="mr-2 size-4" />
-                            Jasny
+                            {{ t('theme.light') }}
                         </DropdownMenuItem>
                         <DropdownMenuItem @click="setMode('dark')">
                             <Moon class="mr-2 size-4" />
-                            Ciemny
+                            {{ t('theme.dark') }}
                         </DropdownMenuItem>
                         <DropdownMenuItem @click="setMode('system')">
                             <Monitor class="mr-2 size-4" />
-                            System
+                            {{ t('theme.system') }}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+                <!-- Language switcher -->
+                <DropdownMenu>
+                    <DropdownMenuTrigger as-child>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            class="size-8"
+                        >
+                            <Globe class="size-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                            :class="{ 'font-semibold': locale === 'pl' }"
+                            @click="setLocale('pl')"
+                        >
+                            {{ t('lang.pl') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            :class="{ 'font-semibold': locale === 'en' }"
+                            @click="setLocale('en')"
+                        >
+                            {{ t('lang.en') }}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -93,7 +126,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                     @click="commandOpen = true"
                 >
                     <Search class="size-3.5" />
-                    <span class="hidden text-xs sm:inline">Szukaj…</span>
+                    <span class="hidden text-xs sm:inline">{{ t('ui.search') }}</span>
                     <kbd class="hidden rounded border bg-muted px-1.5 py-0.5 text-[10px] font-mono sm:inline">
                         ⌘K
                     </kbd>

@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3'
+import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+
+const { t } = useI18n()
 
 const form = useForm({ password: '' })
 
@@ -13,15 +16,13 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Potwierdź hasło" />
+    <Head :title="t('auth.confirmPassword.headTitle')" />
 
     <div class="flex min-h-screen items-center justify-center bg-background px-4">
         <div class="w-full max-w-sm space-y-6">
             <div class="space-y-2 text-center">
-                <h1 class="text-2xl font-bold">Potwierdź hasło</h1>
-                <p class="text-sm text-muted-foreground">
-                    Ta operacja wymaga potwierdzenia tożsamości.
-                </p>
+                <h1 class="text-2xl font-bold">{{ t('auth.confirmPassword.title') }}</h1>
+                <p class="text-sm text-muted-foreground">{{ t('auth.confirmPassword.description') }}</p>
             </div>
 
             <form
@@ -32,7 +33,7 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="password"
-                    >Hasło</label>
+                    >{{ t('auth.passwordLabel') }}</label>
                     <Input
                         id="password"
                         v-model="form.password"
@@ -52,7 +53,7 @@ function submit() {
                     :disabled="form.processing"
                     type="submit"
                 >
-                    Potwierdź
+                    {{ t('auth.confirmPassword.submit') }}
                 </Button>
             </form>
         </div>

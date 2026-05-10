@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3'
+import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+
+const { t } = useI18n()
 
 defineProps<{
     canResetPassword?: boolean
@@ -22,13 +25,13 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Zaloguj się" />
+    <Head :title="t('auth.login.headTitle')" />
 
     <div class="flex min-h-screen items-center justify-center bg-background px-4">
         <div class="w-full max-w-sm space-y-6">
             <div class="space-y-2 text-center">
-                <h1 class="text-2xl font-bold">QR-Master</h1>
-                <p class="text-sm text-muted-foreground">Zaloguj się do swojego konta</p>
+                <h1 class="text-2xl font-bold">{{ t('app.name') }}</h1>
+                <p class="text-sm text-muted-foreground">{{ t('auth.login.subtitle') }}</p>
             </div>
 
             <div
@@ -46,14 +49,14 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="email"
-                    >Email</label>
+                    >{{ t('auth.emailLabel') }}</label>
                     <Input
                         id="email"
                         v-model="form.email"
                         autocomplete="email"
                         autofocus
                         :class="{ 'border-destructive': form.errors.email }"
-                        placeholder="ty@firma.pl"
+                        :placeholder="t('auth.emailPlaceholder')"
                         type="email"
                     />
                     <p
@@ -69,12 +72,12 @@ function submit() {
                         <label
                             class="text-sm font-medium"
                             for="password"
-                        >Hasło</label>
+                        >{{ t('auth.passwordLabel') }}</label>
                         <a
                             v-if="canResetPassword"
                             class="text-xs text-muted-foreground underline-offset-4 hover:underline"
                             href="/forgot-password"
-                        >Nie pamiętam hasła</a>
+                        >{{ t('auth.login.forgotPassword') }}</a>
                     </div>
                     <Input
                         id="password"
@@ -96,16 +99,16 @@ function submit() {
                     :disabled="form.processing"
                     type="submit"
                 >
-                    {{ form.processing ? 'Logowanie…' : 'Zaloguj się' }}
+                    {{ form.processing ? t('auth.login.submitting') : t('auth.login.submit') }}
                 </Button>
             </form>
 
             <p class="text-center text-sm text-muted-foreground">
-                Nie masz konta?
+                {{ t('auth.login.noAccount') }}
                 <a
                     class="font-medium underline-offset-4 hover:underline"
                     href="/register"
-                >Zarejestruj się</a>
+                >{{ t('auth.login.register') }}</a>
             </p>
         </div>
     </div>

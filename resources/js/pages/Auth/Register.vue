@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3'
+import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import TurnstileWidget from '@/components/TurnstileWidget.vue'
 
+const { t } = useI18n()
 const siteKey = import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY as string
 
 const form = useForm({
@@ -22,13 +24,13 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Rejestracja" />
+    <Head :title="t('auth.register.headTitle')" />
 
     <div class="flex min-h-screen items-center justify-center bg-background px-4">
         <div class="w-full max-w-sm space-y-6">
             <div class="space-y-2 text-center">
-                <h1 class="text-2xl font-bold">QR-Master</h1>
-                <p class="text-sm text-muted-foreground">Utwórz nowe konto</p>
+                <h1 class="text-2xl font-bold">{{ t('app.name') }}</h1>
+                <p class="text-sm text-muted-foreground">{{ t('auth.register.subtitle') }}</p>
             </div>
 
             <form
@@ -39,7 +41,7 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="name"
-                    >Imię i nazwisko</label>
+                    >{{ t('auth.nameLabel') }}</label>
                     <Input
                         id="name"
                         v-model="form.name"
@@ -58,7 +60,7 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="email"
-                    >Email</label>
+                    >{{ t('auth.emailLabel') }}</label>
                     <Input
                         id="email"
                         v-model="form.email"
@@ -76,7 +78,7 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="password"
-                    >Hasło</label>
+                    >{{ t('auth.passwordLabel') }}</label>
                     <Input
                         id="password"
                         v-model="form.password"
@@ -94,7 +96,7 @@ function submit() {
                     <label
                         class="text-sm font-medium"
                         for="password_confirmation"
-                    >Powtórz hasło</label>
+                    >{{ t('auth.passwordConfirmLabel') }}</label>
                     <Input
                         id="password_confirmation"
                         v-model="form.password_confirmation"
@@ -118,16 +120,16 @@ function submit() {
                     :disabled="form.processing || !form.turnstile_token"
                     type="submit"
                 >
-                    {{ form.processing ? 'Rejestrowanie…' : 'Zarejestruj się' }}
+                    {{ form.processing ? t('auth.register.submitting') : t('auth.register.submit') }}
                 </Button>
             </form>
 
             <p class="text-center text-sm text-muted-foreground">
-                Masz już konto?
+                {{ t('auth.register.haveAccount') }}
                 <a
                     class="font-medium underline-offset-4 hover:underline"
                     href="/login"
-                >Zaloguj się</a>
+                >{{ t('auth.register.login') }}</a>
             </p>
         </div>
     </div>

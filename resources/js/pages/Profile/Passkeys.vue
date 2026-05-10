@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import AppLayout from '@/layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
+
+const { t, locale } = useI18n()
 
 const webAuthnSupported = computed(() => typeof window !== 'undefined' && !!window.PublicKeyCredential)
 
@@ -28,7 +31,6 @@ async function registerPasskey() {
 
     const options = await optionsRes.json()
 
-    // Decode challenge/user id from base64url
     options.challenge = base64urlDecode(options.challenge)
     options.user.id = base64urlDecode(options.user.id)
     if (options.excludeCredentials) {
@@ -83,24 +85,20 @@ function base64urlEncode(buffer: ArrayBuffer): string {
 </script>
 
 <template>
-    <Head title="Klucze dostępu (Passkeys)" />
+    <Head :title="t('profile.passkeys.headTitle')" />
 
-    <div class="mx-auto max-w-2xl space-y-8 px-4 py-8">
+    <div class="mx-auto max-w-2xl space-y-8">
         <div>
-            <h1 class="text-2xl font-bold">Klucze dostępu</h1>
-            <p class="text-sm text-muted-foreground mt-1">
-                Passkeys to bezpieczna alternatywa dla hasła — używają biometrii
-                lub PIN urządzenia (Face ID, Touch ID, Windows Hello).
-            </p>
+            <h1 class="text-2xl font-bold">{{ t('profile.passkeys.title') }}</h1>
+            <p class="text-sm text-muted-foreground mt-1">{{ t('profile.passkeys.subtitle') }}</p>
         </div>
 
-        <!-- Lista kluczy -->
         <div class="space-y-3">
             <div
                 v-if="credentials.length === 0"
                 class="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground"
             >
-                Nie masz jeszcze żadnych kluczy dostępu.
+                {{ t('profile.passkeys.empty') }}
             </div>
 
             <div
@@ -111,7 +109,7 @@ function base64urlEncode(buffer: ArrayBuffer): string {
                 <div class="space-y-0.5">
                     <p class="text-sm font-medium">{{ cred.name }}</p>
                     <p class="text-xs text-muted-foreground">
-                        Dodany {{ new Date(cred.created_at).toLocaleDateString('pl-PL') }}
+                        {{ t('profile.passkeys.addedOn') }} {{ new Date(cred.created_at).toLocaleDateString(locale === 'pl' ? 'pl-PL' : 'en-GB') }}
                         <span v-if="cred.transports.length"> · {{ cred.transports.join(', ') }}</span>
                     </p>
                 </div>
@@ -120,24 +118,23 @@ function base64urlEncode(buffer: ArrayBuffer): string {
                     variant="destructive"
                     @click="revokePasskey(cred.id)"
                 >
-                    Usuń
+                    {{ t('profile.passkeys.revoke') }}
                 </Button>
             </div>
         </div>
 
-        <!-- Dodaj nowy klucz -->
         <Button
             :disabled="!webAuthnSupported"
             @click="registerPasskey"
         >
-            Dodaj klucz dostępu
+            {{ t('profile.passkeys.add') }}
         </Button>
 
         <p
             v-if="!webAuthnSupported"
             class="text-xs text-muted-foreground"
         >
-            Twoja przeglądarka nie obsługuje WebAuthn / Passkeys.
+            {{ t('profile.passkeys.notSupported') }}
         </p>
     </div>
 </template>

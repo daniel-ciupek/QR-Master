@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3'
+import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
+
+const { t } = useI18n()
 
 defineProps<{ status?: string }>()
 
@@ -12,21 +15,18 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Weryfikacja email" />
+    <Head :title="t('auth.verifyEmail.headTitle')" />
 
     <div class="flex min-h-screen items-center justify-center bg-background px-4">
         <div class="w-full max-w-sm space-y-6 text-center">
-            <h1 class="text-2xl font-bold">Potwierdź email</h1>
-            <p class="text-sm text-muted-foreground">
-                Wysłaliśmy link weryfikacyjny na Twój adres email.
-                Sprawdź skrzynkę i kliknij w link.
-            </p>
+            <h1 class="text-2xl font-bold">{{ t('auth.verifyEmail.title') }}</h1>
+            <p class="text-sm text-muted-foreground">{{ t('auth.verifyEmail.description') }}</p>
 
             <div
                 v-if="status === 'verification-link-sent'"
                 class="rounded-md bg-success-50 p-3 text-sm text-success-700"
             >
-                Nowy link weryfikacyjny został wysłany.
+                {{ t('auth.verifyEmail.linkSent') }}
             </div>
 
             <form @submit.prevent="submit">
@@ -35,7 +35,7 @@ function submit() {
                     type="submit"
                     variant="outline"
                 >
-                    Wyślij ponownie
+                    {{ t('auth.verifyEmail.resend') }}
                 </Button>
             </form>
 
@@ -44,7 +44,7 @@ function submit() {
                 type="button"
                 @click="router.post('/logout')"
             >
-                Wyloguj się
+                {{ t('auth.verifyEmail.logout') }}
             </button>
         </div>
     </div>
