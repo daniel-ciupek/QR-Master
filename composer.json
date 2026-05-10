@@ -19,6 +19,7 @@
         "laravel/tinker": "^3.0",
         "sentry/sentry-laravel": "^4.25",
         "spatie/laravel-csp": "^3.24",
+        "spatie/laravel-data": "^4.15",
         "spatie/laravel-medialibrary": "^11.0",
         "spatie/laravel-permission": "^7.4",
         "spatie/laravel-sluggable": "^3.6",
