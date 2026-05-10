@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\QrCodeType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -37,6 +38,7 @@ class QrCode extends Model implements HasMedia
 {
     use HasSlug;
     use InteractsWithMedia;
+    use MassPrunable;
     use SoftDeletes;
 
     protected $guarded = ['id'];
@@ -72,6 +74,16 @@ class QrCode extends Model implements HasMedia
         $this->addMediaConversion('thumb')
             ->width(200)
             ->height(200);
+    }
+
+    // ── Pruning ────────────────────────────────────────────────────────
+
+    /** @return Builder<QrCode> */
+    public function prunable(): Builder
+    {
+        return static::withTrashed()
+            ->whereNotNull('deleted_at')
+            ->where('deleted_at', '<=', now()->subDays(30));
     }
 
     // ── Relations ──────────────────────────────────────────────────────

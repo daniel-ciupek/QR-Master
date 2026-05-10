@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Actions\QrCode\CreateQrCodeAction;
+use App\Data\QrCodeData;
+use App\Enums\QrCodeType;
 use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -12,32 +15,106 @@ class DemoSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->seedUsers();
+        $users = $this->seedUsers();
+        $this->seedQrCodes($users['admin'], $users['pro'], $users['free']);
 
-        $this->command->info('DemoSeeder: użytkownicy gotowi.');
-        $this->command->comment('QR codes zostaną dodane po implementacji modelu w Etapie 3.');
+        $this->command->info('DemoSeeder: dane demo załadowane.');
+        $this->command->comment('Loginy: admin@qr-master.test / pro@qr-master.test / free@qr-master.test — hasło: password');
     }
 
-    private function seedUsers(): void
+    /** @return array<string, User> */
+    private function seedUsers(): array
     {
-        User::factory()->create([
+        $admin = User::factory()->create([
             'name' => 'Admin QR-Master',
             'email' => 'admin@qr-master.test',
             'email_verified_at' => now(),
-        ])->assignRole(Role::Admin);
+        ]);
+        $admin->assignRole(Role::Admin);
 
-        User::factory()->create([
+        $pro = User::factory()->create([
             'name' => 'Demo Pro User',
             'email' => 'pro@qr-master.test',
             'email_verified_at' => now(),
-        ])->assignRole(Role::User);
+        ]);
+        $pro->assignRole(Role::User);
 
-        User::factory()->create([
+        $free = User::factory()->create([
             'name' => 'Demo Free User',
             'email' => 'free@qr-master.test',
-            'email_verified_at' => null,
-        ])->assignRole(Role::User);
+            'email_verified_at' => now(),
+        ]);
+        $free->assignRole(Role::User);
 
         User::factory(7)->create()->each->assignRole(Role::User);
+
+        return ['admin' => $admin, 'pro' => $pro, 'free' => $free];
+    }
+
+    private function seedQrCodes(User $admin, User $pro, User $free): void
+    {
+        $action = app(CreateQrCodeAction::class);
+
+        // ── Admin codes ────────────────────────────────────────────────
+        $action->handle($admin, new QrCodeData(
+            title: 'Strona główna QR-Master',
+            type: QrCodeType::Url,
+            destination_url: 'https://qr-master.app',
+        ));
+
+        $action->handle($admin, new QrCodeData(
+            title: 'Dokumentacja API',
+            type: QrCodeType::Url,
+            destination_url: 'https://docs.qr-master.app',
+            is_active: true,
+            expires_at: now()->addYear(),
+        ));
+
+        // ── Pro user codes ─────────────────────────────────────────────
+        $action->handle($pro, new QrCodeData(
+            title: 'Kampania letnia 2026',
+            type: QrCodeType::Url,
+            destination_url: 'https://example.com/summer-sale',
+        ));
+
+        $action->handle($pro, new QrCodeData(
+            title: 'Kontakt e-mail',
+            type: QrCodeType::Email,
+            destination_url: 'mailto:hello@example.com?subject=Zapytanie',
+        ));
+
+        $action->handle($pro, new QrCodeData(
+            title: 'Telefon biuro',
+            type: QrCodeType::Phone,
+            destination_url: 'tel:+48123456789',
+        ));
+
+        $action->handle($pro, new QrCodeData(
+            title: 'Wygasła promocja',
+            type: QrCodeType::Url,
+            destination_url: 'https://example.com/promo',
+            is_active: true,
+            expires_at: now()->subDay(),
+        ));
+
+        $action->handle($pro, new QrCodeData(
+            title: 'Wyłączony kod',
+            type: QrCodeType::Url,
+            destination_url: 'https://example.com/hidden',
+            is_active: false,
+        ));
+
+        // ── Free user codes ────────────────────────────────────────────
+        $action->handle($free, new QrCodeData(
+            title: 'Mój profil LinkedIn',
+            type: QrCodeType::Url,
+            destination_url: 'https://linkedin.com/in/example',
+        ));
+
+        $action->handle($free, new QrCodeData(
+            title: 'SMS do mnie',
+            type: QrCodeType::Sms,
+            destination_url: 'smsto:+48987654321:Hej, masz mój QR!',
+        ));
     }
 }
