@@ -264,6 +264,11 @@ export default {
             tooLong: 'Treść jest zbyt długa ({count}/{max} znaków). Kod QR może być nieczytelny.',
             nearLimit: '{count}/{max} znaków',
         },
+        contrast: {
+            good: 'Kontrast dobry ({ratio}:1) — kod będzie czytelny.',
+            warn: 'Kontrast słaby ({ratio}:1) — kod może być trudny do zeskanowania.',
+            fail: 'Kontrast niewystarczający ({ratio}:1) — skanery mogą nie odczytać kodu.',
+        },
         export: {
             title: 'Pobierz kod QR',
             trigger: 'Pobierz',

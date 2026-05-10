@@ -8,6 +8,7 @@ import LivePreview from '@/components/qr/LivePreview.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useContrastChecker } from '@/composables/useContrastChecker'
 import AppLayout from '@/layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
@@ -75,6 +76,12 @@ const showCharCounter = computed(() => charCount.value > MAX_CHARS * 0.7)
 
 const hasError = computed(() => urlError.value !== null || isTooLong.value)
 const canPreview = computed(() => qrData.value.length > 0 && !hasError.value)
+
+// Colors — defaults here, full picker comes in Etap 4
+const dotColor = ref('#000000')
+const backgroundColor = ref('#ffffff')
+
+const contrast = useContrastChecker(dotColor, backgroundColor)
 
 // Export modal
 const exportOpen = ref(false)
@@ -233,11 +240,27 @@ const exportOpen = ref(false)
                             :data="qrData"
                             :size="260"
                             :error-correction-level="eccLevel"
+                            :dot-color="dotColor"
+                            :background-color="backgroundColor"
                         />
                     </template>
                     <p v-else class="text-sm text-muted-foreground text-center px-6">
                         {{ t('qr.preview.empty') }}
                     </p>
+                </div>
+
+                <!-- Contrast warning -->
+                <div
+                    v-if="contrast && contrast.level !== 'good'"
+                    :class="[
+                        'flex items-start gap-2 rounded-md px-3 py-2 text-xs',
+                        contrast.level === 'warn'
+                            ? 'bg-yellow-50 text-yellow-800 border border-yellow-200 dark:bg-yellow-950/30 dark:text-yellow-300 dark:border-yellow-800'
+                            : 'bg-red-50 text-red-800 border border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-800',
+                    ]"
+                >
+                    <span class="mt-0.5 shrink-0">{{ contrast.level === 'warn' ? '⚠️' : '🚫' }}</span>
+                    <span>{{ t(`qr.contrast.${contrast.level}`, { ratio: contrast.ratio }) }}</span>
                 </div>
 
                 <!-- Export trigger -->
@@ -256,5 +279,7 @@ const exportOpen = ref(false)
         v-model:open="exportOpen"
         :data="qrData"
         :ecc-level="eccLevel"
+        :dot-color="dotColor"
+        :background-color="backgroundColor"
     />
 </template>

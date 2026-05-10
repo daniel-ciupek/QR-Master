@@ -11,17 +11,28 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog'
+import { useContrastChecker } from '@/composables/useContrastChecker'
 
 interface Props {
     open: boolean
     data: string
     eccLevel: ErrorCorrectionLevel
+    dotColor?: string
+    backgroundColor?: string
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+    dotColor: '#000000',
+    backgroundColor: '#ffffff',
+})
 const emit = defineEmits<{ 'update:open': [value: boolean] }>()
 
 const { t } = useI18n()
+
+const contrast = useContrastChecker(
+    () => props.dotColor,
+    () => props.backgroundColor,
+)
 
 type ExportFormat = 'png' | 'svg' | 'pdf' | 'eps'
 
@@ -104,14 +115,30 @@ async function download(format: ExportFormat): Promise<void> {
 
             <div class="flex flex-col gap-6">
                 <!-- QR preview -->
-                <div class="flex justify-center">
+                <div class="flex flex-col items-center gap-3">
                     <div class="rounded-xl border border-border bg-white p-4 dark:bg-white">
                         <LivePreview
                             ref="previewRef"
                             :data="props.data"
                             :size="200"
                             :error-correction-level="props.eccLevel"
+                            :dot-color="props.dotColor"
+                            :background-color="props.backgroundColor"
                         />
+                    </div>
+
+                    <!-- Contrast warning -->
+                    <div
+                        v-if="contrast && contrast.level !== 'good'"
+                        :class="[
+                            'w-full flex items-start gap-2 rounded-md px-3 py-2 text-xs',
+                            contrast.level === 'warn'
+                                ? 'bg-yellow-50 text-yellow-800 border border-yellow-200 dark:bg-yellow-950/30 dark:text-yellow-300 dark:border-yellow-800'
+                                : 'bg-red-50 text-red-800 border border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-800',
+                        ]"
+                    >
+                        <span class="shrink-0">{{ contrast.level === 'warn' ? '⚠️' : '🚫' }}</span>
+                        <span>{{ t(`qr.contrast.${contrast.level}`, { ratio: contrast.ratio }) }}</span>
                     </div>
                 </div>
 

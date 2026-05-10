@@ -91,7 +91,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **2.5** Walidacja URL (whitelist schemes), długość treści, error correction level
 - [x] **2.6** Eksport: **PNG, SVG, PDF, EPS** (PDF przez `dompdf` + SVG embed)
 - [x] **2.7** Modal eksportu z preview każdego formatu i wyborem rozdzielczości
-- [ ] **2.8** Color contrast checker — ostrzeżenie jeśli QR będzie nieczytelny
+- [x] **2.8** Color contrast checker — ostrzeżenie jeśli QR będzie nieczytelny
 
 **Kryterium ukończenia:** User generuje QR z URL, zmienia tekst → preview odświeża się płynnie, pobiera w 4 formatach.
 

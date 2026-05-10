@@ -264,6 +264,11 @@ export default {
             tooLong: 'Content is too long ({count}/{max} chars). The QR code may be unreadable.',
             nearLimit: '{count}/{max} chars',
         },
+        contrast: {
+            good: 'Good contrast ({ratio}:1) — code will be readable.',
+            warn: 'Low contrast ({ratio}:1) — code may be difficult to scan.',
+            fail: 'Insufficient contrast ({ratio}:1) — scanners may fail to read the code.',
+        },
         export: {
             title: 'Download QR Code',
             trigger: 'Download',
