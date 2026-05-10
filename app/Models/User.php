@@ -15,6 +15,7 @@ use Illuminate\Notifications\Notifiable;
 use Laragear\WebAuthn\Contracts\WebAuthnAuthenticatable;
 use Laragear\WebAuthn\WebAuthnAuthentication;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
@@ -28,7 +29,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, WebAuthnAuthentication;
+    use HasFactory, HasRoles, Notifiable, TwoFactorAuthenticatable, WebAuthnAuthentication;
 
     #[\Override]
     protected function casts(): array

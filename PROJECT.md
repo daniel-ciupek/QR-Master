@@ -67,7 +67,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **1.2** **2FA TOTP** — flow setup + recovery codes + middleware `EnsureTwoFactor` dla Pro/Business
 - [x] **1.3** **Passkeys / WebAuthn** (laragear/webauthn) jako opcja
 - [x] **1.4** Cloudflare Turnstile na rejestracji + reset hasła
-- [ ] **1.5** spatie/laravel-permission — role: `admin`, `user`; permissions per feature
+- [x] **1.5** spatie/laravel-permission — role: `admin`, `user`; permissions per feature
 - [ ] **1.6** Session management — lista aktywnych sesji, możliwość revocation
 - [ ] **1.7** Layout aplikacji: Sidebar collapsible + Topbar + Command Palette (Cmd+K)
 - [ ] **1.8** **Dark mode** (light / dark / system) — persistowany w localStorage
