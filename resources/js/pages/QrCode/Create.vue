@@ -2,8 +2,10 @@
 import { Head } from '@inertiajs/vue3'
 import type { ErrorCorrectionLevel } from 'qr-code-styling'
 import { computed, ref } from 'vue'
+import type { DotStyle } from '@/types/qr-visual'
 import { useI18n } from 'vue-i18n'
 import ColorPicker from '@/components/qr/ColorPicker.vue'
+import DotStylePicker from '@/components/qr/DotStylePicker.vue'
 import ExportModal from '@/components/qr/ExportModal.vue'
 import LivePreview from '@/components/qr/LivePreview.vue'
 import { Button } from '@/components/ui/button'
@@ -78,6 +80,7 @@ const showCharCounter = computed(() => charCount.value > MAX_CHARS * 0.7)
 const hasError = computed(() => urlError.value !== null || isTooLong.value)
 const canPreview = computed(() => qrData.value.length > 0 && !hasError.value)
 
+const dotStyle = ref<DotStyle>('square')
 const dotColor = ref('#000000')
 const backgroundColor = ref('#ffffff')
 
@@ -209,6 +212,9 @@ const exportOpen = ref(false)
                     }}
                 </p>
 
+                <!-- Dot style picker -->
+                <DotStylePicker v-model="dotStyle" />
+
                 <!-- Color pickers -->
                 <div class="space-y-2">
                     <p class="text-sm font-medium">{{ t('qr.colors.label') }}</p>
@@ -249,6 +255,7 @@ const exportOpen = ref(false)
                             :data="qrData"
                             :size="260"
                             :error-correction-level="eccLevel"
+                            :dot-type="dotStyle"
                             :dot-color="dotColor"
                             :background-color="backgroundColor"
                         />

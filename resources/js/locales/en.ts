@@ -352,6 +352,17 @@ export default {
                 messagePlaceholder: 'Message…',
             },
         },
+        style: {
+            dotStyle: 'Dot style',
+            dots: {
+                square: 'Square',
+                dots: 'Dots',
+                rounded: 'Rounded',
+                classy: 'Classy',
+                classy_rounded: 'Classy Rounded',
+                extra_rounded: 'Extra Rounded',
+            },
+        },
         colors: {
             label: 'Colors',
             dotColor: 'Dot color',

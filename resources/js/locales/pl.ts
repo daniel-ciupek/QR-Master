@@ -352,6 +352,17 @@ export default {
                 messagePlaceholder: 'Treść wiadomości…',
             },
         },
+        style: {
+            dotStyle: 'Styl kropek',
+            dots: {
+                square: 'Kwadrat',
+                dots: 'Kółka',
+                rounded: 'Zaokrąglone',
+                classy: 'Klasyczny',
+                classy_rounded: 'Klas. zaokr.',
+                extra_rounded: 'Bardzo zaokr.',
+            },
+        },
         colors: {
             label: 'Kolory',
             dotColor: 'Kolor kropek',
