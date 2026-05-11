@@ -2,9 +2,10 @@
 import { Head } from '@inertiajs/vue3'
 import type { ErrorCorrectionLevel } from 'qr-code-styling'
 import { computed, ref } from 'vue'
-import type { DotStyle } from '@/types/qr-visual'
+import type { CornerDotStyle, CornerSquareStyle, DotStyle } from '@/types/qr-visual'
 import { useI18n } from 'vue-i18n'
 import ColorPicker from '@/components/qr/ColorPicker.vue'
+import CornerStylePicker from '@/components/qr/CornerStylePicker.vue'
 import DotStylePicker from '@/components/qr/DotStylePicker.vue'
 import ExportModal from '@/components/qr/ExportModal.vue'
 import LivePreview from '@/components/qr/LivePreview.vue'
@@ -81,6 +82,8 @@ const hasError = computed(() => urlError.value !== null || isTooLong.value)
 const canPreview = computed(() => qrData.value.length > 0 && !hasError.value)
 
 const dotStyle = ref<DotStyle>('square')
+const cornerSquare = ref<CornerSquareStyle>('square')
+const cornerDot = ref<CornerDotStyle>('square')
 const dotColor = ref('#000000')
 const backgroundColor = ref('#ffffff')
 
@@ -215,6 +218,14 @@ const exportOpen = ref(false)
                 <!-- Dot style picker -->
                 <DotStylePicker v-model="dotStyle" />
 
+                <!-- Corner style picker -->
+                <CornerStylePicker
+                    :corner-square="cornerSquare"
+                    :corner-dot="cornerDot"
+                    @update:corner-square="cornerSquare = $event"
+                    @update:corner-dot="cornerDot = $event"
+                />
+
                 <!-- Color pickers -->
                 <div class="space-y-2">
                     <p class="text-sm font-medium">{{ t('qr.colors.label') }}</p>
@@ -258,6 +269,8 @@ const exportOpen = ref(false)
                             :dot-type="dotStyle"
                             :dot-color="dotColor"
                             :background-color="backgroundColor"
+                            :corners-square-type="cornerSquare"
+                            :corners-dot-type="cornerDot"
                         />
                     </template>
                     <p v-else class="text-sm text-muted-foreground text-center px-6">

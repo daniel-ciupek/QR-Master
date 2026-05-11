@@ -354,6 +354,8 @@ export default {
         },
         style: {
             dotStyle: 'Styl kropek',
+            cornerSquare: 'Styl oczek (zewn.)',
+            cornerDot: 'Styl oczek (wewn.)',
             dots: {
                 square: 'Kwadrat',
                 dots: 'Kółka',
@@ -361,6 +363,15 @@ export default {
                 classy: 'Klasyczny',
                 classy_rounded: 'Klas. zaokr.',
                 extra_rounded: 'Bardzo zaokr.',
+            },
+            cornerSquares: {
+                square: 'Kwadrat',
+                dot: 'Koło',
+                extra_rounded: 'Zaokrąglone',
+            },
+            cornerDots: {
+                square: 'Kwadrat',
+                dot: 'Koło',
             },
         },
         colors: {

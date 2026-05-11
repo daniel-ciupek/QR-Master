@@ -354,6 +354,8 @@ export default {
         },
         style: {
             dotStyle: 'Dot style',
+            cornerSquare: 'Corner squares',
+            cornerDot: 'Corner dots',
             dots: {
                 square: 'Square',
                 dots: 'Dots',
@@ -361,6 +363,15 @@ export default {
                 classy: 'Classy',
                 classy_rounded: 'Classy Rounded',
                 extra_rounded: 'Extra Rounded',
+            },
+            cornerSquares: {
+                square: 'Square',
+                dot: 'Circle',
+                extra_rounded: 'Rounded',
+            },
+            cornerDots: {
+                square: 'Square',
+                dot: 'Circle',
             },
         },
         colors: {
