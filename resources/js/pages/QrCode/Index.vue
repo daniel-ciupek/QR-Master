@@ -7,7 +7,7 @@ import {
     useVueTable,
 } from '@tanstack/vue-table'
 import { ArrowUpDown, Copy, Download, MoreHorizontal, Pause, Pencil, Play, Plus, Trash2 } from 'lucide-vue-next'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
 import ExportModal from '@/components/qr/ExportModal.vue'
@@ -84,7 +84,72 @@ const { t } = useI18n()
 
 const search = ref(props.filters.search)
 
-// ── Delete dialog ──────────────────────────────────────────────────
+// ── Row selection ──────────────────────────────────────────────────
+const selectedIds = ref<Set<number>>(new Set())
+
+const isAllSelected = computed(() =>
+    props.qrCodes.data.length > 0 && selectedIds.value.size === props.qrCodes.data.length,
+)
+const isPartiallySelected = computed(() =>
+    selectedIds.value.size > 0 && selectedIds.value.size < props.qrCodes.data.length,
+)
+
+function toggleSelect(id: number) {
+    const next = new Set(selectedIds.value)
+    if (next.has(id)) {
+        next.delete(id)
+    } else {
+        next.add(id)
+    }
+    selectedIds.value = next
+}
+
+function toggleSelectAll() {
+    if (isAllSelected.value) {
+        selectedIds.value = new Set()
+    } else {
+        selectedIds.value = new Set(props.qrCodes.data.map((r) => r.id))
+    }
+}
+
+function clearSelection() {
+    selectedIds.value = new Set()
+}
+
+// ── Bulk actions ───────────────────────────────────────────────────
+const bulkDeleteOpen = ref(false)
+
+function bulkPause() {
+    router.post('/qr/bulk/pause', { ids: [...selectedIds.value] }, {
+        preserveScroll: true,
+        onSuccess: clearSelection,
+    })
+}
+
+function bulkActivate() {
+    router.post('/qr/bulk/activate', { ids: [...selectedIds.value] }, {
+        preserveScroll: true,
+        onSuccess: clearSelection,
+    })
+}
+
+function bulkAssignTag(tagId: number) {
+    router.post('/qr/bulk/tag', { ids: [...selectedIds.value], tag_id: tagId }, {
+        preserveScroll: true,
+        onSuccess: clearSelection,
+    })
+}
+
+function executeBulkDelete() {
+    router.post('/qr/bulk/delete', { ids: [...selectedIds.value] }, {
+        onSuccess: () => {
+            clearSelection()
+            bulkDeleteOpen.value = false
+        },
+    })
+}
+
+// ── Single-row delete dialog ───────────────────────────────────────
 const deleteTarget = ref<QrCodeRow | null>(null)
 
 function confirmDelete(row: QrCodeRow) {
@@ -167,6 +232,7 @@ function duplicate(row: QrCodeRow) {
 const columnHelper = createColumnHelper<QrCodeRow>()
 
 const columns = [
+    columnHelper.display({ id: 'select' }),
     columnHelper.accessor('title', {
         header: () => t('qr.index.columns.title'),
         cell: (info) => info.getValue(),
@@ -267,12 +333,53 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                 :style="filters.tag_id === tag.id ? { backgroundColor: tag.color, borderColor: tag.color } : {}"
                 @click="filterByTag(tag.id)"
             >
-                <span
-                    class="size-2 rounded-full shrink-0"
-                    :style="{ backgroundColor: tag.color }"
-                />
+                <span class="size-2 rounded-full shrink-0" :style="{ backgroundColor: tag.color }" />
                 {{ tag.name }}
             </button>
+        </div>
+
+        <!-- Bulk action bar -->
+        <div
+            v-if="selectedIds.size > 0"
+            class="flex flex-wrap items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5"
+        >
+            <span class="text-sm font-medium">
+                {{ t('qr.bulk.selected', { n: selectedIds.size }) }}
+            </span>
+            <div class="flex flex-wrap gap-2 ml-auto">
+                <Button size="sm" variant="outline" @click="bulkActivate">
+                    <Play class="mr-1.5 size-3" />
+                    {{ t('qr.bulk.activate') }}
+                </Button>
+                <Button size="sm" variant="outline" @click="bulkPause">
+                    <Pause class="mr-1.5 size-3" />
+                    {{ t('qr.bulk.pause') }}
+                </Button>
+                <DropdownMenu v-if="userTags.length > 0">
+                    <DropdownMenuTrigger as-child>
+                        <Button size="sm" variant="outline">
+                            {{ t('qr.bulk.assignTag') }}
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" class="w-44">
+                        <DropdownMenuItem
+                            v-for="tag in userTags"
+                            :key="tag.id"
+                            @click="bulkAssignTag(tag.id)"
+                        >
+                            <span class="mr-2 size-2.5 rounded-full shrink-0" :style="{ backgroundColor: tag.color }" />
+                            {{ tag.name }}
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <Button size="sm" variant="destructive" @click="bulkDeleteOpen = true">
+                    <Trash2 class="mr-1.5 size-3" />
+                    {{ t('qr.bulk.delete') }}
+                </Button>
+                <Button size="sm" variant="ghost" @click="clearSelection">
+                    {{ t('qr.bulk.clearSelection') }}
+                </Button>
+            </div>
         </div>
 
         <!-- Table -->
@@ -289,17 +396,29 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                             :class="[
                                 sortableCols.includes(header.id) ? 'cursor-pointer select-none' : '',
                                 header.id === 'actions' ? 'w-12' : '',
+                                header.id === 'select' ? 'w-10' : '',
                             ]"
                             @click="sortableCols.includes(header.id) ? toggleSort(header.id) : undefined"
                         >
-                            <span class="inline-flex items-center gap-1">
-                                <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
-                                <ArrowUpDown
-                                    v-if="sortableCols.includes(header.id)"
-                                    class="size-3 text-muted-foreground"
-                                    :class="{ 'text-foreground': filters.sort === header.id }"
-                                />
-                            </span>
+                            <template v-if="header.id === 'select'">
+                                <input
+                                    type="checkbox"
+                                    class="size-4 rounded border-border cursor-pointer accent-primary"
+                                    :checked="isAllSelected"
+                                    :indeterminate="isPartiallySelected"
+                                    @change="toggleSelectAll"
+                                >
+                            </template>
+                            <template v-else>
+                                <span class="inline-flex items-center gap-1">
+                                    <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
+                                    <ArrowUpDown
+                                        v-if="sortableCols.includes(header.id)"
+                                        class="size-3 text-muted-foreground"
+                                        :class="{ 'text-foreground': filters.sort === header.id }"
+                                    />
+                                </span>
+                            </template>
                         </TableHead>
                     </TableRow>
                 </TableHeader>
@@ -309,8 +428,16 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                         <TableRow
                             v-for="row in table.getRowModel().rows"
                             :key="row.id"
-                            class="hover:bg-muted/50"
+                            :class="['hover:bg-muted/50', selectedIds.has(row.original.id) ? 'bg-primary/5' : '']"
                         >
+                            <TableCell>
+                                <input
+                                    type="checkbox"
+                                    class="size-4 rounded border-border cursor-pointer accent-primary"
+                                    :checked="selectedIds.has(row.original.id)"
+                                    @change="toggleSelect(row.original.id)"
+                                >
+                            </TableCell>
                             <TableCell class="font-medium">{{ row.original.title }}</TableCell>
                             <TableCell>
                                 <Badge variant="outline">{{ t(`qr.index.types.${row.original.type}`) }}</Badge>
@@ -421,22 +548,32 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
         </div>
     </div>
 
-    <!-- Delete confirmation dialog -->
+    <!-- Single delete confirmation -->
     <Dialog :open="deleteTarget !== null" @update:open="(v) => { if (!v) deleteTarget = null }">
         <DialogContent class="sm:max-w-md">
             <DialogHeader>
                 <DialogTitle>{{ t('qr.index.deleteDialog.title') }}</DialogTitle>
+                <DialogDescription>{{ t('qr.index.deleteDialog.description') }}</DialogDescription>
+            </DialogHeader>
+            <DialogFooter class="gap-2">
+                <Button variant="outline" @click="deleteTarget = null">{{ t('qr.index.deleteDialog.cancel') }}</Button>
+                <Button variant="destructive" @click="executeDelete">{{ t('qr.index.deleteDialog.confirm') }}</Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
+    <!-- Bulk delete confirmation -->
+    <Dialog :open="bulkDeleteOpen" @update:open="(v) => { bulkDeleteOpen = v }">
+        <DialogContent class="sm:max-w-md">
+            <DialogHeader>
+                <DialogTitle>{{ t('qr.bulk.deleteDialog.title') }}</DialogTitle>
                 <DialogDescription>
-                    {{ t('qr.index.deleteDialog.description') }}
+                    {{ t('qr.bulk.deleteDialog.description', { n: selectedIds.size }) }}
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter class="gap-2">
-                <Button variant="outline" @click="deleteTarget = null">
-                    {{ t('qr.index.deleteDialog.cancel') }}
-                </Button>
-                <Button variant="destructive" @click="executeDelete">
-                    {{ t('qr.index.deleteDialog.confirm') }}
-                </Button>
+                <Button variant="outline" @click="bulkDeleteOpen = false">{{ t('qr.bulk.deleteDialog.cancel') }}</Button>
+                <Button variant="destructive" @click="executeBulkDelete">{{ t('qr.bulk.deleteDialog.confirm') }}</Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

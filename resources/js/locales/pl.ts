@@ -278,6 +278,20 @@ export default {
             title: 'Utwórz kod QR',
             subtitle: 'Wypełnij formularz, a podgląd zaktualizuje się automatycznie.',
         },
+        bulk: {
+            selected: '{n} zaznaczonych',
+            activate: 'Aktywuj',
+            pause: 'Wstrzymaj',
+            assignTag: 'Przypisz tag',
+            delete: 'Usuń zaznaczone',
+            clearSelection: 'Odznacz wszystko',
+            deleteDialog: {
+                title: 'Usuń zaznaczone kody QR',
+                description: 'Operacja usunie {n} kodów QR do kosza. Zostaną trwale usunięte po 30 dniach.',
+                confirm: 'Usuń',
+                cancel: 'Anuluj',
+            },
+        },
         tags: {
             label: 'Tagi',
             noTags: 'Brak tagów',

@@ -111,7 +111,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **3.8** Akcje: edytuj, duplikuj, wstrzymaj (`is_active`), usuń, kopiuj link, pobierz QR
 - [x] **3.9** Widok edycji kodu — formularz Inertia z walidacją SSR
 - [x] **3.10** Folders / Tags — grupowanie kodów dla łatwiejszego zarządzania
-- [ ] **3.11** Bulk select + bulk actions (delete, pause, export, move to folder)
+- [x] **3.11** Bulk select + bulk actions (delete, pause, export, move to folder)
 
 **Kryterium ukończenia:** User tworzy dynamiczny QR, edytuje URL, skanuje → przekierowanie działa, zarządza listą.
 

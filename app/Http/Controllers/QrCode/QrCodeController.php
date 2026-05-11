@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\QrCode;
 
+use App\Actions\QrCode\BulkAttachTagAction;
+use App\Actions\QrCode\BulkDeleteQrCodesAction;
+use App\Actions\QrCode\BulkToggleActiveQrCodesAction;
 use App\Actions\QrCode\DeleteQrCodeAction;
 use App\Actions\QrCode\DuplicateQrCodeAction;
 use App\Actions\QrCode\SyncQrCodeTagsAction;
@@ -11,6 +14,7 @@ use App\Actions\QrCode\ToggleActiveQrCodeAction;
 use App\Actions\QrCode\UpdateQrCodeAction;
 use App\Data\QrCodeData;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QrCode\BulkQrRequest;
 use App\Http\Requests\QrCode\ExportQrRequest;
 use App\Http\Requests\QrCode\UpdateQrCodeRequest;
 use App\Models\QrCode;
@@ -169,6 +173,43 @@ final class QrCodeController extends Controller
         $new = $action->handle($user, $qrCode);
 
         return redirect()->route('qr.index')->with('success', "Kod QR \"{$new->title}\" został utworzony.");
+    }
+
+    public function bulkDestroy(BulkQrRequest $request, BulkDeleteQrCodesAction $action): RedirectResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $count = $action->handle($user, $request->array('ids'));
+
+        return redirect()->route('qr.index')->with('success', "Usunięto {$count} kodów QR.");
+    }
+
+    public function bulkPause(BulkQrRequest $request, BulkToggleActiveQrCodesAction $action): RedirectResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $action->handle($user, $request->array('ids'), false);
+
+        return back();
+    }
+
+    public function bulkActivate(BulkQrRequest $request, BulkToggleActiveQrCodesAction $action): RedirectResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $action->handle($user, $request->array('ids'), true);
+
+        return back();
+    }
+
+    public function bulkTag(BulkQrRequest $request, BulkAttachTagAction $action): RedirectResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $tagId = (int) $request->input('tag_id');
+        $action->handle($user, $request->array('ids'), $tagId);
+
+        return back();
     }
 
     public function export(ExportQrRequest $request, QrRenderer $renderer): HttpResponse

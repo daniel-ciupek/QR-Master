@@ -278,6 +278,20 @@ export default {
             title: 'Create QR Code',
             subtitle: 'Fill in the form and the preview will update automatically.',
         },
+        bulk: {
+            selected: '{n} selected',
+            activate: 'Activate',
+            pause: 'Pause',
+            assignTag: 'Assign tag',
+            delete: 'Delete selected',
+            clearSelection: 'Clear selection',
+            deleteDialog: {
+                title: 'Delete selected QR codes',
+                description: 'This will move {n} QR codes to trash. They will be permanently deleted after 30 days.',
+                confirm: 'Delete',
+                cancel: 'Cancel',
+            },
+        },
         tags: {
             label: 'Tags',
             noTags: 'No tags',
