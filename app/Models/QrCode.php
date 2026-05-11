@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Data\QrVisualSettings;
 use App\Enums\QrCodeType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -135,5 +136,10 @@ class QrCode extends Model implements HasMedia
     public function isPasswordProtected(): bool
     {
         return $this->password_hash !== null;
+    }
+
+    public function visualSettings(): QrVisualSettings
+    {
+        return QrVisualSettings::from($this->settings ?? []);
     }
 }
