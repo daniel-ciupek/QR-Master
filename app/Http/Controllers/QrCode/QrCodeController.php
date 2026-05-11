@@ -7,11 +7,15 @@ namespace App\Http\Controllers\QrCode;
 use App\Actions\QrCode\DeleteQrCodeAction;
 use App\Actions\QrCode\DuplicateQrCodeAction;
 use App\Actions\QrCode\ToggleActiveQrCodeAction;
+use App\Actions\QrCode\UpdateQrCodeAction;
+use App\Data\QrCodeData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QrCode\ExportQrRequest;
+use App\Http\Requests\QrCode\UpdateQrCodeRequest;
 use App\Models\QrCode;
 use App\Models\User;
 use App\Services\QrRendering\QrRenderer;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -61,6 +65,45 @@ final class QrCodeController extends Controller
     public function create(): Response
     {
         return Inertia::render('QrCode/Create');
+    }
+
+    public function edit(QrCode $qrCode): Response
+    {
+        Gate::authorize('update', $qrCode);
+
+        return Inertia::render('QrCode/Edit', [
+            'qrCode' => [
+                'id' => $qrCode->id,
+                'title' => $qrCode->title,
+                'type' => $qrCode->type->value,
+                'short_hash' => $qrCode->short_hash,
+                'destination_url' => $qrCode->destination_url,
+                'is_active' => $qrCode->is_active,
+                'expires_at' => $qrCode->expires_at?->toDateString(),
+            ],
+        ]);
+    }
+
+    public function update(UpdateQrCodeRequest $request, QrCode $qrCode, UpdateQrCodeAction $action): RedirectResponse
+    {
+        Gate::authorize('update', $qrCode);
+
+        $data = new QrCodeData(
+            title: $request->string('title')->trim()->toString(),
+            type: $qrCode->type,
+            destination_url: $request->filled('destination_url')
+                ? $request->string('destination_url')->trim()->toString()
+                : null,
+            settings: $qrCode->settings,
+            is_active: $request->boolean('is_active'),
+            expires_at: $request->filled('expires_at')
+                ? Carbon::parse($request->input('expires_at'))
+                : null,
+        );
+
+        $action->handle($qrCode, $data);
+
+        return redirect()->route('qr.index')->with('success', 'Zmiany zostały zapisane.');
     }
 
     public function destroy(QrCode $qrCode, DeleteQrCodeAction $action): RedirectResponse
