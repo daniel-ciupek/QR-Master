@@ -97,7 +97,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### Etap 3: Dynamiczne Kody QR — Mechanizm Przekierowań
+### ✅ Etap 3: Dynamiczne Kody QR — Mechanizm Przekierowań *(ukończony 2026-05-11)*
 
 *Cel: Kluczowa wartość B2B — możliwość zmiany linku bez przedrukowywania kodu.*
 
