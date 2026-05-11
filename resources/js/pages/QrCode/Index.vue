@@ -43,6 +43,12 @@ import AppLayout from '@/layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
 
+interface TagItem {
+    id: number
+    name: string
+    color: string
+}
+
 interface QrCodeRow {
     id: number
     title: string
@@ -53,6 +59,7 @@ interface QrCodeRow {
     is_expired: boolean
     expires_at: string | null
     created_at: string
+    tags: TagItem[]
 }
 
 interface Paginator {
@@ -69,7 +76,8 @@ interface Paginator {
 
 const props = defineProps<{
     qrCodes: Paginator
-    filters: { search: string; sort: string; direction: string }
+    filters: { search: string; sort: string; direction: string; tag_id: number }
+    userTags: TagItem[]
 }>()
 
 const { t } = useI18n()
@@ -96,19 +104,36 @@ function exportQrData(row: QrCodeRow): string {
     return `${window.location.origin}/q/${row.short_hash}`
 }
 
-// ── Search / sort ──────────────────────────────────────────────────
+// ── Search / sort / tag filter ─────────────────────────────────────
 const debouncedSearch = useDebounceFn((value: string) => {
-    router.get('/qr', { search: value, sort: props.filters.sort, direction: props.filters.direction }, {
-        preserveState: true,
-        replace: true,
-    })
+    router.get('/qr', {
+        search: value,
+        sort: props.filters.sort,
+        direction: props.filters.direction,
+        tag_id: props.filters.tag_id || undefined,
+    }, { preserveState: true, replace: true })
 }, 300)
 
 watch(search, debouncedSearch)
 
 function toggleSort(col: string) {
     const direction = props.filters.sort === col && props.filters.direction === 'asc' ? 'desc' : 'asc'
-    router.get('/qr', { search: props.filters.search, sort: col, direction }, { preserveState: true, replace: true })
+    router.get('/qr', {
+        search: props.filters.search,
+        sort: col,
+        direction,
+        tag_id: props.filters.tag_id || undefined,
+    }, { preserveState: true, replace: true })
+}
+
+function filterByTag(tagId: number) {
+    const newTagId = props.filters.tag_id === tagId ? undefined : tagId
+    router.get('/qr', {
+        search: props.filters.search,
+        sort: props.filters.sort,
+        direction: props.filters.direction,
+        tag_id: newTagId,
+    }, { preserveState: true, replace: true })
 }
 
 // ── Status helpers ─────────────────────────────────────────────────
@@ -157,6 +182,10 @@ const columns = [
     columnHelper.display({
         id: 'status',
         header: () => t('qr.index.columns.status'),
+    }),
+    columnHelper.display({
+        id: 'tags',
+        header: () => t('qr.tags.label'),
     }),
     columnHelper.accessor('expires_at', {
         header: () => t('qr.index.columns.expires'),
@@ -211,6 +240,41 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
             />
         </div>
 
+        <!-- Tag filter pills -->
+        <div v-if="userTags.length > 0" class="flex flex-wrap gap-2">
+            <button
+                type="button"
+                :class="[
+                    'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium transition-colors border',
+                    filters.tag_id === 0
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'border-border text-muted-foreground hover:border-ring hover:text-foreground',
+                ]"
+                @click="filterByTag(0)"
+            >
+                {{ t('qr.tags.filterAll') }}
+            </button>
+            <button
+                v-for="tag in userTags"
+                :key="tag.id"
+                type="button"
+                :class="[
+                    'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors border',
+                    filters.tag_id === tag.id
+                        ? 'border-transparent text-white'
+                        : 'border-border text-muted-foreground hover:border-ring hover:text-foreground',
+                ]"
+                :style="filters.tag_id === tag.id ? { backgroundColor: tag.color, borderColor: tag.color } : {}"
+                @click="filterByTag(tag.id)"
+            >
+                <span
+                    class="size-2 rounded-full shrink-0"
+                    :style="{ backgroundColor: tag.color }"
+                />
+                {{ tag.name }}
+            </button>
+        </div>
+
         <!-- Table -->
         <div class="rounded-md border border-border overflow-hidden">
             <Table>
@@ -256,6 +320,20 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                             </TableCell>
                             <TableCell>
                                 <Badge :variant="statusVariant(row.original)">{{ statusLabel(row.original) }}</Badge>
+                            </TableCell>
+                            <!-- Tags -->
+                            <TableCell>
+                                <div class="flex flex-wrap gap-1">
+                                    <span
+                                        v-for="tag in row.original.tags"
+                                        :key="tag.id"
+                                        class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs text-white font-medium"
+                                        :style="{ backgroundColor: tag.color }"
+                                    >
+                                        {{ tag.name }}
+                                    </span>
+                                    <span v-if="row.original.tags.length === 0" class="text-xs text-muted-foreground">—</span>
+                                </div>
                             </TableCell>
                             <TableCell class="text-muted-foreground text-sm">
                                 {{ row.original.expires_at ?? t('qr.index.never') }}

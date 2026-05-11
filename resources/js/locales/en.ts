@@ -278,6 +278,17 @@ export default {
             title: 'Create QR Code',
             subtitle: 'Fill in the form and the preview will update automatically.',
         },
+        tags: {
+            label: 'Tags',
+            noTags: 'No tags',
+            addTag: 'Add tag',
+            newTag: 'New tag',
+            tagName: 'Tag name',
+            tagNamePlaceholder: 'e.g. Campaign, Promo…',
+            create: 'Create',
+            filterAll: 'All',
+            deleteConfirm: 'Deleting a tag removes it from all QR codes.',
+        },
         edit: {
             headTitle: 'Edit QR Code',
             title: 'Edit QR Code',

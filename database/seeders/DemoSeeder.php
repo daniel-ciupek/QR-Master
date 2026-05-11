@@ -8,6 +8,7 @@ use App\Actions\QrCode\CreateQrCodeAction;
 use App\Data\QrCodeData;
 use App\Enums\QrCodeType;
 use App\Enums\Role;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -55,39 +56,49 @@ class DemoSeeder extends Seeder
     {
         $action = app(CreateQrCodeAction::class);
 
-        // ── Admin codes ────────────────────────────────────────────────
+        // ── Admin tags + codes ─────────────────────────────────────────
+        $tagDocs = Tag::create(['user_id' => $admin->id, 'name' => 'Dokumenty', 'color' => '#6366f1']);
+
         $action->handle($admin, new QrCodeData(
             title: 'Strona główna QR-Master',
             type: QrCodeType::Url,
             destination_url: 'https://qr-master.app',
         ));
 
-        $action->handle($admin, new QrCodeData(
+        $qr2 = $action->handle($admin, new QrCodeData(
             title: 'Dokumentacja API',
             type: QrCodeType::Url,
             destination_url: 'https://docs.qr-master.app',
             is_active: true,
             expires_at: now()->addYear(),
         ));
+        $qr2->tags()->attach($tagDocs->id);
 
-        // ── Pro user codes ─────────────────────────────────────────────
-        $action->handle($pro, new QrCodeData(
+        // ── Pro user tags + codes ──────────────────────────────────────
+        $tagMarketing = Tag::create(['user_id' => $pro->id, 'name' => 'Marketing', 'color' => '#22c55e']);
+        $tagKontakt = Tag::create(['user_id' => $pro->id, 'name' => 'Kontakt', 'color' => '#06b6d4']);
+        $tagPromo = Tag::create(['user_id' => $pro->id, 'name' => 'Promo', 'color' => '#f97316']);
+
+        $qr3 = $action->handle($pro, new QrCodeData(
             title: 'Kampania letnia 2026',
             type: QrCodeType::Url,
             destination_url: 'https://example.com/summer-sale',
         ));
+        $qr3->tags()->attach([$tagMarketing->id, $tagPromo->id]);
 
-        $action->handle($pro, new QrCodeData(
+        $qr4 = $action->handle($pro, new QrCodeData(
             title: 'Kontakt e-mail',
             type: QrCodeType::Email,
             destination_url: 'mailto:hello@example.com?subject=Zapytanie',
         ));
+        $qr4->tags()->attach($tagKontakt->id);
 
-        $action->handle($pro, new QrCodeData(
+        $qr5 = $action->handle($pro, new QrCodeData(
             title: 'Telefon biuro',
             type: QrCodeType::Phone,
             destination_url: 'tel:+48123456789',
         ));
+        $qr5->tags()->attach($tagKontakt->id);
 
         $action->handle($pro, new QrCodeData(
             title: 'Wygasła promocja',
@@ -116,5 +127,6 @@ class DemoSeeder extends Seeder
             type: QrCodeType::Sms,
             destination_url: 'smsto:+48987654321:Hej, masz mój QR!',
         ));
+
     }
 }

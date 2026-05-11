@@ -278,6 +278,17 @@ export default {
             title: 'Utwórz kod QR',
             subtitle: 'Wypełnij formularz, a podgląd zaktualizuje się automatycznie.',
         },
+        tags: {
+            label: 'Tagi',
+            noTags: 'Brak tagów',
+            addTag: 'Dodaj tag',
+            newTag: 'Nowy tag',
+            tagName: 'Nazwa tagu',
+            tagNamePlaceholder: 'np. Kampania, Promo…',
+            create: 'Utwórz',
+            filterAll: 'Wszystkie',
+            deleteConfirm: 'Usunięcie tagu usunie go ze wszystkich kodów QR.',
+        },
         edit: {
             headTitle: 'Edytuj kod QR',
             title: 'Edytuj kod QR',
