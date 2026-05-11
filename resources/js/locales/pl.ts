@@ -352,6 +352,11 @@ export default {
                 messagePlaceholder: 'Treść wiadomości…',
             },
         },
+        colors: {
+            label: 'Kolory',
+            dotColor: 'Kolor kropek',
+            bgColor: 'Tło',
+        },
         preview: {
             title: 'Podgląd',
             empty: 'Wpisz dane po lewej, aby wygenerować kod QR.',

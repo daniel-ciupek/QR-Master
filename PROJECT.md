@@ -122,7 +122,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 *Cel: Wartość premium — branded QR z logo, gradientami, niestandardowymi kropkami.*
 
 - [x] **4.1** Rozszerzenie pola `settings` (jsonb): `dotStyle, dotColor, gradient, bgColor, cornerSquareStyle, cornerDotStyle, logoPath, logoMargin, frame, frameText`
-- [ ] **4.2** UI: Color picker (HSL + hex + presets brandowych palet)
+- [x] **4.2** UI: Color picker (HSL + hex + presets brandowych palet)
 - [ ] **4.3** Wybór stylu kropek: square, dots, rounded, classy, classy-rounded, extra-rounded (qr-code-styling)
 - [ ] **4.4** Wybór stylu „oczek" (corner squares + corner dots) — niezależnie
 - [ ] **4.5** **Gradienty** — linear, radial, kolory startowy/końcowy

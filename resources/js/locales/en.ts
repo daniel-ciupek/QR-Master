@@ -352,6 +352,11 @@ export default {
                 messagePlaceholder: 'Message…',
             },
         },
+        colors: {
+            label: 'Colors',
+            dotColor: 'Dot color',
+            bgColor: 'Background',
+        },
         preview: {
             title: 'Preview',
             empty: 'Enter data on the left to generate a QR code.',
