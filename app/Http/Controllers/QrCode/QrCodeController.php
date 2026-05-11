@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\QrCode;
 
+use App\Actions\QrCode\DeleteQrCodeAction;
+use App\Actions\QrCode\DuplicateQrCodeAction;
+use App\Actions\QrCode\ToggleActiveQrCodeAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QrCode\ExportQrRequest;
 use App\Models\QrCode;
 use App\Models\User;
 use App\Services\QrRendering\QrRenderer;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -40,6 +45,7 @@ final class QrCodeController extends Controller
                 'title' => $qr->title,
                 'type' => $qr->type->value,
                 'short_hash' => $qr->short_hash,
+                'destination_url' => $qr->destination_url,
                 'is_active' => $qr->is_active,
                 'is_expired' => $qr->isExpired(),
                 'expires_at' => $qr->expires_at?->toDateString(),
@@ -55,6 +61,33 @@ final class QrCodeController extends Controller
     public function create(): Response
     {
         return Inertia::render('QrCode/Create');
+    }
+
+    public function destroy(QrCode $qrCode, DeleteQrCodeAction $action): RedirectResponse
+    {
+        Gate::authorize('delete', $qrCode);
+        $action->handle($qrCode);
+
+        return redirect()->route('qr.index')->with('success', 'Kod QR został usunięty.');
+    }
+
+    public function toggleActive(QrCode $qrCode, ToggleActiveQrCodeAction $action): RedirectResponse
+    {
+        Gate::authorize('update', $qrCode);
+        $action->handle($qrCode);
+
+        return back();
+    }
+
+    public function duplicate(Request $request, QrCode $qrCode, DuplicateQrCodeAction $action): RedirectResponse
+    {
+        Gate::authorize('duplicate', $qrCode);
+
+        /** @var User $user */
+        $user = $request->user();
+        $new = $action->handle($user, $qrCode);
+
+        return redirect()->route('qr.index')->with('success', "Kod QR \"{$new->title}\" został utworzony.");
     }
 
     public function export(ExportQrRequest $request, QrRenderer $renderer): HttpResponse

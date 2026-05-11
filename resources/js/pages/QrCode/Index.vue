@@ -6,11 +6,28 @@ import {
     getCoreRowModel,
     useVueTable,
 } from '@tanstack/vue-table'
-import { ArrowUpDown, Plus } from 'lucide-vue-next'
+import { ArrowUpDown, Copy, Download, MoreHorizontal, Pause, Pencil, Play, Plus, Trash2 } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { toast } from 'vue-sonner'
+import ExportModal from '@/components/qr/ExportModal.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import {
     Table,
@@ -31,6 +48,7 @@ interface QrCodeRow {
     title: string
     type: string
     short_hash: string
+    destination_url: string | null
     is_active: boolean
     is_expired: boolean
     expires_at: string | null
@@ -58,6 +76,27 @@ const { t } = useI18n()
 
 const search = ref(props.filters.search)
 
+// ── Delete dialog ──────────────────────────────────────────────────
+const deleteTarget = ref<QrCodeRow | null>(null)
+
+function confirmDelete(row: QrCodeRow) {
+    deleteTarget.value = row
+}
+
+function executeDelete() {
+    if (!deleteTarget.value) return
+    router.delete(`/qr/${deleteTarget.value.id}`, { preserveScroll: true })
+    deleteTarget.value = null
+}
+
+// ── Export modal ───────────────────────────────────────────────────
+const exportTarget = ref<QrCodeRow | null>(null)
+
+function exportQrData(row: QrCodeRow): string {
+    return `${window.location.origin}/q/${row.short_hash}`
+}
+
+// ── Search / sort ──────────────────────────────────────────────────
 const debouncedSearch = useDebounceFn((value: string) => {
     router.get('/qr', { search: value, sort: props.filters.sort, direction: props.filters.direction }, {
         preserveState: true,
@@ -72,6 +111,7 @@ function toggleSort(col: string) {
     router.get('/qr', { search: props.filters.search, sort: col, direction }, { preserveState: true, replace: true })
 }
 
+// ── Status helpers ─────────────────────────────────────────────────
 function statusVariant(row: QrCodeRow): 'default' | 'secondary' | 'destructive' | 'outline' {
     if (row.is_expired) return 'destructive'
     if (!row.is_active) return 'secondary'
@@ -84,6 +124,21 @@ function statusLabel(row: QrCodeRow): string {
     return t('qr.index.status.active')
 }
 
+// ── Row actions ────────────────────────────────────────────────────
+function copyLink(row: QrCodeRow) {
+    navigator.clipboard.writeText(`${window.location.origin}/q/${row.short_hash}`)
+    toast.success(t('qr.index.actions.copyLinkDone'))
+}
+
+function toggleActive(row: QrCodeRow) {
+    router.patch(`/qr/${row.id}/toggle-active`, {}, { preserveScroll: true })
+}
+
+function duplicate(row: QrCodeRow) {
+    router.post(`/qr/${row.id}/duplicate`, {}, { preserveScroll: true })
+}
+
+// ── Table ──────────────────────────────────────────────────────────
 const columnHelper = createColumnHelper<QrCodeRow>()
 
 const columns = [
@@ -110,6 +165,10 @@ const columns = [
     columnHelper.accessor('created_at', {
         header: () => t('qr.index.columns.created'),
         cell: (info) => info.getValue(),
+    }),
+    columnHelper.display({
+        id: 'actions',
+        header: () => t('qr.index.columns.actions'),
     }),
 ]
 
@@ -163,7 +222,10 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                         <TableHead
                             v-for="header in headerGroup.headers"
                             :key="header.id"
-                            :class="sortableCols.includes(header.id) ? 'cursor-pointer select-none' : ''"
+                            :class="[
+                                sortableCols.includes(header.id) ? 'cursor-pointer select-none' : '',
+                                header.id === 'actions' ? 'w-12' : '',
+                            ]"
                             @click="sortableCols.includes(header.id) ? toggleSort(header.id) : undefined"
                         >
                             <span class="inline-flex items-center gap-1">
@@ -201,6 +263,52 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                             <TableCell class="text-muted-foreground text-sm">
                                 {{ row.original.created_at }}
                             </TableCell>
+
+                            <!-- Actions dropdown -->
+                            <TableCell class="text-right">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger as-child>
+                                        <Button variant="ghost" size="icon" class="size-8">
+                                            <MoreHorizontal class="size-4" />
+                                            <span class="sr-only">{{ t('qr.index.columns.actions') }}</span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" class="w-48">
+                                        <DropdownMenuItem as-child>
+                                            <Link :href="`/qr/${row.original.id}/edit`">
+                                                <Pencil class="mr-2 size-4" />
+                                                {{ t('qr.index.actions.edit') }}
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem @click="duplicate(row.original)">
+                                            <Copy class="mr-2 size-4" />
+                                            {{ t('qr.index.actions.duplicate') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem @click="copyLink(row.original)">
+                                            <Copy class="mr-2 size-4" />
+                                            {{ t('qr.index.actions.copyLink') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem @click="exportTarget = row.original">
+                                            <Download class="mr-2 size-4" />
+                                            {{ t('qr.index.actions.download') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem @click="toggleActive(row.original)">
+                                            <Pause v-if="row.original.is_active" class="mr-2 size-4" />
+                                            <Play v-else class="mr-2 size-4" />
+                                            {{ row.original.is_active ? t('qr.index.actions.pause') : t('qr.index.actions.activate') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            class="text-destructive focus:text-destructive"
+                                            @click="confirmDelete(row.original)"
+                                        >
+                                            <Trash2 class="mr-2 size-4" />
+                                            {{ t('qr.index.actions.delete') }}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </TableCell>
                         </TableRow>
                     </template>
 
@@ -234,4 +342,33 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
             </div>
         </div>
     </div>
+
+    <!-- Delete confirmation dialog -->
+    <Dialog :open="deleteTarget !== null" @update:open="(v) => { if (!v) deleteTarget = null }">
+        <DialogContent class="sm:max-w-md">
+            <DialogHeader>
+                <DialogTitle>{{ t('qr.index.deleteDialog.title') }}</DialogTitle>
+                <DialogDescription>
+                    {{ t('qr.index.deleteDialog.description') }}
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter class="gap-2">
+                <Button variant="outline" @click="deleteTarget = null">
+                    {{ t('qr.index.deleteDialog.cancel') }}
+                </Button>
+                <Button variant="destructive" @click="executeDelete">
+                    {{ t('qr.index.deleteDialog.confirm') }}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
+    <!-- Export modal -->
+    <ExportModal
+        v-if="exportTarget !== null"
+        :open="exportTarget !== null"
+        :data="exportQrData(exportTarget)"
+        ecc-level="M"
+        @update:open="(v) => { if (!v) exportTarget = null }"
+    />
 </template>

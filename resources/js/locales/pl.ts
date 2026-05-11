@@ -256,6 +256,22 @@ export default {
                 review: 'Recenzja',
             },
             never: 'Nigdy',
+            actions: {
+                edit: 'Edytuj',
+                duplicate: 'Duplikuj',
+                copyLink: 'Kopiuj link',
+                copyLinkDone: 'Skopiowano!',
+                download: 'Pobierz QR',
+                pause: 'Wstrzymaj',
+                activate: 'Aktywuj',
+                delete: 'Usuń',
+            },
+            deleteDialog: {
+                title: 'Usuń kod QR',
+                description: 'Kod zostanie przeniesiony do kosza i trwale usunięty po 30 dniach.',
+                confirm: 'Usuń',
+                cancel: 'Anuluj',
+            },
         },
         create: {
             headTitle: 'Nowy kod QR',

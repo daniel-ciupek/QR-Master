@@ -256,6 +256,22 @@ export default {
                 review: 'Review',
             },
             never: 'Never',
+            actions: {
+                edit: 'Edit',
+                duplicate: 'Duplicate',
+                copyLink: 'Copy link',
+                copyLinkDone: 'Copied!',
+                download: 'Download QR',
+                pause: 'Pause',
+                activate: 'Activate',
+                delete: 'Delete',
+            },
+            deleteDialog: {
+                title: 'Delete QR Code',
+                description: 'The code will be moved to trash and permanently deleted after 30 days.',
+                confirm: 'Delete',
+                cancel: 'Cancel',
+            },
         },
         create: {
             headTitle: 'New QR Code',
