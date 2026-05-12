@@ -374,6 +374,14 @@ export default {
                 dot: 'Circle',
             },
         },
+        gradient: {
+            label: 'Gradient',
+            linear: 'Linear',
+            radial: 'Radial',
+            colorStart: 'Start color',
+            colorEnd: 'End color',
+            rotation: 'Rotation ({deg}°)',
+        },
         colors: {
             label: 'Colors',
             dotColor: 'Dot color',

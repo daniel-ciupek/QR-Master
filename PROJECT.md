@@ -125,7 +125,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **4.2** UI: Color picker (HSL + hex + presets brandowych palet)
 - [x] **4.3** Wybór stylu kropek: square, dots, rounded, classy, classy-rounded, extra-rounded (qr-code-styling)
 - [x] **4.4** Wybór stylu „oczek" (corner squares + corner dots) — niezależnie
-- [ ] **4.5** **Gradienty** — linear, radial, kolory startowy/końcowy
+- [x] **4.5** **Gradienty** — linear, radial, kolory startowy/końcowy
 - [ ] **4.6** Upload loga: spatie/laravel-medialibrary, walidacja MIME (real), max 2MB, optimize (PNG/SVG/JPG)
 - [ ] **4.7** Logo margin / size controls (% pokrycia QR, max 30%)
 - [ ] **4.8** **Frames** (opakowania) — „Skanuj mnie", „Menu", custom CTA pod kodem

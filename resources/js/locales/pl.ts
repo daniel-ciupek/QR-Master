@@ -374,6 +374,14 @@ export default {
                 dot: 'Koło',
             },
         },
+        gradient: {
+            label: 'Gradient',
+            linear: 'Liniowy',
+            radial: 'Radialny',
+            colorStart: 'Kolor startowy',
+            colorEnd: 'Kolor końcowy',
+            rotation: 'Kąt obrotu ({deg}°)',
+        },
         colors: {
             label: 'Kolory',
             dotColor: 'Kolor kropek',

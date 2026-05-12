@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import QRCodeStyling from 'qr-code-styling'
-import type { Options, DotType, CornerSquareType, CornerDotType, ErrorCorrectionLevel } from 'qr-code-styling'
+import type { Options, DotType, CornerSquareType, CornerDotType, ErrorCorrectionLevel, Gradient } from 'qr-code-styling'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 
@@ -16,6 +16,12 @@ export interface LivePreviewProps {
     image?: string
     imageSize?: number
     hideBackgroundDots?: boolean
+    // Gradient
+    gradientEnabled?: boolean
+    gradientType?: 'linear' | 'radial'
+    gradientColorStart?: string
+    gradientColorEnd?: string
+    gradientRotation?: number
 }
 
 const props = withDefaults(defineProps<LivePreviewProps>(), {
@@ -29,10 +35,26 @@ const props = withDefaults(defineProps<LivePreviewProps>(), {
     image: undefined,
     imageSize: 0.3,
     hideBackgroundDots: true,
+    gradientEnabled: false,
+    gradientType: 'linear',
+    gradientColorStart: '#000000',
+    gradientColorEnd: '#444444',
+    gradientRotation: 0,
 })
 
 const container = ref<HTMLDivElement>()
 let qr: QRCodeStyling | null = null
+
+function buildGradient(): Gradient {
+    return {
+        type: props.gradientType ?? 'linear',
+        rotation: ((props.gradientRotation ?? 0) / 180) * Math.PI,
+        colorStops: [
+            { offset: 0, color: props.gradientColorStart ?? '#000000' },
+            { offset: 1, color: props.gradientColorEnd ?? '#444444' },
+        ],
+    }
+}
 
 function buildOptions(): Options {
     return {
@@ -46,7 +68,9 @@ function buildOptions(): Options {
         },
         dotsOptions: {
             type: props.dotType,
-            color: props.dotColor,
+            ...(props.gradientEnabled
+                ? { gradient: buildGradient() }
+                : { color: props.dotColor }),
         },
         cornersSquareOptions: {
             type: props.cornersSquareType,
@@ -104,6 +128,11 @@ watch(
         props.image,
         props.imageSize,
         props.hideBackgroundDots,
+        props.gradientEnabled,
+        props.gradientType,
+        props.gradientColorStart,
+        props.gradientColorEnd,
+        props.gradientRotation,
     ],
     debouncedUpdate,
 )

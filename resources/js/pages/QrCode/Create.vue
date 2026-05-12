@@ -7,6 +7,8 @@ import { useI18n } from 'vue-i18n'
 import ColorPicker from '@/components/qr/ColorPicker.vue'
 import CornerStylePicker from '@/components/qr/CornerStylePicker.vue'
 import DotStylePicker from '@/components/qr/DotStylePicker.vue'
+import GradientPicker from '@/components/qr/GradientPicker.vue'
+import type { GradientConfig } from '@/components/qr/GradientPicker.vue'
 import ExportModal from '@/components/qr/ExportModal.vue'
 import LivePreview from '@/components/qr/LivePreview.vue'
 import { Button } from '@/components/ui/button'
@@ -86,6 +88,13 @@ const cornerSquare = ref<CornerSquareStyle>('square')
 const cornerDot = ref<CornerDotStyle>('square')
 const dotColor = ref('#000000')
 const backgroundColor = ref('#ffffff')
+const gradient = ref<GradientConfig>({
+    enabled: false,
+    type: 'linear',
+    colorStart: '#000000',
+    colorEnd: '#444444',
+    rotation: 0,
+})
 
 const contrast = useContrastChecker(dotColor, backgroundColor)
 
@@ -235,6 +244,9 @@ const exportOpen = ref(false)
                     </div>
                 </div>
 
+                <!-- Gradient picker -->
+                <GradientPicker v-model="gradient" />
+
                 <!-- ECC selector -->
                 <div class="flex items-center gap-3">
                     <label class="text-sm font-medium shrink-0">{{ t('qr.ecc.label') }}</label>
@@ -271,6 +283,11 @@ const exportOpen = ref(false)
                             :background-color="backgroundColor"
                             :corners-square-type="cornerSquare"
                             :corners-dot-type="cornerDot"
+                            :gradient-enabled="gradient.enabled"
+                            :gradient-type="gradient.type"
+                            :gradient-color-start="gradient.colorStart"
+                            :gradient-color-end="gradient.colorEnd"
+                            :gradient-rotation="gradient.rotation"
                         />
                     </template>
                     <p v-else class="text-sm text-muted-foreground text-center px-6">
