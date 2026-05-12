@@ -12,6 +12,7 @@ import type { GradientConfig } from '@/components/qr/GradientPicker.vue'
 import FramePicker from '@/components/qr/FramePicker.vue'
 import TemplatePicker from '@/components/qr/TemplatePicker.vue'
 import type { QrTemplate } from '@/components/qr/TemplatePicker.vue'
+import UserTemplatePicker from '@/components/qr/UserTemplatePicker.vue'
 import LogoControls from '@/components/qr/LogoControls.vue'
 import LogoUpload from '@/components/qr/LogoUpload.vue'
 import QrFrame from '@/components/qr/QrFrame.vue'
@@ -23,6 +24,10 @@ import { useContrastChecker } from '@/composables/useContrastChecker'
 import AppLayout from '@/layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
+
+const props = defineProps<{
+    userTemplates: Array<{ id: number; name: string; settings: Omit<QrTemplate, 'name'> }>
+}>()
 
 const { t } = useI18n()
 
@@ -97,7 +102,19 @@ const frameType = ref<FrameType>('none')
 const frameText = ref('')
 const frameColor = ref('#000000')
 
-function applyTemplate(tpl: QrTemplate) {
+const currentStyle = computed(() => ({
+    dotStyle: dotStyle.value,
+    dotColor: dotColor.value,
+    bgColor: backgroundColor.value,
+    cornerSquare: cornerSquare.value,
+    cornerDot: cornerDot.value,
+    gradient: { ...gradient.value },
+    frameType: frameType.value,
+    frameText: frameText.value,
+    frameColor: frameColor.value,
+}))
+
+function applyTemplate(tpl: QrTemplate | Omit<QrTemplate, 'name'>) {
     dotStyle.value = tpl.dotStyle
     dotColor.value = tpl.dotColor
     backgroundColor.value = tpl.bgColor
@@ -260,6 +277,13 @@ const exportOpen = ref(false)
 
                 <!-- Templates -->
                 <TemplatePicker @apply="applyTemplate" />
+
+                <!-- User saved templates -->
+                <UserTemplatePicker
+                    :templates="props.userTemplates"
+                    :current-style="currentStyle"
+                    @apply="applyTemplate"
+                />
 
                 <!-- Dot style picker -->
                 <DotStylePicker v-model="dotStyle" />

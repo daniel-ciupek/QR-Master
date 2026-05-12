@@ -20,6 +20,7 @@ use App\Http\Requests\QrCode\ExportQrRequest;
 use App\Http\Requests\QrCode\UpdateQrCodeRequest;
 use App\Http\Requests\QrCode\UploadQrLogoRequest;
 use App\Models\QrCode;
+use App\Models\QrUserTemplate;
 use App\Models\Tag;
 use App\Models\User;
 use App\Services\QrRendering\QrRenderer;
@@ -85,9 +86,22 @@ final class QrCodeController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        return Inertia::render('QrCode/Create');
+        /** @var User $user */
+        $user = $request->user();
+
+        $userTemplates = QrUserTemplate::where('user_id', $user->id)
+            ->orderBy('name')
+            ->get()
+            ->map(fn (QrUserTemplate $t) => [
+                'id' => $t->id,
+                'name' => $t->name,
+                'settings' => $t->settings,
+            ])
+            ->all();
+
+        return Inertia::render('QrCode/Create', ['userTemplates' => $userTemplates]);
     }
 
     public function edit(Request $request, QrCode $qrCode): Response

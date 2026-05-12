@@ -130,7 +130,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **4.7** Logo margin / size controls (% pokrycia QR, max 30%)
 - [x] **4.8** **Frames** (opakowania) — „Skanuj mnie", „Menu", custom CTA pod kodem
 - [x] **4.9** **Templates** — predefiniowane zestawy stylów (Modern, Classic, Vibrant, Minimal, Restaurant)
-- [ ] **4.10** Bookmark templates — user może zapisać własny styl jako szablon do reuse
+- [x] **4.10** Bookmark templates — user może zapisać własny styl jako szablon do reuse
 - [ ] **4.11** **AI suggest colors** (placeholder do Etap 10) — endpoint `/api/ai/suggest-palette` z analizą loga
 
 **Kryterium ukończenia:** User wgrywa logo firmy → AI sugeruje paletę → preview pokazuje branded QR → eksport zachowuje wszystkie efekty.

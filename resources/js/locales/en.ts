@@ -384,6 +384,14 @@ export default {
             size: 'Logo size',
             margin: 'Logo margin',
         },
+        userTemplates: {
+            label: 'My templates',
+            save: 'Save style',
+            confirm: 'Save',
+            namePlaceholder: 'Template name…',
+            empty: 'No saved templates.',
+            delete: 'Delete',
+        },
         templates: {
             label: 'Templates',
             classic: 'Classic',

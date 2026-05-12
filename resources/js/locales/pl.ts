@@ -384,6 +384,14 @@ export default {
             size: 'Rozmiar loga',
             margin: 'Margines loga',
         },
+        userTemplates: {
+            label: 'Moje szablony',
+            save: 'Zapisz styl',
+            confirm: 'Zapisz',
+            namePlaceholder: 'Nazwa szablonu…',
+            empty: 'Brak zapisanych szablonów.',
+            delete: 'Usuń',
+        },
         templates: {
             label: 'Szablony',
             classic: 'Classic',

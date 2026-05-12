@@ -9,6 +9,7 @@ use App\Http\Controllers\Profile\SecurityController;
 use App\Http\Controllers\Profile\SessionsController;
 use App\Http\Controllers\PublicRedirectController;
 use App\Http\Controllers\QrCode\QrCodeController;
+use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
 use App\Http\Controllers\WebAuthn\WebAuthnRegisterController;
@@ -56,6 +57,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{qrCode}', [QrCodeController::class, 'destroy'])->name('destroy');
         Route::patch('/{qrCode}/toggle-active', [QrCodeController::class, 'toggleActive'])->name('toggleActive');
         Route::post('/{qrCode}/duplicate', [QrCodeController::class, 'duplicate'])->name('duplicate');
+    });
+
+    Route::prefix('qr-templates')->name('qr-templates.')->group(function () {
+        Route::post('/', [QrUserTemplateController::class, 'store'])->name('store');
+        Route::delete('/{qrUserTemplate}', [QrUserTemplateController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('tags')->name('tags.')->group(function () {
