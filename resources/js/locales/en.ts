@@ -374,6 +374,14 @@ export default {
                 dot: 'Circle',
             },
         },
+        logo: {
+            label: 'Logo',
+            upload: 'Upload logo',
+            uploaded: 'Logo uploaded',
+            remove: 'Remove',
+            errorMime: 'Allowed formats: PNG, JPG, SVG, WEBP.',
+            errorSize: 'File exceeds 2 MB.',
+        },
         gradient: {
             label: 'Gradient',
             linear: 'Linear',

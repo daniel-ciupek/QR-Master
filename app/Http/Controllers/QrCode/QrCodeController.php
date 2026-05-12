@@ -12,11 +12,13 @@ use App\Actions\QrCode\DuplicateQrCodeAction;
 use App\Actions\QrCode\SyncQrCodeTagsAction;
 use App\Actions\QrCode\ToggleActiveQrCodeAction;
 use App\Actions\QrCode\UpdateQrCodeAction;
+use App\Actions\QrCode\UploadQrLogoAction;
 use App\Data\QrCodeData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QrCode\BulkQrRequest;
 use App\Http\Requests\QrCode\ExportQrRequest;
 use App\Http\Requests\QrCode\UpdateQrCodeRequest;
+use App\Http\Requests\QrCode\UploadQrLogoRequest;
 use App\Models\QrCode;
 use App\Models\Tag;
 use App\Models\User;
@@ -113,6 +115,7 @@ final class QrCodeController extends Controller
                 'is_active' => $qrCode->is_active,
                 'expires_at' => $qrCode->expires_at?->toDateString(),
                 'tag_ids' => $qrCode->tags->pluck('id')->toArray(),
+                'logo_url' => $qrCode->getFirstMediaUrl('logo') ?: null,
             ],
             'userTags' => $userTags,
         ]);
@@ -173,6 +176,22 @@ final class QrCodeController extends Controller
         $new = $action->handle($user, $qrCode);
 
         return redirect()->route('qr.index')->with('success', "Kod QR \"{$new->title}\" został utworzony.");
+    }
+
+    public function uploadLogo(UploadQrLogoRequest $request, QrCode $qrCode, UploadQrLogoAction $action): RedirectResponse
+    {
+        Gate::authorize('update', $qrCode);
+        $action->handle($qrCode, $request->file('logo'));
+
+        return back();
+    }
+
+    public function deleteLogo(QrCode $qrCode): RedirectResponse
+    {
+        Gate::authorize('update', $qrCode);
+        $qrCode->clearMediaCollection('logo');
+
+        return back();
     }
 
     public function bulkDestroy(BulkQrRequest $request, BulkDeleteQrCodesAction $action): RedirectResponse

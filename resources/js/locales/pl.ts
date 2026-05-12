@@ -374,6 +374,14 @@ export default {
                 dot: 'Koło',
             },
         },
+        logo: {
+            label: 'Logo',
+            upload: 'Wgraj logo',
+            uploaded: 'Logo wgrane',
+            remove: 'Usuń',
+            errorMime: 'Dozwolone formaty: PNG, JPG, SVG, WEBP.',
+            errorSize: 'Plik przekracza 2 MB.',
+        },
         gradient: {
             label: 'Gradient',
             linear: 'Liniowy',

@@ -44,6 +44,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [QrCodeController::class, 'index'])->name('index');
         Route::get('/create', [QrCodeController::class, 'create'])->name('create');
         Route::post('/export', [QrCodeController::class, 'export'])->name('export');
+        Route::post('/{qrCode}/logo', [QrCodeController::class, 'uploadLogo'])->name('logo.upload');
+        Route::delete('/{qrCode}/logo', [QrCodeController::class, 'deleteLogo'])->name('logo.delete');
         // Bulk actions — must come before /{qrCode} wildcard
         Route::post('/bulk/delete', [QrCodeController::class, 'bulkDestroy'])->name('bulk.destroy');
         Route::post('/bulk/pause', [QrCodeController::class, 'bulkPause'])->name('bulk.pause');

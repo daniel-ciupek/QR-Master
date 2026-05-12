@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Head, Link, router, useForm } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LivePreview from '@/components/qr/LivePreview.vue'
+import LogoUpload from '@/components/qr/LogoUpload.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -25,6 +26,7 @@ interface QrCodeProp {
     is_active: boolean
     expires_at: string | null
     tag_ids: number[]
+    logo_url: string | null
 }
 
 const props = defineProps<{
@@ -73,6 +75,15 @@ function submitNewTag() {
             showNewTagForm.value = false
         },
     })
+}
+
+// ── Logo ───────────────────────────────────────────────────────────
+function onLogoUpload(file: File) {
+    router.post(`/qr/${props.qrCode.id}/logo`, { logo: file }, { preserveScroll: true })
+}
+
+function onLogoRemove() {
+    router.delete(`/qr/${props.qrCode.id}/logo`, { preserveScroll: true })
 }
 
 // ── QR preview ─────────────────────────────────────────────────────
@@ -217,6 +228,13 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
                     </div>
                 </div>
 
+                <!-- Logo upload -->
+                <LogoUpload
+                    :current-logo-url="qrCode.logo_url"
+                    @upload="onLogoUpload"
+                    @remove="onLogoRemove"
+                />
+
                 <!-- is_active toggle -->
                 <div class="space-y-1.5">
                     <p class="text-sm font-medium leading-none">{{ t('qr.edit.fields.isActive') }}</p>
@@ -282,6 +300,7 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
                         :data="redirectUrl"
                         :size="240"
                         error-correction-level="M"
+                        :image="qrCode.logo_url ?? undefined"
                     />
                 </div>
                 <p class="text-xs text-muted-foreground text-center">{{ t('qr.edit.preview.hint') }}</p>
