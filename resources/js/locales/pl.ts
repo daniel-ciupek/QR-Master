@@ -384,6 +384,18 @@ export default {
             size: 'Rozmiar loga',
             margin: 'Margines loga',
         },
+        frame: {
+            label: 'Ramka',
+            text: 'Tekst CTA',
+            textPlaceholder: 'np. Skanuj mnie!',
+            color: 'Kolor ramki',
+            types: {
+                none: 'Brak',
+                simple: 'Prosta',
+                rounded: 'Zaokr.',
+                speech_bubble: 'Dymek',
+            },
+        },
         gradient: {
             label: 'Gradient',
             linear: 'Liniowy',

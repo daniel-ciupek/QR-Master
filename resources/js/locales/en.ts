@@ -384,6 +384,18 @@ export default {
             size: 'Logo size',
             margin: 'Logo margin',
         },
+        frame: {
+            label: 'Frame',
+            text: 'CTA text',
+            textPlaceholder: 'e.g. Scan me!',
+            color: 'Frame color',
+            types: {
+                none: 'None',
+                simple: 'Simple',
+                rounded: 'Rounded',
+                speech_bubble: 'Bubble',
+            },
+        },
         gradient: {
             label: 'Gradient',
             linear: 'Linear',

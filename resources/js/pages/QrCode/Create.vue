@@ -2,17 +2,18 @@
 import { Head } from '@inertiajs/vue3'
 import type { ErrorCorrectionLevel } from 'qr-code-styling'
 import { computed, ref } from 'vue'
-import type { CornerDotStyle, CornerSquareStyle, DotStyle } from '@/types/qr-visual'
+import type { CornerDotStyle, CornerSquareStyle, DotStyle, FrameType } from '@/types/qr-visual'
 import { useI18n } from 'vue-i18n'
 import ColorPicker from '@/components/qr/ColorPicker.vue'
 import CornerStylePicker from '@/components/qr/CornerStylePicker.vue'
 import DotStylePicker from '@/components/qr/DotStylePicker.vue'
 import GradientPicker from '@/components/qr/GradientPicker.vue'
 import type { GradientConfig } from '@/components/qr/GradientPicker.vue'
+import FramePicker from '@/components/qr/FramePicker.vue'
 import LogoControls from '@/components/qr/LogoControls.vue'
 import LogoUpload from '@/components/qr/LogoUpload.vue'
+import QrFrame from '@/components/qr/QrFrame.vue'
 import ExportModal from '@/components/qr/ExportModal.vue'
-import LivePreview from '@/components/qr/LivePreview.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -90,6 +91,9 @@ const cornerSquare = ref<CornerSquareStyle>('square')
 const cornerDot = ref<CornerDotStyle>('square')
 const dotColor = ref('#000000')
 const backgroundColor = ref('#ffffff')
+const frameType = ref<FrameType>('none')
+const frameText = ref('')
+const frameColor = ref('#000000')
 const logoDataUrl = ref<string | null>(null)
 const logoSize = ref(0.3)
 const logoMargin = ref(5)
@@ -263,6 +267,13 @@ const exportOpen = ref(false)
                 <!-- Gradient picker -->
                 <GradientPicker v-model="gradient" />
 
+                <!-- Frame picker -->
+                <FramePicker
+                    v-model:frame-type="frameType"
+                    v-model:frame-text="frameText"
+                    v-model:frame-color="frameColor"
+                />
+
                 <!-- Logo upload (client-side only on Create) -->
                 <LogoUpload
                     :current-logo-url="logoDataUrl"
@@ -304,7 +315,7 @@ const exportOpen = ref(false)
                 <p class="text-sm font-medium self-start">{{ t('qr.preview.title') }}</p>
                 <div class="rounded-xl border border-border bg-card p-4 flex items-center justify-center w-full min-h-[300px]">
                     <template v-if="canPreview">
-                        <LivePreview
+                        <QrFrame
                             :data="qrData"
                             :size="260"
                             :error-correction-level="eccLevel"
@@ -321,6 +332,9 @@ const exportOpen = ref(false)
                             :image="logoDataUrl ?? undefined"
                             :image-size="logoSize"
                             :logo-margin="logoMargin"
+                            :frame-type="frameType"
+                            :frame-text="frameText"
+                            :frame-color="frameColor"
                         />
                     </template>
                     <p v-else class="text-sm text-muted-foreground text-center px-6">
