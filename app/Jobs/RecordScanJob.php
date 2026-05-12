@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Contracts\GeoLookupInterface;
 use App\Models\QrCode;
 use App\Models\ScanLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,8 +14,8 @@ use Illuminate\Http\Request;
 /**
  * Async scan logging — dispatched by PublicRedirectController on every redirect.
  *
- * SECURITY: raw IP is never persisted — only HMAC-SHA256 hash with app salt.
- * Geo-IP lookup added in 5.5, UA parsing in 5.6.
+ * SECURITY: rawIp is only held in queue payload (Redis, seconds to minutes) for geo
+ * lookup — it is NEVER written to the database. Only ip_hash is persisted.
  */
 final class RecordScanJob implements ShouldQueue
 {
@@ -29,6 +30,7 @@ final class RecordScanJob implements ShouldQueue
     public function __construct(
         public readonly int $qrCodeId,
         public readonly string $ipHash,
+        public readonly string $rawIp,
         public readonly string $userAgent,
         public readonly ?string $referer,
         public readonly string $language,
@@ -44,20 +46,27 @@ final class RecordScanJob implements ShouldQueue
         return new self(
             qrCodeId: $qrCode->id,
             ipHash: hash_hmac('sha256', $ip, (string) $salt),
+            rawIp: $ip,
             userAgent: $request->userAgent() ?? '',
             referer: $request->header('referer'),
             language: substr($request->header('Accept-Language', 'en'), 0, 10),
         );
     }
 
-    public function handle(): void
+    public function handle(GeoLookupInterface $geo): void
     {
+        $geoData = $geo->lookup($this->rawIp);
+
         ScanLog::create([
             'qr_code_id' => $this->qrCodeId,
             'ip_hash' => $this->ipHash,
             'referrer' => $this->referer,
             'language' => $this->language,
-            // country, region, city, lat, lng: populated in 5.5 (geo-IP)
+            'country' => $geoData['country'] ?? null,
+            'region' => $geoData['region'] ?? null,
+            'city' => $geoData['city'] ?? null,
+            'lat' => $geoData['lat'] ?? null,
+            'lng' => $geoData['lng'] ?? null,
             // device_type, os, browser: populated in 5.6 (UA parsing)
             'scanned_at' => now(),
         ]);
