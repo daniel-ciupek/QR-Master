@@ -117,7 +117,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### Etap 4: Personalizacja Wizualna i Branding
+### ✅ Etap 4: Personalizacja Wizualna i Branding *(ukończony 2026-05-12)*
 
 *Cel: Wartość premium — branded QR z logo, gradientami, niestandardowymi kropkami.*
 
