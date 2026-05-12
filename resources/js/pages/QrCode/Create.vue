@@ -12,6 +12,7 @@ import type { GradientConfig } from '@/components/qr/GradientPicker.vue'
 import FramePicker from '@/components/qr/FramePicker.vue'
 import TemplatePicker from '@/components/qr/TemplatePicker.vue'
 import type { QrTemplate } from '@/components/qr/TemplatePicker.vue'
+import SuggestPaletteButton from '@/components/qr/SuggestPaletteButton.vue'
 import UserTemplatePicker from '@/components/qr/UserTemplatePicker.vue'
 import LogoControls from '@/components/qr/LogoControls.vue'
 import LogoUpload from '@/components/qr/LogoUpload.vue'
@@ -298,7 +299,12 @@ const exportOpen = ref(false)
 
                 <!-- Color pickers -->
                 <div class="space-y-2">
-                    <p class="text-sm font-medium">{{ t('qr.colors.label') }}</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-medium">{{ t('qr.colors.label') }}</p>
+                        <SuggestPaletteButton
+                            @apply="(dot, bg) => { dotColor = dot; backgroundColor = bg }"
+                        />
+                    </div>
                     <div class="flex flex-wrap gap-4">
                         <ColorPicker v-model="dotColor" :label="t('qr.colors.dotColor')" />
                         <ColorPicker v-model="backgroundColor" :label="t('qr.colors.bgColor')" />

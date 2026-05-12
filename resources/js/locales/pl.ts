@@ -384,6 +384,11 @@ export default {
             size: 'Rozmiar loga',
             margin: 'Margines loga',
         },
+        ai: {
+            suggest: 'Sugeruj kolory',
+            suggesting: 'Ładowanie…',
+            pickPalette: 'Wybierz paletę:',
+        },
         userTemplates: {
             label: 'Moje szablony',
             save: 'Zapisz styl',

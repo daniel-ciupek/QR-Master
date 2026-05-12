@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\SuggestPaletteController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\Profile\PasskeysController;
 use App\Http\Controllers\Profile\ProfileController;
@@ -58,6 +59,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/{qrCode}/toggle-active', [QrCodeController::class, 'toggleActive'])->name('toggleActive');
         Route::post('/{qrCode}/duplicate', [QrCodeController::class, 'duplicate'])->name('duplicate');
     });
+
+    Route::get('/api/ai/suggest-palette', SuggestPaletteController::class)->name('ai.suggest-palette');
 
     Route::prefix('qr-templates')->name('qr-templates.')->group(function () {
         Route::post('/', [QrUserTemplateController::class, 'store'])->name('store');

@@ -384,6 +384,11 @@ export default {
             size: 'Logo size',
             margin: 'Logo margin',
         },
+        ai: {
+            suggest: 'Suggest colors',
+            suggesting: 'Loading…',
+            pickPalette: 'Pick a palette:',
+        },
         userTemplates: {
             label: 'My templates',
             save: 'Save style',
