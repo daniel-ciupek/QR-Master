@@ -381,6 +381,8 @@ export default {
             remove: 'Remove',
             errorMime: 'Allowed formats: PNG, JPG, SVG, WEBP.',
             errorSize: 'File exceeds 2 MB.',
+            size: 'Logo size',
+            margin: 'Logo margin',
         },
         gradient: {
             label: 'Gradient',

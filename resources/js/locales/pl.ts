@@ -381,6 +381,8 @@ export default {
             remove: 'Usuń',
             errorMime: 'Dozwolone formaty: PNG, JPG, SVG, WEBP.',
             errorSize: 'Plik przekracza 2 MB.',
+            size: 'Rozmiar loga',
+            margin: 'Margines loga',
         },
         gradient: {
             label: 'Gradient',

@@ -9,6 +9,7 @@ import CornerStylePicker from '@/components/qr/CornerStylePicker.vue'
 import DotStylePicker from '@/components/qr/DotStylePicker.vue'
 import GradientPicker from '@/components/qr/GradientPicker.vue'
 import type { GradientConfig } from '@/components/qr/GradientPicker.vue'
+import LogoControls from '@/components/qr/LogoControls.vue'
 import LogoUpload from '@/components/qr/LogoUpload.vue'
 import ExportModal from '@/components/qr/ExportModal.vue'
 import LivePreview from '@/components/qr/LivePreview.vue'
@@ -90,6 +91,8 @@ const cornerDot = ref<CornerDotStyle>('square')
 const dotColor = ref('#000000')
 const backgroundColor = ref('#ffffff')
 const logoDataUrl = ref<string | null>(null)
+const logoSize = ref(0.3)
+const logoMargin = ref(5)
 
 function onLogoUpload(file: File) {
     const reader = new FileReader()
@@ -267,6 +270,13 @@ const exportOpen = ref(false)
                     @remove="onLogoRemove"
                 />
 
+                <!-- Logo size/margin controls (shown only when logo present) -->
+                <LogoControls
+                    v-if="logoDataUrl"
+                    v-model:logo-size="logoSize"
+                    v-model:logo-margin="logoMargin"
+                />
+
                 <!-- ECC selector -->
                 <div class="flex items-center gap-3">
                     <label class="text-sm font-medium shrink-0">{{ t('qr.ecc.label') }}</label>
@@ -309,6 +319,8 @@ const exportOpen = ref(false)
                             :gradient-color-end="gradient.colorEnd"
                             :gradient-rotation="gradient.rotation"
                             :image="logoDataUrl ?? undefined"
+                            :image-size="logoSize"
+                            :logo-margin="logoMargin"
                         />
                     </template>
                     <p v-else class="text-sm text-muted-foreground text-center px-6">

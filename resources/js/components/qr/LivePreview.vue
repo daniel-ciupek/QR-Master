@@ -16,6 +16,8 @@ export interface LivePreviewProps {
     image?: string
     imageSize?: number
     hideBackgroundDots?: boolean
+    // Logo margin (px)
+    logoMargin?: number
     // Gradient
     gradientEnabled?: boolean
     gradientType?: 'linear' | 'radial'
@@ -35,6 +37,7 @@ const props = withDefaults(defineProps<LivePreviewProps>(), {
     image: undefined,
     imageSize: 0.3,
     hideBackgroundDots: true,
+    logoMargin: 5,
     gradientEnabled: false,
     gradientType: 'linear',
     gradientColorStart: '#000000',
@@ -87,7 +90,7 @@ function buildOptions(): Options {
                   imageOptions: {
                       hideBackgroundDots: props.hideBackgroundDots,
                       imageSize: props.imageSize,
-                      margin: 4,
+                      margin: props.logoMargin,
                       crossOrigin: 'anonymous',
                   },
               }
@@ -128,6 +131,7 @@ watch(
         props.image,
         props.imageSize,
         props.hideBackgroundDots,
+        props.logoMargin,
         props.gradientEnabled,
         props.gradientType,
         props.gradientColorStart,
