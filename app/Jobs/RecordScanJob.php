@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Models\QrCode;
+use App\Models\ScanLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Http\Request;
 
 /**
- * Async scan logging — full implementation in Etap 5.
- * Dispatched by PublicRedirectController on every successful redirect.
+ * Async scan logging — dispatched by PublicRedirectController on every redirect.
  *
- * SECURITY: IP is hashed (HMAC-SHA256 + salt) before storage — raw IP never persisted.
+ * SECURITY: raw IP is never persisted — only HMAC-SHA256 hash with app salt.
+ * Geo-IP lookup added in 5.5, UA parsing in 5.6.
  */
 final class RecordScanJob implements ShouldQueue
 {
@@ -31,7 +32,9 @@ final class RecordScanJob implements ShouldQueue
         public readonly string $userAgent,
         public readonly ?string $referer,
         public readonly string $language,
-    ) {}
+    ) {
+        $this->onQueue('scans');
+    }
 
     public static function fromRequest(QrCode $qrCode, Request $request): self
     {
@@ -49,6 +52,14 @@ final class RecordScanJob implements ShouldQueue
 
     public function handle(): void
     {
-        // Full geo-IP + UA parsing implemented in Etap 5.
+        ScanLog::create([
+            'qr_code_id' => $this->qrCodeId,
+            'ip_hash' => $this->ipHash,
+            'referrer' => $this->referer,
+            'language' => $this->language,
+            // country, region, city, lat, lng: populated in 5.5 (geo-IP)
+            // device_type, os, browser: populated in 5.6 (UA parsing)
+            'scanned_at' => now(),
+        ]);
     }
 }
