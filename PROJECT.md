@@ -141,8 +141,8 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 *Cel: Klucz do sprzedaży planów Pro/Business — pełna widoczność efektywności kampanii.*
 
-- [ ] **5.1** Migracja `scan_logs`: `id, qr_id, ip_hash, country, region, city, lat, lng, device_type, os, browser, referrer, language, scanned_at`
-- [ ] **5.2** **Partycjonowanie** tabeli `scan_logs` po miesiącach (PostgreSQL native)
+- [x] **5.1** Migracja `scan_logs`: `id, qr_id, ip_hash, country, region, city, lat, lng, device_type, os, browser, referrer, language, scanned_at`
+- [x] **5.2** **Partycjonowanie** tabeli `scan_logs` po miesiącach (PostgreSQL native)
 - [ ] **5.3** Indeksy na `qr_id`, `scanned_at`, `country` (kompozytowe)
 - [ ] **5.4** `app/Jobs/RecordScanJob.php` — async logowanie skanu (Redis queue, redirect zwraca natychmiast)
 - [ ] **5.5** `stevebauman/location` — lookup IP (z cache 24h)
