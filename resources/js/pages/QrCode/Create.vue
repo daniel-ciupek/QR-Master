@@ -10,6 +10,8 @@ import DotStylePicker from '@/components/qr/DotStylePicker.vue'
 import GradientPicker from '@/components/qr/GradientPicker.vue'
 import type { GradientConfig } from '@/components/qr/GradientPicker.vue'
 import FramePicker from '@/components/qr/FramePicker.vue'
+import TemplatePicker from '@/components/qr/TemplatePicker.vue'
+import type { QrTemplate } from '@/components/qr/TemplatePicker.vue'
 import LogoControls from '@/components/qr/LogoControls.vue'
 import LogoUpload from '@/components/qr/LogoUpload.vue'
 import QrFrame from '@/components/qr/QrFrame.vue'
@@ -94,6 +96,18 @@ const backgroundColor = ref('#ffffff')
 const frameType = ref<FrameType>('none')
 const frameText = ref('')
 const frameColor = ref('#000000')
+
+function applyTemplate(tpl: QrTemplate) {
+    dotStyle.value = tpl.dotStyle
+    dotColor.value = tpl.dotColor
+    backgroundColor.value = tpl.bgColor
+    cornerSquare.value = tpl.cornerSquare
+    cornerDot.value = tpl.cornerDot
+    gradient.value = { ...tpl.gradient }
+    frameType.value = tpl.frameType
+    frameText.value = tpl.frameText
+    frameColor.value = tpl.frameColor
+}
 const logoDataUrl = ref<string | null>(null)
 const logoSize = ref(0.3)
 const logoMargin = ref(5)
@@ -243,6 +257,9 @@ const exportOpen = ref(false)
                             : t('qr.validation.nearLimit', { count: charCount, max: MAX_CHARS })
                     }}
                 </p>
+
+                <!-- Templates -->
+                <TemplatePicker @apply="applyTemplate" />
 
                 <!-- Dot style picker -->
                 <DotStylePicker v-model="dotStyle" />

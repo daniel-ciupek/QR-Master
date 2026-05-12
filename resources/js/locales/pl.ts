@@ -384,6 +384,15 @@ export default {
             size: 'Rozmiar loga',
             margin: 'Margines loga',
         },
+        templates: {
+            label: 'Szablony',
+            classic: 'Classic',
+            modern: 'Modern',
+            vibrant: 'Vibrant',
+            minimal: 'Minimal',
+            restaurant: 'Restaurant',
+            scanMe: 'Skanuj mnie!',
+        },
         frame: {
             label: 'Ramka',
             text: 'Tekst CTA',

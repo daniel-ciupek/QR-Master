@@ -384,6 +384,15 @@ export default {
             size: 'Logo size',
             margin: 'Logo margin',
         },
+        templates: {
+            label: 'Templates',
+            classic: 'Classic',
+            modern: 'Modern',
+            vibrant: 'Vibrant',
+            minimal: 'Minimal',
+            restaurant: 'Restaurant',
+            scanMe: 'Scan me!',
+        },
         frame: {
             label: 'Frame',
             text: 'CTA text',
