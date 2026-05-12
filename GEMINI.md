@@ -83,13 +83,15 @@ Każda zmiana musi przejść te bramki:
 
 **Branche:** `main` (prod, chroniony, fast-forward z `develop` + tag), `develop` (default dla feature'ów), `feat/<nazwa>`, `fix/<nazwa>`, `chore/<nazwa>`.
 
+**Branch roboczy (BEZWZGLĘDNE):** Pracujesz wyłącznie na branchu `gemini`. Wszystkie commity i pushe trafiają na `origin/gemini`. Nigdy nie pushuj bezpośrednio na `develop` ani `main`. Merge do `develop` wykonuje wyłącznie owner repozytorium po code review. Wyjątek: jeśli user wyraźnie poprosi o działanie na innym branchu i jawnie zatwierdzi — dopiero wtedy możesz zmienić branch.
+
 **Commit messages — Conventional Commits:** `<type>(<scope>): <subject>`. Typy: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `perf`, `style`, `ci`, `build`. Format heredoc dla wieloliniowych.
 
 ### ❗ Zgoda usera przed KAŻDYM `git commit` i `git push`
 
 **ZASADA MIKRO-COMMITÓW (BARDZO WAŻNE):** Bezwzględnie nie czekaj na ukończenie pełnego etapu z PROJECT.md. Musisz pytać o zgodę na commit po KAŻDYM pojedynczym podpunkcie (np. po 2.1, po 2.2, po 3.1 itd.). Każda najmniejsza logiczna zmiana musi być osobnym commitem zatwierdzonym przez usera. Zasada ta obowiązuje we wszystkich etapach projektu.
 
-**ODZNACZANIE ZADAŃ (OBOWIĄZKOWE):** Po ukończeniu każdego podpunktu natychmiast zaktualizuj `PROJECT.md` — zmień `- [ ]` na `- [x]` przy wykonanym zadaniu. Rób to przed każdym commitem, tak aby stan checkboxów w repo zawsze odzwierciedlał rzeczywisty postęp.
+**ODZNACZANIE ZADAŃ (OBOWIĄZKOWE):** Po ukończeniu każdego podpunktu natychmiast zaktualizuj `PROJECT.md` — zmień `- [ ]` na `- [x x]` przy wykonanym zadaniu. Rób to przed każdym commitem, tak aby stan checkboxów w repo zawsze odzwierciedlał rzeczywisty postęp.
 
 **ZAKAZ COMMITA I PUSHA BEZ ZIELONYCH TESTÓW (BEZWZGLĘDNE):** Przed każdym `git commit` i `git push` uruchamiamy pełną suitę testów. Jeśli choćby jeden test failuje — STOP, najpierw napraw, dopiero potem commit. Nie ma wyjątków. Kolejność weryfikacji:
 1. `php artisan test --parallel` (Pest) — zero failów
