@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Contracts\GeoLookupInterface;
+use App\Contracts\UserAgentParserInterface;
+use App\Services\GeoLookupService;
+use App\Services\UserAgentParserService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -16,7 +20,8 @@ class AppServiceProvider extends ServiceProvider
     #[\Override]
     public function register(): void
     {
-        //
+        $this->app->bind(GeoLookupInterface::class, GeoLookupService::class);
+        $this->app->bind(UserAgentParserInterface::class, UserAgentParserService::class);
     }
 
     public function boot(): void

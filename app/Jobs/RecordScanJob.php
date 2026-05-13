@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Contracts\GeoLookupInterface;
+use App\Contracts\UserAgentParserInterface;
 use App\Models\QrCode;
 use App\Models\ScanLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -53,9 +54,10 @@ final class RecordScanJob implements ShouldQueue
         );
     }
 
-    public function handle(GeoLookupInterface $geo): void
+    public function handle(GeoLookupInterface $geo, UserAgentParserInterface $uaParser): void
     {
         $geoData = $geo->lookup($this->rawIp);
+        $uaData = $uaParser->parse($this->userAgent);
 
         ScanLog::create([
             'qr_code_id' => $this->qrCodeId,
@@ -67,7 +69,9 @@ final class RecordScanJob implements ShouldQueue
             'city' => $geoData['city'] ?? null,
             'lat' => $geoData['lat'] ?? null,
             'lng' => $geoData['lng'] ?? null,
-            // device_type, os, browser: populated in 5.6 (UA parsing)
+            'device_type' => $uaData['device_type'],
+            'os' => $uaData['os'],
+            'browser' => $uaData['browser'],
             'scanned_at' => now(),
         ]);
     }

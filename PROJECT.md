@@ -146,7 +146,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **5.3** Indeksy na `qr_id`, `scanned_at`, `country` (kompozytowe)
 - [x] **5.4** `app/Jobs/RecordScanJob.php` — async logowanie skanu (Redis queue, redirect zwraca natychmiast)
 - [x] **5.5** `stevebauman/location` — lookup IP (z cache 24h)
-- [ ] **5.6** `whichbrowser/parser` lub `jenssegers/agent` — User-Agent parsing
+- [x] **5.6** `whichbrowser/parser` lub `jenssegers/agent` — User-Agent parsing
 - [ ] **5.7** **Anonymizacja IP** — IP nie jest zapisywany w surowej formie, tylko `ip_hash` (Argon2id z salt) — pozwala na unikalne unique-scans bez retencji PII
 - [ ] **5.8** Cron `php artisan privacy:purge-old-scans` — usuwa precyzyjne dane geolokalizacji po 90 dniach
 - [ ] **5.9** Widok „Szczegóły kodu": Bento grid layout w stylu Linear/Vercel
