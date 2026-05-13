@@ -16,7 +16,7 @@ function makeScanLog(array $overrides = []): ScanLog
         'user_id' => User::factory()->create()->id,
         'type' => QrCodeType::Url,
         'title' => 'Purge Test',
-        'short_hash' => 'prg'.uniqid(),
+        'short_hash' => substr(uniqid(), -9),
         'destination_url' => 'https://example.com',
         'is_active' => true,
     ]);
