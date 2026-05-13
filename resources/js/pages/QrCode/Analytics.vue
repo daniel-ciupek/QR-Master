@@ -60,6 +60,12 @@ interface ScanRow {
     language: string | null
 }
 
+interface HourlyRow {
+    day_of_week: number
+    hour: number
+    count: number
+}
+
 const props = defineProps<{
     qrCode: QrCodeProp
     stats: Stats
@@ -68,6 +74,7 @@ const props = defineProps<{
     topBrowsers: BrowserRow[]
     dailyScans: DailyRow[]
     recentScans: ScanRow[]
+    hourlyHeatmap: HourlyRow[]
 }>()
 
 const isDark = usePreferredDark()
@@ -160,6 +167,52 @@ const browserDonutOptions = computed(() => ({
     legend: { position: 'bottom' as const, fontSize: '12px' },
     series: props.topBrowsers.map((r) => r.count),
     plotOptions: { pie: { donut: { size: '55%' } } },
+}))
+
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const HOURS = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, '0')}:00`)
+
+// Transform flat rows into ApexCharts heatmap series (7 days × 24 hours)
+const heatmapSeries = computed(() => {
+    const grid: Record<number, Record<number, number>> = {}
+    for (const row of props.hourlyHeatmap) {
+        if (!grid[row.day_of_week]) grid[row.day_of_week] = {}
+        ;(grid[row.day_of_week] as Record<number, number>)[row.hour] = row.count
+    }
+    return DAY_NAMES.map((name, day) => ({
+        name,
+        data: HOURS.map((hour, h) => ({ x: hour, y: grid[day]?.[h] ?? 0 })),
+    }))
+})
+
+const heatmapOptions = computed(() => ({
+    chart: {
+        type: 'heatmap' as const,
+        height: 220,
+        toolbar: { show: false },
+        background: 'transparent',
+        animations: { enabled: false },
+    },
+    theme: { mode: themeMode.value },
+    dataLabels: { enabled: false },
+    stroke: { width: 1 },
+    plotOptions: {
+        heatmap: {
+            shadeIntensity: 0.6,
+            radius: 2,
+            colorScale: {
+                ranges: [
+                    { from: 0, to: 0, color: isDark.value ? '#1f2937' : '#f3f4f6', name: 'None' },
+                    { from: 1, to: 5, color: '#93c5fd', name: 'Low' },
+                    { from: 6, to: 20, color: '#3b82f6', name: 'Medium' },
+                    { from: 21, to: 9999, color: '#1d4ed8', name: 'High' },
+                ],
+            },
+        },
+    },
+    xaxis: { labels: { style: { fontSize: '10px' }, rotate: -45 } },
+    yaxis: { labels: { style: { fontSize: '11px' } } },
+    tooltip: { y: { formatter: (v: number) => `${v} scans` } },
 }))
 
 const deviceIcon = (type: string | null) => {
@@ -319,6 +372,21 @@ const publicUrl = computed(() => `/q/${props.qrCode.short_hash}`)
                 </CardContent>
             </Card>
         </div>
+
+        <!-- Hourly heatmap -->
+        <Card>
+            <CardHeader>
+                <CardTitle>Scan Activity by Hour &amp; Day</CardTitle>
+            </CardHeader>
+            <CardContent class="pt-0">
+                <VueApexCharts
+                    type="heatmap"
+                    height="220"
+                    :options="heatmapOptions"
+                    :series="heatmapSeries"
+                />
+            </CardContent>
+        </Card>
 
         <!-- Recent scans -->
         <Card>

@@ -63,6 +63,20 @@ final class QrCodeAnalyticsController extends Controller
             ->limit(10)
             ->get(['scanned_at', 'country', 'city', 'device_type', 'os', 'browser', 'referrer', 'language']);
 
+        $isPgsql = DB::getDriverName() === 'pgsql';
+        $hourlyHeatmap = (clone $base)
+            ->groupBy('day_of_week', 'hour')
+            ->select(
+                DB::raw($isPgsql
+                    ? 'EXTRACT(DOW FROM scanned_at)::int AS day_of_week'
+                    : "CAST(strftime('%w', scanned_at) AS INTEGER) AS day_of_week"),
+                DB::raw($isPgsql
+                    ? 'EXTRACT(HOUR FROM scanned_at)::int AS hour'
+                    : "CAST(strftime('%H', scanned_at) AS INTEGER) AS hour"),
+                DB::raw('count(*) AS count'),
+            )
+            ->get();
+
         return Inertia::render('QrCode/Analytics', [
             'qrCode' => $qrCode->only('id', 'title', 'short_hash', 'type', 'destination_url', 'is_active', 'created_at'),
             'stats' => $stats,
@@ -71,6 +85,7 @@ final class QrCodeAnalyticsController extends Controller
             'topBrowsers' => $topBrowsers,
             'dailyScans' => $dailyScans,
             'recentScans' => $recentScans,
+            'hourlyHeatmap' => $hourlyHeatmap,
         ]);
     }
 }
