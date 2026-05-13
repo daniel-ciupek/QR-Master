@@ -1,3 +1,5 @@
+import type Echo from 'laravel-echo'
+import type Pusher from 'pusher-js'
 import type { PageProps as InertiaPageProps } from '@inertiajs/core'
 
 export interface AuthUser {
@@ -44,5 +46,7 @@ interface TurnstileInstance {
 declare global {
     interface Window {
         turnstile?: TurnstileInstance
+        Pusher: typeof Pusher
+        Echo: Echo
     }
 }

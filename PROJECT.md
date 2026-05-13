@@ -152,7 +152,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **5.9** Widok „Szczegóły kodu": Bento grid layout w stylu Linear/Vercel
 - [x] **5.10** Wykresy: ApexCharts (timeline skanów, mapa świata, breakdown urządzenia/OS/browser)
 - [x] **5.11** **Heatmapa godzinowa** — kiedy ludzie skanują (ważne dla offline reklamy)
-- [ ] **5.12** **Real-time counter** (Laravel Reverb) — live update licznika skanów na dashboardzie
+- [x] **5.12** **Real-time counter** (Laravel Reverb) — live update licznika skanów na dashboardzie
 - [ ] **5.13** Eksport raportu PDF — branded summary dla klienta końcowego
 - [ ] **5.14** **Comparing** — porównaj 2-5 kodów obok siebie
 

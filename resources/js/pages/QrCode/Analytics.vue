@@ -2,7 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3'
 import { usePreferredDark } from '@vueuse/core'
 import { Activity, ArrowLeft, Monitor, Smartphone, Tablet } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -225,6 +225,19 @@ const formatDateTime = (iso: string) =>
     new Date(iso).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 
 const publicUrl = computed(() => `/q/${props.qrCode.short_hash}`)
+
+// Real-time counter via Reverb
+const liveTotal = ref(props.stats.total)
+
+onMounted(() => {
+    window.Echo.private(`qr-analytics.${props.qrCode.id}`).listen('.scan.recorded', () => {
+        liveTotal.value++
+    })
+})
+
+onUnmounted(() => {
+    window.Echo.leave(`qr-analytics.${props.qrCode.id}`)
+})
 </script>
 
 <template>
@@ -256,10 +269,16 @@ const publicUrl = computed(() => `/q/${props.qrCode.short_hash}`)
         <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
             <Card>
                 <CardHeader class="pb-2">
-                    <CardTitle>Total Scans</CardTitle>
+                    <CardTitle class="flex items-center gap-1.5">
+                        Total Scans
+                        <span class="relative flex size-2">
+                            <span class="bg-primary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" />
+                            <span class="bg-primary relative inline-flex size-2 rounded-full" />
+                        </span>
+                    </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p class="text-3xl font-bold">{{ stats.total.toLocaleString() }}</p>
+                    <p class="text-3xl font-bold">{{ liveTotal.toLocaleString() }}</p>
                 </CardContent>
             </Card>
             <Card>
