@@ -9,6 +9,7 @@ use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Profile\SecurityController;
 use App\Http\Controllers\Profile\SessionsController;
 use App\Http\Controllers\PublicRedirectController;
+use App\Http\Controllers\QrCode\QrCodeAnalyticsController;
 use App\Http\Controllers\QrCode\QrCodeController;
 use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
@@ -53,6 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/bulk/pause', [QrCodeController::class, 'bulkPause'])->name('bulk.pause');
         Route::post('/bulk/activate', [QrCodeController::class, 'bulkActivate'])->name('bulk.activate');
         Route::post('/bulk/tag', [QrCodeController::class, 'bulkTag'])->name('bulk.tag');
+        Route::get('/{qrCode}/analytics', QrCodeAnalyticsController::class)->name('analytics');
         Route::get('/{qrCode}/edit', [QrCodeController::class, 'edit'])->name('edit');
         Route::patch('/{qrCode}', [QrCodeController::class, 'update'])->name('update');
         Route::delete('/{qrCode}', [QrCodeController::class, 'destroy'])->name('destroy');

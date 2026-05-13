@@ -9,6 +9,11 @@ use App\Models\User;
 
 final class QrCodePolicy
 {
+    public function viewAnalytics(User $user, QrCode $qrCode): bool
+    {
+        return $user->id === $qrCode->user_id;
+    }
+
     public function update(User $user, QrCode $qrCode): bool
     {
         return $user->id === $qrCode->user_id;

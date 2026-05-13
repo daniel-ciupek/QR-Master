@@ -149,7 +149,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **5.6** `whichbrowser/parser` lub `jenssegers/agent` — User-Agent parsing
 - [x] **5.7** **Anonymizacja IP** — IP nie jest zapisywany w surowej formie, tylko `ip_hash` (Argon2id z salt) — pozwala na unikalne unique-scans bez retencji PII
 - [x] **5.8** Cron `php artisan privacy:purge-old-scans` — usuwa precyzyjne dane geolokalizacji po 90 dniach
-- [ ] **5.9** Widok „Szczegóły kodu": Bento grid layout w stylu Linear/Vercel
+- [x] **5.9** Widok „Szczegóły kodu": Bento grid layout w stylu Linear/Vercel
 - [ ] **5.10** Wykresy: ApexCharts (timeline skanów, mapa świata, breakdown urządzenia/OS/browser)
 - [ ] **5.11** **Heatmapa godzinowa** — kiedy ludzie skanują (ważne dla offline reklamy)
 - [ ] **5.12** **Real-time counter** (Laravel Reverb) — live update licznika skanów na dashboardzie
