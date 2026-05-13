@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
-import { Activity, ArrowLeft, BarChart3, Globe, Monitor, Smartphone, Tablet, TrendingUp } from 'lucide-vue-next'
+import { usePreferredDark } from '@vueuse/core'
+import { Activity, ArrowLeft, Monitor, Smartphone, Tablet } from 'lucide-vue-next'
 import { computed } from 'vue'
+import VueApexCharts from 'vue3-apexcharts'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,7 +11,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
 
-interface QrCode {
+interface QrCodeProp {
     id: number
     title: string
     short_hash: string
@@ -59,7 +61,7 @@ interface ScanRow {
 }
 
 const props = defineProps<{
-    qrCode: QrCode
+    qrCode: QrCodeProp
     stats: Stats
     topCountries: CountRow[]
     deviceBreakdown: DeviceRow[]
@@ -68,10 +70,97 @@ const props = defineProps<{
     recentScans: ScanRow[]
 }>()
 
-const maxCountry = computed(() => Math.max(1, ...props.topCountries.map((r) => r.count)))
-const maxDevice = computed(() => Math.max(1, ...props.deviceBreakdown.map((r) => r.count)))
-const maxBrowser = computed(() => Math.max(1, ...props.topBrowsers.map((r) => r.count)))
-const maxDaily = computed(() => Math.max(1, ...props.dailyScans.map((r) => r.count)))
+const isDark = usePreferredDark()
+const themeMode = computed((): 'dark' | 'light' => (isDark.value ? 'dark' : 'light'))
+
+// Fill missing days in last 30 days
+const filledDailyScans = computed(() => {
+    const map = new Map(props.dailyScans.map((d) => [d.date, d.count]))
+    const result: { x: number; y: number }[] = []
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date()
+        d.setDate(d.getDate() - i)
+        const key = d.toISOString().slice(0, 10)
+        result.push({ x: d.getTime(), y: map.get(key) ?? 0 })
+    }
+    return result
+})
+
+const timelineOptions = computed(() => ({
+    chart: {
+        type: 'area' as const,
+        height: 160,
+        toolbar: { show: false },
+        background: 'transparent',
+        sparkline: { enabled: false },
+        animations: { enabled: true, easing: 'easeinout', speed: 400 },
+    },
+    theme: { mode: themeMode.value },
+    stroke: { curve: 'smooth' as const, width: 2 },
+    fill: {
+        type: 'gradient',
+        gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.02, stops: [0, 100] },
+    },
+    dataLabels: { enabled: false },
+    xaxis: {
+        type: 'datetime' as const,
+        labels: { format: 'dd MMM', style: { fontSize: '11px' } },
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+    },
+    yaxis: { labels: { style: { fontSize: '11px' } }, min: 0 },
+    grid: { borderColor: isDark.value ? '#333' : '#e5e7eb', strokeDashArray: 4 },
+    tooltip: { x: { format: 'dd MMM yyyy' } },
+    series: [{ name: 'Scans', data: filledDailyScans.value }],
+}))
+
+const treemapOptions = computed(() => ({
+    chart: {
+        type: 'treemap' as const,
+        height: 220,
+        toolbar: { show: false },
+        background: 'transparent',
+    },
+    theme: { mode: themeMode.value },
+    dataLabels: { enabled: true, style: { fontSize: '12px' } },
+    plotOptions: { treemap: { distributed: true, enableShades: false } },
+    series: [
+        {
+            data: props.topCountries.length
+                ? props.topCountries.map((r) => ({ x: r.country, y: r.count }))
+                : [{ x: 'No data', y: 1 }],
+        },
+    ],
+    tooltip: { y: { formatter: (v: number) => `${v} scans` } },
+}))
+
+const deviceDonutOptions = computed(() => ({
+    chart: {
+        type: 'donut' as const,
+        height: 200,
+        background: 'transparent',
+    },
+    theme: { mode: themeMode.value },
+    labels: props.deviceBreakdown.map((r) => r.type),
+    dataLabels: { enabled: true },
+    legend: { position: 'bottom' as const, fontSize: '12px' },
+    series: props.deviceBreakdown.map((r) => r.count),
+    plotOptions: { pie: { donut: { size: '55%' } } },
+}))
+
+const browserDonutOptions = computed(() => ({
+    chart: {
+        type: 'donut' as const,
+        height: 200,
+        background: 'transparent',
+    },
+    theme: { mode: themeMode.value },
+    labels: props.topBrowsers.map((r) => r.browser),
+    dataLabels: { enabled: true },
+    legend: { position: 'bottom' as const, fontSize: '12px' },
+    series: props.topBrowsers.map((r) => r.count),
+    plotOptions: { pie: { donut: { size: '55%' } } },
+}))
 
 const deviceIcon = (type: string | null) => {
     if (type === 'mobile') return Smartphone
@@ -120,7 +209,6 @@ const publicUrl = computed(() => `/q/${props.qrCode.short_hash}`)
                     <p class="text-3xl font-bold">{{ stats.total.toLocaleString() }}</p>
                 </CardContent>
             </Card>
-
             <Card>
                 <CardHeader class="pb-2">
                     <CardTitle>Unique</CardTitle>
@@ -130,7 +218,6 @@ const publicUrl = computed(() => `/q/${props.qrCode.short_hash}`)
                     <p class="text-muted-foreground mt-1 text-xs">distinct IPs</p>
                 </CardContent>
             </Card>
-
             <Card>
                 <CardHeader class="pb-2">
                     <CardTitle>Today</CardTitle>
@@ -139,7 +226,6 @@ const publicUrl = computed(() => `/q/${props.qrCode.short_hash}`)
                     <p class="text-3xl font-bold">{{ stats.today.toLocaleString() }}</p>
                 </CardContent>
             </Card>
-
             <Card>
                 <CardHeader class="pb-2">
                     <CardTitle>This Month</CardTitle>
@@ -150,126 +236,86 @@ const publicUrl = computed(() => `/q/${props.qrCode.short_hash}`)
             </Card>
         </div>
 
-        <!-- Daily sparkline + top countries -->
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <Card class="md:col-span-2">
+        <!-- Timeline chart -->
+        <Card>
+            <CardHeader>
+                <CardTitle>Scans — Last 30 Days</CardTitle>
+            </CardHeader>
+            <CardContent class="pt-0">
+                <VueApexCharts
+                    type="area"
+                    height="160"
+                    :options="timelineOptions"
+                    :series="timelineOptions.series"
+                />
+            </CardContent>
+        </Card>
+
+        <!-- Country treemap + device donut -->
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Card>
                 <CardHeader>
-                    <CardTitle class="flex items-center gap-2">
-                        <TrendingUp class="size-4" />
-                        Last 30 Days
-                    </CardTitle>
+                    <CardTitle>Country Distribution</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <div class="flex h-28 items-end gap-0.5">
-                        <template v-if="dailyScans.length">
-                            <div
-                                v-for="day in dailyScans"
-                                :key="day.date"
-                                :title="`${day.date}: ${day.count}`"
-                                class="bg-primary/70 hover:bg-primary min-w-0 flex-1 rounded-t transition-colors"
-                                :style="{ height: `${Math.max(4, (day.count / maxDaily) * 100)}%` }"
-                            />
-                        </template>
-                        <div v-else class="text-muted-foreground flex w-full items-center justify-center text-sm">
-                            No scans yet
-                        </div>
-                    </div>
+                <CardContent class="pt-0">
+                    <VueApexCharts
+                        type="treemap"
+                        height="220"
+                        :options="treemapOptions"
+                        :series="treemapOptions.series"
+                    />
                 </CardContent>
             </Card>
 
             <Card>
                 <CardHeader>
-                    <CardTitle class="flex items-center gap-2">
-                        <Globe class="size-4" />
-                        Top Countries
-                    </CardTitle>
+                    <CardTitle>Device Types</CardTitle>
                 </CardHeader>
-                <CardContent class="space-y-3">
-                    <template v-if="topCountries.length">
-                        <div
-                            v-for="row in topCountries"
-                            :key="row.country"
-                            class="space-y-1"
-                        >
-                            <div class="flex justify-between text-sm">
-                                <span class="font-medium">{{ row.country }}</span>
-                                <span class="text-muted-foreground">{{ row.count }}</span>
-                            </div>
-                            <div class="bg-muted h-1.5 w-full rounded-full">
-                                <div
-                                    class="bg-primary h-1.5 rounded-full"
-                                    :style="{ width: `${(row.count / maxCountry) * 100}%` }"
-                                />
-                            </div>
-                        </div>
+                <CardContent class="pt-0">
+                    <template v-if="deviceBreakdown.length">
+                        <VueApexCharts
+                            type="donut"
+                            height="200"
+                            :options="deviceDonutOptions"
+                            :series="deviceDonutOptions.series"
+                        />
                     </template>
-                    <p v-else class="text-muted-foreground text-sm">No geo data yet</p>
+                    <div v-else class="text-muted-foreground flex h-48 items-center justify-center text-sm">
+                        No device data yet
+                    </div>
                 </CardContent>
             </Card>
         </div>
 
-        <!-- Device + browser breakdown -->
+        <!-- Browser donut -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Card>
                 <CardHeader>
-                    <CardTitle class="flex items-center gap-2">
-                        <Monitor class="size-4" />
-                        Device Types
-                    </CardTitle>
+                    <CardTitle>Top Browsers</CardTitle>
                 </CardHeader>
-                <CardContent class="space-y-3">
-                    <template v-if="deviceBreakdown.length">
-                        <div
-                            v-for="row in deviceBreakdown"
-                            :key="row.type"
-                            class="space-y-1"
-                        >
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="flex items-center gap-1.5 font-medium capitalize">
-                                    <component :is="deviceIcon(row.type)" class="size-3.5" />
-                                    {{ row.type }}
-                                </span>
-                                <span class="text-muted-foreground">{{ row.count }}</span>
-                            </div>
-                            <div class="bg-muted h-1.5 w-full rounded-full">
-                                <div
-                                    class="bg-primary h-1.5 rounded-full"
-                                    :style="{ width: `${(row.count / maxDevice) * 100}%` }"
-                                />
-                            </div>
-                        </div>
+                <CardContent class="pt-0">
+                    <template v-if="topBrowsers.length">
+                        <VueApexCharts
+                            type="donut"
+                            height="200"
+                            :options="browserDonutOptions"
+                            :series="browserDonutOptions.series"
+                        />
                     </template>
-                    <p v-else class="text-muted-foreground text-sm">No device data yet</p>
+                    <div v-else class="text-muted-foreground flex h-48 items-center justify-center text-sm">
+                        No browser data yet
+                    </div>
                 </CardContent>
             </Card>
 
-            <Card>
+            <!-- This week stat card -->
+            <Card class="flex flex-col justify-between">
                 <CardHeader>
-                    <CardTitle class="flex items-center gap-2">
-                        <BarChart3 class="size-4" />
-                        Top Browsers
-                    </CardTitle>
+                    <CardTitle>This Week</CardTitle>
                 </CardHeader>
-                <CardContent class="space-y-3">
-                    <template v-if="topBrowsers.length">
-                        <div
-                            v-for="row in topBrowsers"
-                            :key="row.browser"
-                            class="space-y-1"
-                        >
-                            <div class="flex justify-between text-sm">
-                                <span class="font-medium">{{ row.browser }}</span>
-                                <span class="text-muted-foreground">{{ row.count }}</span>
-                            </div>
-                            <div class="bg-muted h-1.5 w-full rounded-full">
-                                <div
-                                    class="bg-primary h-1.5 rounded-full"
-                                    :style="{ width: `${(row.count / maxBrowser) * 100}%` }"
-                                />
-                            </div>
-                        </div>
-                    </template>
-                    <p v-else class="text-muted-foreground text-sm">No browser data yet</p>
+                <CardContent>
+                    <p class="text-5xl font-bold">{{ stats.this_week.toLocaleString() }}</p>
+                    <p class="text-muted-foreground mt-2 text-sm">scans in the last 7 days</p>
                 </CardContent>
             </Card>
         </div>
