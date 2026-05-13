@@ -16,3 +16,9 @@ Schedule::command('model:prune', ['--model' => [QrCode::class]])
     ->daily()
     ->withoutOverlapping()
     ->runInBackground();
+
+// RODO: nullify precise geo data in scan_logs older than 90 days
+Schedule::command('privacy:purge-old-scans')
+    ->dailyAt('03:00')
+    ->withoutOverlapping()
+    ->runInBackground();
