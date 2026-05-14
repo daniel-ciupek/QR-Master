@@ -7,6 +7,7 @@ namespace App\Http\Controllers\QrCode;
 use App\Actions\QrCode\BulkAttachTagAction;
 use App\Actions\QrCode\BulkDeleteQrCodesAction;
 use App\Actions\QrCode\BulkToggleActiveQrCodesAction;
+use App\Actions\QrCode\CreateQrCodeAction;
 use App\Actions\QrCode\DeleteQrCodeAction;
 use App\Actions\QrCode\DuplicateQrCodeAction;
 use App\Actions\QrCode\SyncQrCodeTagsAction;
@@ -14,15 +15,18 @@ use App\Actions\QrCode\ToggleActiveQrCodeAction;
 use App\Actions\QrCode\UpdateQrCodeAction;
 use App\Actions\QrCode\UploadQrLogoAction;
 use App\Data\QrCodeData;
+use App\Enums\QrCodeType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QrCode\BulkQrRequest;
 use App\Http\Requests\QrCode\ExportQrRequest;
+use App\Http\Requests\QrCode\StoreQrCodeRequest;
 use App\Http\Requests\QrCode\UpdateQrCodeRequest;
 use App\Http\Requests\QrCode\UploadQrLogoRequest;
 use App\Models\QrCode;
 use App\Models\QrUserTemplate;
 use App\Models\Tag;
 use App\Models\User;
+use App\Services\QrContent\QrContentBuilderService;
 use App\Services\QrRendering\QrRenderer;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -102,6 +106,81 @@ final class QrCodeController extends Controller
             ->all();
 
         return Inertia::render('QrCode/Create', ['userTemplates' => $userTemplates]);
+    }
+
+    public function store(
+        StoreQrCodeRequest $request,
+        CreateQrCodeAction $action,
+        QrContentBuilderService $builder,
+    ): RedirectResponse {
+        /** @var User $user */
+        $user = $request->user();
+        $validated = $request->validated();
+        $type = QrCodeType::from($validated['type']);
+
+        $destinationUrl = $builder->build($type, $validated);
+
+        $settings = array_merge(
+            $validated['settings'] ?? [],
+            $this->extractTypeSettings($type, $validated),
+        );
+
+        $data = new QrCodeData(
+            title: $validated['title'],
+            type: $type,
+            destination_url: $destinationUrl !== '' ? $destinationUrl : null,
+            settings: $settings,
+            is_active: (bool) ($validated['is_active'] ?? true),
+            expires_at: isset($validated['expires_at']) ? Carbon::parse($validated['expires_at']) : null,
+        );
+
+        $qrCode = $action->handle($user, $data);
+
+        // Store encrypted PII fields
+        $qrCode->vcard_phone = $validated['vcard_phone'] ?? null;
+        $qrCode->vcard_email = $validated['vcard_email'] ?? null;
+        $qrCode->wifi_password = $validated['wifi_password'] ?? null;
+        $qrCode->save();
+
+        return redirect()->route('qr.index')->with('success', 'Kod QR został utworzony.');
+    }
+
+    /**
+     * Extract non-sensitive type-specific fields for the settings JSON.
+     *
+     * @param  array<string, mixed>  $validated
+     * @return array<string, mixed>
+     */
+    private function extractTypeSettings(QrCodeType $type, array $validated): array
+    {
+        return match ($type) {
+            QrCodeType::VCard => array_filter([
+                'vcard_first_name' => $validated['vcard_first_name'] ?? null,
+                'vcard_last_name' => $validated['vcard_last_name'] ?? null,
+                'vcard_company' => $validated['vcard_company'] ?? null,
+                'vcard_job_title' => $validated['vcard_job_title'] ?? null,
+                'vcard_website' => $validated['vcard_website'] ?? null,
+                'vcard_address' => $validated['vcard_address'] ?? null,
+                'vcard_photo_url' => $validated['vcard_photo_url'] ?? null,
+            ], fn ($v) => $v !== null && $v !== ''),
+            QrCodeType::Email => array_filter([
+                'email_address' => $validated['email_address'] ?? null,
+                'email_subject' => $validated['email_subject'] ?? null,
+                'email_body' => $validated['email_body'] ?? null,
+            ], fn ($v) => $v !== null && $v !== ''),
+            QrCodeType::Sms => array_filter([
+                'sms_number' => $validated['sms_number'] ?? null,
+                'sms_message' => $validated['sms_message'] ?? null,
+            ], fn ($v) => $v !== null && $v !== ''),
+            QrCodeType::Phone => array_filter([
+                'phone_number' => $validated['phone_number'] ?? null,
+            ], fn ($v) => $v !== null && $v !== ''),
+            QrCodeType::Geo => array_filter([
+                'geo_lat' => $validated['geo_lat'] ?? null,
+                'geo_lng' => $validated['geo_lng'] ?? null,
+            ], fn ($v) => $v !== null && $v !== ''),
+            default => [],
+        };
     }
 
     public function edit(Request $request, QrCode $qrCode): Response

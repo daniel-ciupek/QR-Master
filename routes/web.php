@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [QrCodeController::class, 'index'])->name('index');
         Route::get('/compare', QrCodeCompareController::class)->name('compare');
         Route::get('/create', [QrCodeController::class, 'create'])->name('create');
+        Route::post('/', [QrCodeController::class, 'store'])->name('store');
         Route::post('/export', [QrCodeController::class, 'export'])->name('export');
         Route::post('/{qrCode}/logo', [QrCodeController::class, 'uploadLogo'])->name('logo.upload');
         Route::delete('/{qrCode}/logo', [QrCodeController::class, 'deleteLogo'])->name('logo.delete');

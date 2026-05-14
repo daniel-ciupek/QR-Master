@@ -53,6 +53,10 @@ class QrCode extends Model implements HasMedia
             'settings' => 'array',
             'is_active' => 'boolean',
             'expires_at' => 'datetime',
+            // PII — encrypted at rest
+            'vcard_phone' => 'encrypted',
+            'vcard_email' => 'encrypted',
+            'wifi_password' => 'encrypted',
         ];
     }
 

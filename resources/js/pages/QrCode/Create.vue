@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3'
+import { Head, router } from '@inertiajs/vue3'
 import type { ErrorCorrectionLevel } from 'qr-code-styling'
 import { computed, ref } from 'vue'
 import type { CornerDotStyle, CornerSquareStyle, DotStyle, FrameType } from '@/types/qr-visual'
@@ -37,7 +37,7 @@ const MAX_CHARS = 900
 
 const ALLOWED_URL_SCHEMES = ['https://', 'http://']
 
-type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms'
+type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard'
 type EccLevel = ErrorCorrectionLevel
 
 const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
@@ -53,6 +53,71 @@ const emailBody = ref('')
 const phone = ref('')
 const smsNumber = ref('')
 const smsMessage = ref('')
+
+// vCard fields
+const vcardFirstName = ref('')
+const vcardLastName = ref('')
+const vcardCompany = ref('')
+const vcardJobTitle = ref('')
+const vcardPhone = ref('')
+const vcardEmail = ref('')
+const vcardWebsite = ref('')
+const vcardAddress = ref('')
+
+// Form meta
+const qrTitle = ref('')
+const isSaving = ref(false)
+
+// Build vCard string client-side for live preview
+function buildVCardPreview(): string {
+    const fn = `${vcardFirstName.value.trim()} ${vcardLastName.value.trim()}`.trim()
+    const lines = ['BEGIN:VCARD', 'VERSION:4.0']
+    if (fn) { lines.push(`FN:${fn}`); lines.push(`N:${vcardLastName.value.trim()};${vcardFirstName.value.trim()};;;`) }
+    if (vcardCompany.value.trim()) lines.push(`ORG:${vcardCompany.value.trim()}`)
+    if (vcardJobTitle.value.trim()) lines.push(`TITLE:${vcardJobTitle.value.trim()}`)
+    if (vcardPhone.value.trim()) lines.push(`TEL;TYPE=WORK:${vcardPhone.value.trim()}`)
+    if (vcardEmail.value.trim()) lines.push(`EMAIL;TYPE=WORK:${vcardEmail.value.trim()}`)
+    if (vcardWebsite.value.trim()) lines.push(`URL:${vcardWebsite.value.trim()}`)
+    if (vcardAddress.value.trim()) lines.push(`ADR;TYPE=WORK:;;${vcardAddress.value.trim()};;;;`)
+    lines.push('END:VCARD')
+    return lines.join('\r\n')
+}
+
+function saveQrCode() {
+    if (!qrTitle.value.trim()) return
+    isSaving.value = true
+    router.post('/qr', {
+        title: qrTitle.value.trim(),
+        type: activeTab.value,
+        is_active: true,
+        // URL
+        destination_url: activeTab.value === 'url' ? url.value.trim() : undefined,
+        // Text
+        text_content: activeTab.value === 'text' ? text.value.trim() : undefined,
+        // Email
+        email_address: activeTab.value === 'email' ? emailAddress.value.trim() : undefined,
+        email_subject: activeTab.value === 'email' ? emailSubject.value.trim() : undefined,
+        email_body: activeTab.value === 'email' ? emailBody.value.trim() : undefined,
+        // Phone
+        phone_number: activeTab.value === 'phone' ? phone.value.trim() : undefined,
+        // SMS
+        sms_number: activeTab.value === 'sms' ? smsNumber.value.trim() : undefined,
+        sms_message: activeTab.value === 'sms' ? smsMessage.value.trim() : undefined,
+        // vCard
+        vcard_first_name: activeTab.value === 'vcard' ? vcardFirstName.value.trim() : undefined,
+        vcard_last_name: activeTab.value === 'vcard' ? vcardLastName.value.trim() : undefined,
+        vcard_company: activeTab.value === 'vcard' ? vcardCompany.value.trim() : undefined,
+        vcard_job_title: activeTab.value === 'vcard' ? vcardJobTitle.value.trim() : undefined,
+        vcard_phone: activeTab.value === 'vcard' ? vcardPhone.value.trim() : undefined,
+        vcard_email: activeTab.value === 'vcard' ? vcardEmail.value.trim() : undefined,
+        vcard_website: activeTab.value === 'vcard' ? vcardWebsite.value.trim() : undefined,
+        vcard_address: activeTab.value === 'vcard' ? vcardAddress.value.trim() : undefined,
+        // Visual settings
+        settings: currentStyle.value,
+    }, {
+        onFinish: () => { isSaving.value = false },
+    })
+}
 
 const qrData = computed<string>(() => {
     switch (activeTab.value) {
@@ -76,6 +141,8 @@ const qrData = computed<string>(() => {
             if (!num) return ''
             return smsMessage.value.trim() ? `smsto:${num}:${smsMessage.value.trim()}` : `smsto:${num}`
         }
+        case 'vcard':
+            return buildVCardPreview()
         default:
             return ''
     }
@@ -166,13 +233,24 @@ const exportOpen = ref(false)
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
             <!-- Form -->
             <div class="lg:col-span-3 space-y-5">
+                <!-- QR Code title (required to save) -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium">{{ t('qr.create.fields.title') }}</label>
+                    <Input
+                        v-model="qrTitle"
+                        :placeholder="t('qr.create.fields.titlePlaceholder')"
+                        autocomplete="off"
+                    />
+                </div>
+
                 <Tabs v-model="activeTab" class="w-full">
-                    <TabsList class="w-full">
+                    <TabsList class="w-full overflow-x-auto">
                         <TabsTrigger value="url" class="flex-1">{{ t('qr.tabs.url') }}</TabsTrigger>
                         <TabsTrigger value="text" class="flex-1">{{ t('qr.tabs.text') }}</TabsTrigger>
                         <TabsTrigger value="email" class="flex-1">{{ t('qr.tabs.email') }}</TabsTrigger>
                         <TabsTrigger value="phone" class="flex-1">{{ t('qr.tabs.phone') }}</TabsTrigger>
                         <TabsTrigger value="sms" class="flex-1">{{ t('qr.tabs.sms') }}</TabsTrigger>
+                        <TabsTrigger value="vcard" class="flex-1">{{ t('qr.tabs.vcard') }}</TabsTrigger>
                     </TabsList>
 
                     <!-- URL -->
@@ -261,7 +339,62 @@ const exportOpen = ref(false)
                             />
                         </div>
                     </TabsContent>
+
+                    <!-- vCard -->
+                    <TabsContent value="vcard" class="mt-4 space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1.5">
+                                <label class="text-sm font-medium">{{ t('qr.fields.vcard.firstName') }}</label>
+                                <Input v-model="vcardFirstName" :placeholder="t('qr.fields.vcard.firstNamePlaceholder')" autocomplete="off" />
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-sm font-medium">{{ t('qr.fields.vcard.lastName') }}</label>
+                                <Input v-model="vcardLastName" :placeholder="t('qr.fields.vcard.lastNamePlaceholder')" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1.5">
+                                <label class="text-sm font-medium text-muted-foreground">{{ t('qr.fields.vcard.company') }}</label>
+                                <Input v-model="vcardCompany" :placeholder="t('qr.fields.vcard.companyPlaceholder')" autocomplete="off" />
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-sm font-medium text-muted-foreground">{{ t('qr.fields.vcard.jobTitle') }}</label>
+                                <Input v-model="vcardJobTitle" :placeholder="t('qr.fields.vcard.jobTitlePlaceholder')" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1.5">
+                                <label class="text-sm font-medium text-muted-foreground">{{ t('qr.fields.vcard.phone') }}</label>
+                                <Input v-model="vcardPhone" type="tel" :placeholder="t('qr.fields.vcard.phonePlaceholder')" autocomplete="off" />
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-sm font-medium text-muted-foreground">{{ t('qr.fields.vcard.email') }}</label>
+                                <Input v-model="vcardEmail" type="email" :placeholder="t('qr.fields.vcard.emailPlaceholder')" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-sm font-medium text-muted-foreground">{{ t('qr.fields.vcard.website') }}</label>
+                            <Input v-model="vcardWebsite" type="url" :placeholder="t('qr.fields.vcard.websitePlaceholder')" autocomplete="off" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-sm font-medium text-muted-foreground">{{ t('qr.fields.vcard.address') }}</label>
+                            <Input v-model="vcardAddress" :placeholder="t('qr.fields.vcard.addressPlaceholder')" autocomplete="off" />
+                        </div>
+                    </TabsContent>
                 </Tabs>
+
+                <!-- Save button -->
+                <div class="flex items-center gap-3 pt-1">
+                    <Button
+                        :disabled="!qrTitle.trim() || isSaving"
+                        @click="saveQrCode"
+                    >
+                        {{ isSaving ? t('qr.create.saving') : t('qr.create.save') }}
+                    </Button>
+                    <span v-if="!qrTitle.trim()" class="text-muted-foreground text-xs">
+                        {{ t('qr.create.titleRequired') }}
+                    </span>
+                </div>
 
                 <!-- Char counter -->
                 <p
