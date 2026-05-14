@@ -98,10 +98,10 @@ const significance = computed<{ z: number; label: string; color: string } | null
     const n = props.totalScans
     const p1 = a.scan_count / n
     const p2 = b.scan_count / n
-    const pPool = 0.5
-    const se = Math.sqrt(pPool * (1 - pPool) * (2 / n))
+    // One-proportion z-test: H0 = 50/50 split. SE = sqrt(0.25/n), z = |p1-p2| / (2*SE)
+    const se = Math.sqrt(0.25 / n)
     if (se === 0) return null
-    const z = Math.abs(p1 - p2) / se
+    const z = Math.abs(p1 - p2) / (2 * se)
 
     if (z >= 2.58) return { z, label: t('abTest.significance.high'), color: 'text-green-600 dark:text-green-400' }
     if (z >= 1.96) return { z, label: t('abTest.significance.medium'), color: 'text-yellow-600 dark:text-yellow-400' }

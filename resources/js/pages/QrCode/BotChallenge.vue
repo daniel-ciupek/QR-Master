@@ -14,6 +14,7 @@ const props = defineProps<{
 const form = useForm({ turnstile_token: '' })
 
 function onToken(token: string) {
+    if (form.processing) return
     form.turnstile_token = token
     form.post(`/q/${props.hash}/challenge`, { preserveScroll: true })
 }
