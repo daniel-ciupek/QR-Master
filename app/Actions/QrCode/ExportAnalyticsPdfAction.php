@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 final class ExportAnalyticsPdfAction
 {
-    public function execute(QrCode $qrCode): DomPDF
+    public function handle(QrCode $qrCode): DomPDF
     {
         $base = ScanLog::where('qr_code_id', $qrCode->id);
 

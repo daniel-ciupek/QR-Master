@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $user_id
  * @property string $session_id
- * @property string|null $ip_address
+ * @property string|null $ip_hash
  * @property string|null $user_agent
  * @property Carbon $last_active_at
  * @property Carbon $created_at
@@ -21,7 +21,7 @@ class UserSession extends Model
 {
     public $timestamps = false;
 
-    protected $fillable = ['user_id', 'session_id', 'ip_address', 'user_agent', 'last_active_at'];
+    protected $fillable = ['user_id', 'session_id', 'ip_hash', 'user_agent', 'last_active_at'];
 
     protected $casts = ['last_active_at' => 'datetime', 'created_at' => 'datetime'];
 

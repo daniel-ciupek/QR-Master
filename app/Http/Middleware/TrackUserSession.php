@@ -18,18 +18,19 @@ final class TrackUserSession
         if (auth()->check() && $request->hasSession()) {
             $sessionId = $request->session()->getId();
             $userId = auth()->id();
+            $salt = (string) config('app.ip_hash_salt', config('app.key'));
+            $ipHash = hash_hmac('sha256', $request->ip() ?? '', $salt);
 
             UserSession::updateOrCreate(
                 ['session_id' => $sessionId],
                 [
                     'user_id' => $userId,
-                    'ip_address' => $request->ip(),
+                    'ip_hash' => $ipHash,
                     'user_agent' => $request->userAgent(),
                     'last_active_at' => now(),
                 ],
             );
 
-            // Prune sessions inactive longer than session.lifetime
             UserSession::where('user_id', $userId)
                 ->where('last_active_at', '<', now()->subMinutes(config('session.lifetime', 120)))
                 ->delete();

@@ -101,6 +101,8 @@ return [
 
     'key' => env('APP_KEY'),
 
+    'ip_hash_salt' => env('SCAN_IP_HASH_SALT'),
+
     'previous_keys' => [
         ...array_filter(
             explode(',', (string) env('APP_PREVIOUS_KEYS', ''))

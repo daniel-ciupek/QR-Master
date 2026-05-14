@@ -18,6 +18,6 @@ final class QrCodeAnalyticsPdfController extends Controller
 
         $filename = 'qr-report-'.$qrCode->short_hash.'-'.now()->format('Y-m-d').'.pdf';
 
-        return $action->execute($qrCode)->download($filename);
+        return $action->handle($qrCode)->download($filename);
     }
 }

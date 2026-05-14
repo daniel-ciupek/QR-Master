@@ -27,7 +27,7 @@ class SessionsController extends Controller
                 'is_current' => $s->session_id === $currentSessionId,
                 'browser' => $s->parsedBrowser(),
                 'os' => $s->parsedOs(),
-                'ip_address' => $s->ip_address,
+                'ip_address' => null,
                 'last_active_at' => $s->last_active_at->diffForHumans(),
             ]);
 
