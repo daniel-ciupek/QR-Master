@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Actions\Profile;
 
+use App\Models\AbVariant;
 use App\Models\QrCode;
+use App\Models\RedirectRule;
 use App\Models\ScanLog;
 use App\Models\User;
 use App\Models\UserSession;
@@ -48,6 +50,7 @@ final class ExportUserDataAction
                 ->all(),
             'qr_codes' => QrCode::where('user_id', $user->id)
                 ->withTrashed()
+                ->with(['abTest.variants', 'redirectRules'])
                 ->orderByDesc('created_at')
                 ->get(['id', 'title', 'type', 'short_hash', 'destination_url', 'is_active', 'created_at', 'deleted_at'])
                 ->map(fn (QrCode $qr) => [
@@ -73,6 +76,22 @@ final class ExportUserDataAction
                             'language' => $log->language,
                         ])
                         ->all(),
+                    'redirect_rules' => $qr->redirectRules->map(fn (RedirectRule $r) => [
+                        'priority' => $r->priority,
+                        'destination_url' => $r->destination_url,
+                        'conditions' => $r->conditions,
+                        'is_active' => $r->is_active,
+                    ])->all(),
+                    'ab_test' => $qr->abTest ? [
+                        'is_active' => $qr->abTest->is_active,
+                        'variants' => $qr->abTest->variants->map(fn (AbVariant $v) => [
+                            'name' => $v->name,
+                            'destination_url' => $v->destination_url,
+                            'weight' => $v->weight,
+                            'scan_count' => $v->scan_count,
+                            'is_winner' => $v->is_winner,
+                        ])->all(),
+                    ] : null,
                 ])
                 ->all(),
         ];
