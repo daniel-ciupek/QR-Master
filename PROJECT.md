@@ -160,7 +160,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### Etap 6: Specjalistyczne Typy Kodów QR
+### ✅ Etap 6: Specjalistyczne Typy Kodów QR *(ukończony 2026-05-14)*
 
 *Cel: Gotowe rozwiązania „z pudełka" dla każdej branży.*
 
