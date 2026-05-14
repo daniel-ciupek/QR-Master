@@ -342,6 +342,7 @@ export default {
             sms: 'SMS',
             vcard: 'vCard',
             wifi: 'WiFi',
+            geo: 'Geo',
         },
         fields: {
             url: { label: 'URL address', placeholder: 'https://example.com' },
@@ -378,6 +379,14 @@ export default {
                 websitePlaceholder: 'https://example.com',
                 address: 'Address (optional)',
                 addressPlaceholder: '123 Main St, City, Country',
+            },
+            geo: {
+                lat: 'Latitude',
+                latPlaceholder: '52.2297',
+                lng: 'Longitude',
+                lngPlaceholder: '21.0122',
+                hint: 'Coordinates will open in the default maps app.',
+                openMaps: 'Preview in Google Maps',
             },
             wifi: {
                 ssid: 'Network name (SSID)',

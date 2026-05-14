@@ -166,8 +166,8 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 - [x] **6.1** **Moduł vCard** — formularz: imię, nazwisko, firma, stanowisko, telefon, email, www, adres, foto. Generuje vCard 4.0 standard
 - [x] **6.2** Encrypted at rest dla pól vCard (telefon, email) — Eloquent cast `'encrypted'`
-- [ ] **6.3** **Moduł WiFi** — SSID, hasło (encrypted), typ (WPA/WPA2/WPA3/WEP/Open), ukryta sieć
-- [ ] **6.4** **Moduł SMS / Email / Phone / Geo** — szybkie generatory specjalistyczne
+- [x] **6.3** **Moduł WiFi** — SSID, hasło (encrypted), typ (WPA/WPA2/WPA3/WEP/Open), ukryta sieć
+- [x] **6.4** **Moduł SMS / Email / Phone / Geo** — szybkie generatory specjalistyczne
 - [ ] **6.5** **Moduł PDF Menu** — upload PDF (max 10MB), podgląd inline, możliwość wymiany bez zmiany QR
 - [ ] **6.6** **Moduł Bio-Link** — landing page builder
   - Kreator: avatar, bio, lista linków (drag-drop sortowanie)

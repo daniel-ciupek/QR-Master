@@ -37,7 +37,7 @@ const MAX_CHARS = 900
 
 const ALLOWED_URL_SCHEMES = ['https://', 'http://']
 
-type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi'
+type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo'
 type EccLevel = ErrorCorrectionLevel
 
 const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
@@ -53,6 +53,10 @@ const emailBody = ref('')
 const phone = ref('')
 const smsNumber = ref('')
 const smsMessage = ref('')
+
+// Geo fields
+const geoLat = ref('')
+const geoLng = ref('')
 
 // WiFi fields
 type WifiSecurity = 'wpa' | 'wpa2' | 'wpa3' | 'wep' | 'open'
@@ -137,6 +141,9 @@ function saveQrCode() {
         vcard_email: activeTab.value === 'vcard' ? vcardEmail.value.trim() : undefined,
         vcard_website: activeTab.value === 'vcard' ? vcardWebsite.value.trim() : undefined,
         vcard_address: activeTab.value === 'vcard' ? vcardAddress.value.trim() : undefined,
+        // Geo
+        geo_lat: activeTab.value === 'geo' ? geoLat.value.trim() : undefined,
+        geo_lng: activeTab.value === 'geo' ? geoLng.value.trim() : undefined,
         // WiFi
         wifi_ssid: activeTab.value === 'wifi' ? wifiSsid.value.trim() : undefined,
         wifi_security: activeTab.value === 'wifi' ? wifiSecurity.value : undefined,
@@ -175,6 +182,11 @@ const qrData = computed<string>(() => {
             return buildVCardPreview()
         case 'wifi':
             return buildWifiPreview()
+        case 'geo': {
+            const lat = geoLat.value.trim()
+            const lng = geoLng.value.trim()
+            return lat && lng ? `geo:${lat},${lng}` : ''
+        }
         default:
             return ''
     }
@@ -284,6 +296,7 @@ const exportOpen = ref(false)
                         <TabsTrigger value="sms" class="flex-1">{{ t('qr.tabs.sms') }}</TabsTrigger>
                         <TabsTrigger value="vcard" class="flex-1">{{ t('qr.tabs.vcard') }}</TabsTrigger>
                         <TabsTrigger value="wifi" class="flex-1">{{ t('qr.tabs.wifi') }}</TabsTrigger>
+                        <TabsTrigger value="geo" class="flex-1">{{ t('qr.tabs.geo') }}</TabsTrigger>
                     </TabsList>
 
                     <!-- URL -->
@@ -420,6 +433,44 @@ const exportOpen = ref(false)
                             <span class="text-sm font-medium">{{ t('qr.fields.wifi.hidden') }}</span>
                             <span class="text-xs text-muted-foreground">{{ t('qr.fields.wifi.hiddenHint') }}</span>
                         </label>
+                    </TabsContent>
+
+                    <!-- Geo -->
+                    <TabsContent value="geo" class="mt-4 space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium">{{ t('qr.fields.geo.lat') }}</label>
+                                <Input
+                                    v-model="geoLat"
+                                    type="number"
+                                    step="any"
+                                    min="-90"
+                                    max="90"
+                                    :placeholder="t('qr.fields.geo.latPlaceholder')"
+                                    autocomplete="off"
+                                />
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-medium">{{ t('qr.fields.geo.lng') }}</label>
+                                <Input
+                                    v-model="geoLng"
+                                    type="number"
+                                    step="any"
+                                    min="-180"
+                                    max="180"
+                                    :placeholder="t('qr.fields.geo.lngPlaceholder')"
+                                    autocomplete="off"
+                                />
+                            </div>
+                        </div>
+                        <p class="text-xs text-muted-foreground">{{ t('qr.fields.geo.hint') }}</p>
+                        <a
+                            v-if="geoLat.trim() && geoLng.trim()"
+                            :href="`https://www.google.com/maps?q=${geoLat.trim()},${geoLng.trim()}`"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-xs text-primary underline underline-offset-2"
+                        >{{ t('qr.fields.geo.openMaps') }}</a>
                     </TabsContent>
 
                     <!-- vCard -->

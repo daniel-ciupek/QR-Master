@@ -342,6 +342,7 @@ export default {
             sms: 'SMS',
             vcard: 'vCard',
             wifi: 'WiFi',
+            geo: 'Geo',
         },
         fields: {
             url: { label: 'Adres URL', placeholder: 'https://example.com' },
@@ -378,6 +379,14 @@ export default {
                 websitePlaceholder: 'https://firma.pl',
                 address: 'Adres (opcjonalnie)',
                 addressPlaceholder: 'ul. Główna 1, Warszawa, Polska',
+            },
+            geo: {
+                lat: 'Szerokość geograficzna',
+                latPlaceholder: '52.2297',
+                lng: 'Długość geograficzna',
+                lngPlaceholder: '21.0122',
+                hint: 'Współrzędne otworzą się w domyślnej aplikacji map.',
+                openMaps: 'Podgląd w Google Maps',
             },
             wifi: {
                 ssid: 'Nazwa sieci (SSID)',
