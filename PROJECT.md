@@ -185,7 +185,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### Etap 7: Smart Redirect, A/B Testing, Harmonogramowanie
+### ✅ Etap 7: Smart Redirect, A/B Testing, Harmonogramowanie *(ukończony 2026-05-14)*
 
 *Cel: Zaawansowane reguły — wartość premium dla marketerów.*
 
