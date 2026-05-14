@@ -37,7 +37,7 @@ const MAX_CHARS = 900
 
 const ALLOWED_URL_SCHEMES = ['https://', 'http://']
 
-type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf'
+type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf' | 'bio_link'
 type EccLevel = ErrorCorrectionLevel
 
 const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
@@ -195,6 +195,8 @@ const qrData = computed<string>(() => {
         case 'pdf':
             // URL is set server-side after creation; preview uses placeholder
             return pdfFile.value ? pdfFile.value.name : ''
+        case 'bio_link':
+            return ''
         default:
             return ''
     }
@@ -306,6 +308,7 @@ const exportOpen = ref(false)
                         <TabsTrigger value="wifi" class="flex-1">{{ t('qr.tabs.wifi') }}</TabsTrigger>
                         <TabsTrigger value="geo" class="flex-1">{{ t('qr.tabs.geo') }}</TabsTrigger>
                         <TabsTrigger value="pdf" class="flex-1">{{ t('qr.tabs.pdf') }}</TabsTrigger>
+                        <TabsTrigger value="bio_link" class="flex-1">{{ t('qr.tabs.bio_link') }}</TabsTrigger>
                     </TabsList>
 
                     <!-- URL -->
@@ -577,6 +580,20 @@ const exportOpen = ref(false)
                         >
                             {{ t('qr.fields.pdf.remove') }}
                         </Button>
+                    </TabsContent>
+
+                    <!-- Bio-Link -->
+                    <TabsContent value="bio_link" class="mt-4 space-y-3">
+                        <div class="rounded-lg border border-border bg-accent/20 p-4 space-y-2">
+                            <p class="text-sm font-medium">{{ t('qr.fields.bio_link.title') }}</p>
+                            <p class="text-sm text-muted-foreground">{{ t('qr.fields.bio_link.hint') }}</p>
+                            <ul class="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                                <li>{{ t('qr.fields.bio_link.feature1') }}</li>
+                                <li>{{ t('qr.fields.bio_link.feature2') }}</li>
+                                <li>{{ t('qr.fields.bio_link.feature3') }}</li>
+                            </ul>
+                        </div>
+                        <p class="text-xs text-muted-foreground">{{ t('qr.fields.bio_link.afterSave') }}</p>
                     </TabsContent>
                 </Tabs>
 

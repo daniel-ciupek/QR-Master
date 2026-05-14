@@ -169,7 +169,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **6.3** **Moduł WiFi** — SSID, hasło (encrypted), typ (WPA/WPA2/WPA3/WEP/Open), ukryta sieć
 - [x] **6.4** **Moduł SMS / Email / Phone / Geo** — szybkie generatory specjalistyczne
 - [x] **6.5** **Moduł PDF Menu** — upload PDF (max 10MB), podgląd inline, możliwość wymiany bez zmiany QR
-- [ ] **6.6** **Moduł Bio-Link** — landing page builder
+- [x] **6.6** **Moduł Bio-Link** — landing page builder
   - Kreator: avatar, bio, lista linków (drag-drop sortowanie)
   - Templates: Minimal, Bold, Glassmorphism, Retro
   - Theming: kolory, tło, font, button shape

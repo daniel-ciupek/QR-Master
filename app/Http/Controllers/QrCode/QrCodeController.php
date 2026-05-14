@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\QrCode;
 
+use App\Actions\BioLink\CreateBioLinkAction;
 use App\Actions\QrCode\BulkAttachTagAction;
 use App\Actions\QrCode\BulkDeleteQrCodesAction;
 use App\Actions\QrCode\BulkToggleActiveQrCodesAction;
@@ -136,12 +137,19 @@ final class QrCodeController extends Controller
             expires_at: isset($validated['expires_at']) ? Carbon::parse($validated['expires_at']) : null,
         );
 
-        $qrCode = DB::transaction(function () use ($user, $data, $validated, $action): QrCode {
+        $bioLink = null;
+
+        $qrCode = DB::transaction(function () use ($user, $data, $validated, $action, &$bioLink): QrCode {
             $qrCode = $action->handle($user, $data);
 
             if ($data->type === QrCodeType::Pdf) {
                 // destination_url = self-referential viewer URL; must be set after short_hash is generated
                 $qrCode->destination_url = route('qr.redirect', $qrCode->short_hash);
+            }
+
+            if ($data->type === QrCodeType::BioLink) {
+                $bioLink = app(CreateBioLinkAction::class)->handle($user, $qrCode);
+                $qrCode->destination_url = route('bio-link.show', $bioLink->slug);
             }
 
             $qrCode->vcard_phone = $validated['vcard_phone'] ?? null;
@@ -156,6 +164,12 @@ final class QrCodeController extends Controller
         if ($type === QrCodeType::Pdf && $request->hasFile('pdf_file')) {
             $qrCode->addMediaFromRequest('pdf_file')
                 ->toMediaCollection('pdf_menu');
+        }
+
+        // Bio-Link: redirect to editor immediately after creation
+        if ($type === QrCodeType::BioLink && $bioLink !== null) {
+            return redirect()->route('bio-link.edit', $bioLink->id)
+                ->with('success', 'Bio-Link został utworzony.');
         }
 
         return redirect()->route('qr.index')->with('success', 'Kod QR został utworzony.');

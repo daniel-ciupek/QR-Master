@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\SuggestPaletteController;
+use App\Http\Controllers\BioLink\BioLinkClickController;
+use App\Http\Controllers\BioLink\BioLinkController;
+use App\Http\Controllers\BioLink\BioLinkItemController;
+use App\Http\Controllers\BioLink\BioLinkPublicController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\Profile\PasskeysController;
 use App\Http\Controllers\Profile\ProfileController;
@@ -29,6 +33,15 @@ Route::get('/', function () {
 Route::get('/q/{hash}', PublicRedirectController::class)
     ->middleware('throttle:public-redirect')
     ->name('qr.redirect');
+
+// Public Bio-Link pages — no auth, rate limited
+Route::get('/b/{slug}', BioLinkPublicController::class)
+    ->middleware('throttle:public-redirect')
+    ->name('bio-link.show');
+
+Route::get('/b/{slug}/link/{item}', BioLinkClickController::class)
+    ->middleware('throttle:public-redirect')
+    ->name('bio-link.click');
 
 Route::post('/locale', function (Request $request) {
     $locale = in_array($request->input('locale'), ['pl', 'en']) ? $request->input('locale') : 'pl';
@@ -69,6 +82,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/api/ai/suggest-palette', SuggestPaletteController::class)->name('ai.suggest-palette');
+
+    // Bio-Link editor (auth required)
+    Route::prefix('bio-links')->name('bio-link.')->group(function () {
+        Route::get('/{bioLink}/edit', [BioLinkController::class, 'edit'])->name('edit');
+        Route::patch('/{bioLink}', [BioLinkController::class, 'update'])->name('update');
+        Route::post('/{bioLink}/avatar', [BioLinkController::class, 'uploadAvatar'])->name('avatar.upload');
+        Route::delete('/{bioLink}/avatar', [BioLinkController::class, 'deleteAvatar'])->name('avatar.delete');
+        Route::post('/{bioLink}/items', [BioLinkItemController::class, 'store'])->name('items.store');
+        Route::post('/{bioLink}/items/reorder', [BioLinkItemController::class, 'reorder'])->name('items.reorder');
+        Route::patch('/{bioLink}/items/{item}', [BioLinkItemController::class, 'update'])->name('items.update');
+        Route::delete('/{bioLink}/items/{item}', [BioLinkItemController::class, 'destroy'])->name('items.destroy');
+    });
 
     Route::prefix('qr-templates')->name('qr-templates.')->group(function () {
         Route::post('/', [QrUserTemplateController::class, 'store'])->name('store');

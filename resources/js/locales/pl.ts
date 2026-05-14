@@ -344,6 +344,7 @@ export default {
             wifi: 'WiFi',
             geo: 'Geo',
             pdf: 'PDF',
+            bio_link: 'Bio-Link',
         },
         fields: {
             url: { label: 'Adres URL', placeholder: 'https://example.com' },
@@ -410,6 +411,14 @@ export default {
                 selectFile: 'Kliknij, aby wybrać plik PDF',
                 maxSize: 'Maksymalnie 10 MB',
                 remove: 'Usuń plik',
+            },
+            bio_link: {
+                title: 'Bio-Link — strona lądowania',
+                hint: 'Tworzy mobilną stronę lądowania z Twoimi linkami.',
+                feature1: 'Awatar, bio i lista linków',
+                feature2: '4 szablony wizualne (Minimal, Bold, Glassmorphism, Retro)',
+                feature3: 'Śledzenie kliknięć per link',
+                afterSave: 'Po zapisaniu zostaniesz przekierowany/a do edytora Bio-Link.',
             },
         },
         style: {
@@ -570,6 +579,51 @@ export default {
                 today: 'Dziś ',
                 thisWeek: 'Ten tydzień ',
             },
+        },
+    },
+
+    common: {
+        save: 'Zapisz',
+        saving: 'Zapisywanie…',
+        cancel: 'Anuluj',
+        edit: 'Edytuj',
+        delete: 'Usuń',
+    },
+
+    bioLink: {
+        preview: 'Podgląd',
+        tabs: {
+            profile: 'Profil',
+            links: 'Linki',
+            appearance: 'Wygląd',
+        },
+        profile: {
+            avatar: 'Awatar',
+            changeAvatar: 'Zmień zdjęcie',
+            removeAvatar: 'Usuń zdjęcie',
+            bio: 'Bio',
+            bioPlaceholder: 'Krótki opis…',
+        },
+        items: {
+            empty: 'Brak linków. Dodaj pierwszy link poniżej.',
+            clicks: 'kliknięć',
+            titlePlaceholder: 'Tytuł linku',
+            urlPlaceholder: 'https://example.com',
+            active: 'Widoczny',
+            add: 'Dodaj link',
+            addLink: 'Dodaj link',
+            deleteConfirm: 'Usunąć ten link?',
+        },
+        appearance: {
+            template: 'Szablon',
+            colors: 'Kolory',
+            primaryColor: 'Kolor akcentu',
+            bgColor: 'Tło',
+            textColor: 'Tekst',
+            buttonShape: 'Kształt przycisku',
+            font: 'Czcionka',
+            shapes: { rounded: 'Zaokrąglony', square: 'Kwadratowy', pill: 'Pigułka' },
+            fonts: { inter: 'Sans', serif: 'Szeryfowy', mono: 'Mono' },
         },
     },
 }

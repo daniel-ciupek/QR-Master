@@ -36,6 +36,8 @@ final class QrContentBuilderService
             QrCodeType::Geo => $this->buildGeo($fields),
             // PDF viewer URL is self-referential — set after QrCode creation in controller
             QrCodeType::Pdf => '',
+            // Bio-Link public URL is set after BioLink creation in controller
+            QrCodeType::BioLink => '',
             default => throw new InvalidArgumentException("Unsupported QR type: {$type->value}"),
         };
     }

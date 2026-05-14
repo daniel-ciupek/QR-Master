@@ -344,6 +344,7 @@ export default {
             wifi: 'WiFi',
             geo: 'Geo',
             pdf: 'PDF',
+            bio_link: 'Bio-Link',
         },
         fields: {
             url: { label: 'URL address', placeholder: 'https://example.com' },
@@ -410,6 +411,14 @@ export default {
                 selectFile: 'Click to select a PDF file',
                 maxSize: 'Maximum 10 MB',
                 remove: 'Remove file',
+            },
+            bio_link: {
+                title: 'Bio-Link landing page',
+                hint: 'Creates a mobile-friendly landing page with your links.',
+                feature1: 'Avatar, bio and list of links',
+                feature2: '4 visual templates (Minimal, Bold, Glassmorphism, Retro)',
+                feature3: 'Click tracking per link',
+                afterSave: 'After saving you will be redirected to the Bio-Link editor.',
             },
         },
         style: {
@@ -570,6 +579,51 @@ export default {
                 today: 'Today ',
                 thisWeek: 'This week ',
             },
+        },
+    },
+
+    common: {
+        save: 'Save',
+        saving: 'Saving…',
+        cancel: 'Cancel',
+        edit: 'Edit',
+        delete: 'Delete',
+    },
+
+    bioLink: {
+        preview: 'Preview',
+        tabs: {
+            profile: 'Profile',
+            links: 'Links',
+            appearance: 'Appearance',
+        },
+        profile: {
+            avatar: 'Avatar',
+            changeAvatar: 'Change photo',
+            removeAvatar: 'Remove photo',
+            bio: 'Bio',
+            bioPlaceholder: 'Short description…',
+        },
+        items: {
+            empty: 'No links yet. Add your first link below.',
+            clicks: 'clicks',
+            titlePlaceholder: 'Link title',
+            urlPlaceholder: 'https://example.com',
+            active: 'Visible',
+            add: 'Add link',
+            addLink: 'Add link',
+            deleteConfirm: 'Delete this link?',
+        },
+        appearance: {
+            template: 'Template',
+            colors: 'Colors',
+            primaryColor: 'Accent color',
+            bgColor: 'Background',
+            textColor: 'Text',
+            buttonShape: 'Button shape',
+            font: 'Font',
+            shapes: { rounded: 'Rounded', square: 'Square', pill: 'Pill' },
+            fonts: { inter: 'Sans', serif: 'Serif', mono: 'Mono' },
         },
     },
 }
