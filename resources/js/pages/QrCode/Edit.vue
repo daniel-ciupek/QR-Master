@@ -291,6 +291,17 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
                     </Button>
                 </div>
 
+                <!-- A/B Test link -->
+                <div class="rounded-lg border border-border bg-muted/30 px-4 py-3 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium">{{ t('qr.edit.abTest.title') }}</p>
+                        <p class="text-xs text-muted-foreground">{{ t('qr.edit.abTest.hint') }}</p>
+                    </div>
+                    <Button variant="outline" size="sm" as-child>
+                        <Link :href="`/qr/${props.qrCode.id}/ab-test`">{{ t('qr.edit.abTest.manage') }}</Link>
+                    </Button>
+                </div>
+
                 <!-- Smart Redirect Rules link -->
                 <div class="rounded-lg border border-border bg-muted/30 px-4 py-3 flex items-center justify-between">
                     <div>

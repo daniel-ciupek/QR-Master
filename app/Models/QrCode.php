@@ -123,6 +123,12 @@ class QrCode extends Model implements HasMedia
         return $this->hasMany(RedirectRule::class)->orderBy('priority');
     }
 
+    /** @return HasOne<AbTest, $this> */
+    public function abTest(): HasOne
+    {
+        return $this->hasOne(AbTest::class);
+    }
+
     /** @return BelongsToMany<Tag, $this> */
     public function tags(): BelongsToMany
     {
