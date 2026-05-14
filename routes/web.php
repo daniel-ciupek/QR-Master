@@ -19,6 +19,7 @@ use App\Http\Controllers\QrCode\QrCodeAnalyticsPdfController;
 use App\Http\Controllers\QrCode\QrCodeCompareController;
 use App\Http\Controllers\QrCode\QrCodeController;
 use App\Http\Controllers\QrCode\RedirectRuleController;
+use App\Http\Controllers\QrPasswordController;
 use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
@@ -35,6 +36,14 @@ Route::get('/', function () {
 Route::get('/q/{hash}', PublicRedirectController::class)
     ->middleware('throttle:public-redirect')
     ->name('qr.redirect');
+
+// Password-protected QR unlock
+Route::get('/q/{hash}/unlock', [QrPasswordController::class, 'show'])
+    ->middleware('throttle:public-redirect')
+    ->name('qr.password.show');
+Route::post('/q/{hash}/unlock', [QrPasswordController::class, 'verify'])
+    ->middleware('throttle:qr-password')
+    ->name('qr.password.verify');
 
 // Public Bio-Link pages — no auth, rate limited
 Route::get('/b/{slug}', BioLinkPublicController::class)

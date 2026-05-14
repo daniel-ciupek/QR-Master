@@ -21,7 +21,7 @@ use Inertia\Response;
  *  - Rate limited at 60 req/min/IP ('public-redirect' limiter in AppServiceProvider)
  *  - Only active, non-expired, non-deleted codes are redirected
  *  - Destination URL stored server-side — no open-redirect from user input
- *  - Password-protected codes: blocked until full prompt UI in Etap 5
+ *  - Password-protected codes: redirect to /q/{hash}/unlock prompt (QrPasswordController)
  *  - Scan logging async (queue) — redirect returns immediately
  *  - IP anonymised via HMAC-SHA256 in RecordScanJob — no PII in queue payload
  *  - Cache-Control: no-store prevents proxy caching of stale redirects
@@ -67,9 +67,9 @@ final class PublicRedirectController extends Controller
             abort(404);
         }
 
-        // Password-protected: block redirect until Etap 5 implements the prompt UI
-        if ($qrCode->isPasswordProtected()) {
-            abort(403);
+        // Password-protected: require session unlock token from QrPasswordController
+        if ($qrCode->isPasswordProtected() && ! $request->session()->get("qr_unlocked_{$hash}")) {
+            return redirect()->route('qr.password.show', $hash);
         }
 
         // Smart redirect rules take priority over everything

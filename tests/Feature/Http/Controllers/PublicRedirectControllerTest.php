@@ -79,13 +79,13 @@ it('returns 404 when destination_url is null', function (): void {
     $this->get('/q/nourlab1')->assertNotFound();
 });
 
-it('returns 403 for password-protected code', function (): void {
+it('redirects to unlock page for password-protected code', function (): void {
     makeQrCode([
         'short_hash' => 'passwd12',
         'password_hash' => bcrypt('secret'),
     ]);
 
-    $this->get('/q/passwd12')->assertForbidden();
+    $this->get('/q/passwd12')->assertRedirect('/q/passwd12/unlock');
 });
 
 it('dispatches RecordScanJob with hashed IP on successful redirect', function (): void {

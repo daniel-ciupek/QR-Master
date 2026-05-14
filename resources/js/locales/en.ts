@@ -776,4 +776,14 @@ export default {
             fonts: { inter: 'Sans', serif: 'Serif', mono: 'Mono' },
         },
     },
+    qrPassword: {
+        pageTitle: 'Password-protected QR code',
+        title: 'This QR code is password protected',
+        subtitle: 'Enter the password to continue to: {name}',
+        passwordLabel: 'Password',
+        passwordPlaceholder: 'Enter password…',
+        submit: 'Unlock',
+        verifying: 'Verifying…',
+        wrong: 'Incorrect password.',
+    },
 }

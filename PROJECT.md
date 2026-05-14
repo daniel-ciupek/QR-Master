@@ -200,7 +200,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
   - Statistical significance calculator
   - Winner auto-selection po N skanach
 - [x] **7.4** **Harmonogramowanie** — `expires_at` + `activates_at` (kampanie sezonowe)
-- [ ] **7.5** **Password-protected QR** — przed redirectem prompt o hasło (Argon2id hash)
+- [x] **7.5** **Password-protected QR** — przed redirectem prompt o hasło (Argon2id hash)
 - [ ] **7.6** **Geofencing** — zezwól tylko z określonych krajów/regionów (anti-leak na inne rynki)
 - [ ] **7.7** **Click cap** — maksymalna liczba skanów (np. promocja na pierwsze 100 osób)
 - [ ] **7.8** **Fallback URL** — jeśli żadna reguła nie pasuje

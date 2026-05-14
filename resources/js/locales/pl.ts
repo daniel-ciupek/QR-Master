@@ -776,4 +776,14 @@ export default {
             fonts: { inter: 'Sans', serif: 'Szeryfowy', mono: 'Mono' },
         },
     },
+    qrPassword: {
+        pageTitle: 'Kod chroniony hasłem',
+        title: 'Ten kod QR jest chroniony hasłem',
+        subtitle: 'Wprowadź hasło, aby przejść do: {name}',
+        passwordLabel: 'Hasło',
+        passwordPlaceholder: 'Wpisz hasło…',
+        submit: 'Odblokuj',
+        verifying: 'Sprawdzanie…',
+        wrong: 'Nieprawidłowe hasło.',
+    },
 }
