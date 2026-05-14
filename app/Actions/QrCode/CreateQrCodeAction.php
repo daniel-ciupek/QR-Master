@@ -26,6 +26,8 @@ final class CreateQrCodeAction
             'settings' => $data->settings,
             'is_active' => $data->is_active,
             'expires_at' => $data->expires_at,
+            'activates_at' => $data->activates_at,
+            'geo_allowed_countries' => $data->geo_allowed_countries,
             'scan_limit' => $data->scan_limit,
             'password_hash' => $data->password !== null
                 ? Hash::make($data->password)
