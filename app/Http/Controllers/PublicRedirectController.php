@@ -46,6 +46,21 @@ final class PublicRedirectController extends Controller
             ]);
         }
 
+        if ($qrCode->type === QrCodeType::App) {
+            $url = $this->resolveAppUrl($request, $qrCode->settings ?? []);
+
+            if ($url === null) {
+                abort(404);
+            }
+
+            dispatch(RecordScanJob::fromRequest($qrCode, $request));
+
+            return redirect()->away($url, 302)->withHeaders([
+                'Cache-Control' => 'no-store, no-cache, must-revalidate',
+                'X-Robots-Tag' => 'noindex',
+            ]);
+        }
+
         if ($qrCode->destination_url === null) {
             abort(404);
         }
@@ -63,5 +78,28 @@ final class PublicRedirectController extends Controller
                 'Cache-Control' => 'no-store, no-cache, must-revalidate',
                 'X-Robots-Tag' => 'noindex',
             ]);
+    }
+
+    /** @param array<string, mixed> $settings */
+    private function resolveAppUrl(Request $request, array $settings): ?string
+    {
+        $ua = strtolower($request->userAgent() ?? '');
+
+        $isIos = str_contains($ua, 'iphone') || str_contains($ua, 'ipad') || str_contains($ua, 'ipod');
+        $isAndroid = str_contains($ua, 'android');
+
+        $ios = ($settings['app_ios_url'] ?? '') ?: null;
+        $android = ($settings['app_android_url'] ?? '') ?: null;
+        $fallback = ($settings['app_fallback_url'] ?? '') ?: null;
+
+        if ($isIos) {
+            return $ios ?? $fallback ?? $android;
+        }
+
+        if ($isAndroid) {
+            return $android ?? $fallback ?? $ios;
+        }
+
+        return $fallback ?? $ios ?? $android;
     }
 }

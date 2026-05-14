@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\QrCode;
 
 use App\Enums\QrCodeType;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -72,8 +73,24 @@ final class StoreQrCodeRequest extends FormRequest
             // PDF Menu — file required when type=pdf, max 10 MB
             'pdf_file' => ['required_if:type,pdf', 'nullable', 'file', 'mimes:pdf', 'max:10240'],
 
+            // App Store / Play Store — at least one URL required when type=app
+            'app_ios_url' => ['nullable', 'url', 'max:2000', 'regex:/^https?:\/\/.+/'],
+            'app_android_url' => ['nullable', 'url', 'max:2000', 'regex:/^https?:\/\/.+/'],
+            'app_fallback_url' => ['nullable', 'url', 'max:2000', 'regex:/^https?:\/\/.+/'],
+
             // Visual settings (pass-through, no deep validation)
             'settings' => ['nullable', 'array'],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        if ($this->input('type') === 'app') {
+            $validator->after(function (Validator $v): void {
+                if (! $this->filled('app_ios_url') && ! $this->filled('app_android_url')) {
+                    $v->errors()->add('app_ios_url', 'At least one store URL (iOS or Android) is required.');
+                }
+            });
+        }
     }
 }

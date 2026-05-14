@@ -37,7 +37,7 @@ const MAX_CHARS = 900
 
 const ALLOWED_URL_SCHEMES = ['https://', 'http://']
 
-type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf' | 'bio_link'
+type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf' | 'bio_link' | 'app'
 type EccLevel = ErrorCorrectionLevel
 
 const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
@@ -60,6 +60,11 @@ const geoLng = ref('')
 
 // PDF fields
 const pdfFile = ref<File | null>(null)
+
+// App Store fields
+const appIosUrl = ref('')
+const appAndroidUrl = ref('')
+const appFallbackUrl = ref('')
 
 // WiFi fields
 type WifiSecurity = 'wpa' | 'wpa2' | 'wpa3' | 'wep' | 'open'
@@ -154,6 +159,10 @@ function saveQrCode() {
         wifi_hidden: activeTab.value === 'wifi' ? wifiHidden.value : undefined,
         // PDF — Inertia auto-converts to multipart/form-data when File is present
         pdf_file: activeTab.value === 'pdf' ? pdfFile.value : undefined,
+        // App Store / Play Store
+        app_ios_url: activeTab.value === 'app' ? appIosUrl.value.trim() : undefined,
+        app_android_url: activeTab.value === 'app' ? appAndroidUrl.value.trim() : undefined,
+        app_fallback_url: activeTab.value === 'app' ? appFallbackUrl.value.trim() : undefined,
         // Visual settings
         settings: currentStyle.value,
     }, {
@@ -197,6 +206,8 @@ const qrData = computed<string>(() => {
             return pdfFile.value ? pdfFile.value.name : ''
         case 'bio_link':
             return ''
+        case 'app':
+            return appIosUrl.value.trim() || appAndroidUrl.value.trim() || appFallbackUrl.value.trim()
         default:
             return ''
     }
@@ -309,6 +320,7 @@ const exportOpen = ref(false)
                         <TabsTrigger value="geo" class="flex-1">{{ t('qr.tabs.geo') }}</TabsTrigger>
                         <TabsTrigger value="pdf" class="flex-1">{{ t('qr.tabs.pdf') }}</TabsTrigger>
                         <TabsTrigger value="bio_link" class="flex-1">{{ t('qr.tabs.bio_link') }}</TabsTrigger>
+                        <TabsTrigger value="app" class="flex-1">{{ t('qr.tabs.app') }}</TabsTrigger>
                     </TabsList>
 
                     <!-- URL -->
@@ -595,12 +607,45 @@ const exportOpen = ref(false)
                         </div>
                         <p class="text-xs text-muted-foreground">{{ t('qr.fields.bio_link.afterSave') }}</p>
                     </TabsContent>
+
+                    <!-- App Store / Play Store -->
+                    <TabsContent value="app" class="mt-4 space-y-4">
+                        <p class="text-sm text-muted-foreground">{{ t('qr.fields.app.hint') }}</p>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.app.iosUrl') }}</label>
+                            <Input
+                                v-model="appIosUrl"
+                                type="url"
+                                :placeholder="t('qr.fields.app.iosPlaceholder')"
+                                autocomplete="off"
+                            />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.app.androidUrl') }}</label>
+                            <Input
+                                v-model="appAndroidUrl"
+                                type="url"
+                                :placeholder="t('qr.fields.app.androidPlaceholder')"
+                                autocomplete="off"
+                            />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.app.fallbackUrl') }}</label>
+                            <Input
+                                v-model="appFallbackUrl"
+                                type="url"
+                                :placeholder="t('qr.fields.app.fallbackPlaceholder')"
+                                autocomplete="off"
+                            />
+                            <p class="text-xs text-muted-foreground">{{ t('qr.fields.app.fallbackHint') }}</p>
+                        </div>
+                    </TabsContent>
                 </Tabs>
 
                 <!-- Save button -->
                 <div class="flex items-center gap-3 pt-1">
                     <Button
-                        :disabled="!qrTitle.trim() || isSaving || (activeTab === 'pdf' && !pdfFile)"
+                        :disabled="!qrTitle.trim() || isSaving || (activeTab === 'pdf' && !pdfFile) || (activeTab === 'app' && !appIosUrl.trim() && !appAndroidUrl.trim())"
                         @click="saveQrCode"
                     >
                         {{ isSaving ? t('qr.create.saving') : t('qr.create.save') }}

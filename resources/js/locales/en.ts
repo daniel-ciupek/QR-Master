@@ -345,6 +345,7 @@ export default {
             geo: 'Geo',
             pdf: 'PDF',
             bio_link: 'Bio-Link',
+            app: 'App',
         },
         fields: {
             url: { label: 'URL address', placeholder: 'https://example.com' },
@@ -411,6 +412,16 @@ export default {
                 selectFile: 'Click to select a PDF file',
                 maxSize: 'Maximum 10 MB',
                 remove: 'Remove file',
+            },
+            app: {
+                hint: 'Automatically redirects iOS users to App Store, Android users to Google Play, others to the fallback URL.',
+                iosUrl: 'App Store URL (iOS)',
+                iosPlaceholder: 'https://apps.apple.com/app/…',
+                androidUrl: 'Google Play URL (Android)',
+                androidPlaceholder: 'https://play.google.com/store/apps/details?id=…',
+                fallbackUrl: 'Fallback URL (Desktop)',
+                fallbackPlaceholder: 'https://your-website.com',
+                fallbackHint: 'Shown when platform cannot be detected. Optional.',
             },
             bio_link: {
                 title: 'Bio-Link landing page',

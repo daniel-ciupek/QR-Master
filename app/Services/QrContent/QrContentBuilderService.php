@@ -38,6 +38,8 @@ final class QrContentBuilderService
             QrCodeType::Pdf => '',
             // Bio-Link public URL is set after BioLink creation in controller
             QrCodeType::BioLink => '',
+            // App Store redirect URL is the dynamic QR hash — set after creation
+            QrCodeType::App => '',
             default => throw new InvalidArgumentException("Unsupported QR type: {$type->value}"),
         };
     }

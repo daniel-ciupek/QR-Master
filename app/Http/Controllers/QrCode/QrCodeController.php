@@ -152,6 +152,10 @@ final class QrCodeController extends Controller
                 $qrCode->destination_url = route('bio-link.show', $bioLink->slug);
             }
 
+            if ($data->type === QrCodeType::App) {
+                $qrCode->destination_url = route('qr.redirect', $qrCode->short_hash);
+            }
+
             $qrCode->vcard_phone = $validated['vcard_phone'] ?? null;
             $qrCode->vcard_email = $validated['vcard_email'] ?? null;
             $qrCode->wifi_password = $validated['wifi_password'] ?? null;
@@ -213,6 +217,11 @@ final class QrCodeController extends Controller
             QrCodeType::Geo => array_filter([
                 'geo_lat' => $validated['geo_lat'] ?? null,
                 'geo_lng' => $validated['geo_lng'] ?? null,
+            ], fn ($v) => $v !== null && $v !== ''),
+            QrCodeType::App => array_filter([
+                'app_ios_url' => $validated['app_ios_url'] ?? null,
+                'app_android_url' => $validated['app_android_url'] ?? null,
+                'app_fallback_url' => $validated['app_fallback_url'] ?? null,
             ], fn ($v) => $v !== null && $v !== ''),
             default => [],
         };
