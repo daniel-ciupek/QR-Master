@@ -153,7 +153,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **5.10** Wykresy: ApexCharts (timeline skanów, mapa świata, breakdown urządzenia/OS/browser)
 - [x] **5.11** **Heatmapa godzinowa** — kiedy ludzie skanują (ważne dla offline reklamy)
 - [x] **5.12** **Real-time counter** (Laravel Reverb) — live update licznika skanów na dashboardzie
-- [ ] **5.13** Eksport raportu PDF — branded summary dla klienta końcowego
+- [x] **5.13** Eksport raportu PDF — branded summary dla klienta końcowego
 - [ ] **5.14** **Comparing** — porównaj 2-5 kodów obok siebie
 
 **Kryterium ukończenia:** Skan publicznego QR → log pojawia się w dashboardzie real-time, mapa pokazuje lokalizację, eksport PDF zawiera pełny raport.

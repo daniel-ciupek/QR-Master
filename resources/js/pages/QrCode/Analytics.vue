@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
 import { usePreferredDark } from '@vueuse/core'
-import { Activity, ArrowLeft, Monitor, Smartphone, Tablet } from 'lucide-vue-next'
+import { Activity, ArrowLeft, Download, Monitor, Smartphone, Tablet } from 'lucide-vue-next'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { Badge } from '@/components/ui/badge'
@@ -260,6 +260,12 @@ onUnmounted(() => {
                 </div>
                 <p class="text-muted-foreground text-sm">{{ publicUrl }}</p>
             </div>
+            <Button variant="outline" size="sm" as-child>
+                <a :href="`/qr/${qrCode.id}/analytics/export-pdf`" target="_blank" rel="noopener noreferrer">
+                    <Download class="mr-1.5 size-3.5" />
+                    Export PDF
+                </a>
+            </Button>
             <Button variant="outline" size="sm" as-child>
                 <Link :href="`/qr/${qrCode.id}/edit`">Edit</Link>
             </Button>

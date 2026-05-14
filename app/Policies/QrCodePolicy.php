@@ -14,6 +14,11 @@ final class QrCodePolicy
         return $user->id === $qrCode->user_id;
     }
 
+    public function exportPdf(User $user, QrCode $qrCode): bool
+    {
+        return $user->id === $qrCode->user_id;
+    }
+
     public function update(User $user, QrCode $qrCode): bool
     {
         return $user->id === $qrCode->user_id;
