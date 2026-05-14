@@ -329,7 +329,12 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
 
                     <!-- Link to full analytics -->
                     <div class="mt-auto pt-2">
-                        <Button variant="outline" size="sm" class="w-full text-xs" as-child>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            class="w-full text-xs"
+                            as-child
+                        >
                             <Link :href="`/qr/${item.id}/analytics`">View full analytics</Link>
                         </Button>
                     </div>

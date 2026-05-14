@@ -365,16 +365,31 @@ const exportOpen = ref(false)
                         <div class="grid grid-cols-2 gap-3">
                             <div class="space-y-1.5">
                                 <label class="text-sm font-medium text-muted-foreground">{{ t('qr.fields.vcard.phone') }}</label>
-                                <Input v-model="vcardPhone" type="tel" :placeholder="t('qr.fields.vcard.phonePlaceholder')" autocomplete="off" />
+                                <Input
+                                    v-model="vcardPhone"
+                                    type="tel"
+                                    :placeholder="t('qr.fields.vcard.phonePlaceholder')"
+                                    autocomplete="off"
+                                />
                             </div>
                             <div class="space-y-1.5">
                                 <label class="text-sm font-medium text-muted-foreground">{{ t('qr.fields.vcard.email') }}</label>
-                                <Input v-model="vcardEmail" type="email" :placeholder="t('qr.fields.vcard.emailPlaceholder')" autocomplete="off" />
+                                <Input
+                                    v-model="vcardEmail"
+                                    type="email"
+                                    :placeholder="t('qr.fields.vcard.emailPlaceholder')"
+                                    autocomplete="off"
+                                />
                             </div>
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-sm font-medium text-muted-foreground">{{ t('qr.fields.vcard.website') }}</label>
-                            <Input v-model="vcardWebsite" type="url" :placeholder="t('qr.fields.vcard.websitePlaceholder')" autocomplete="off" />
+                            <Input
+                                v-model="vcardWebsite"
+                                type="url"
+                                :placeholder="t('qr.fields.vcard.websitePlaceholder')"
+                                autocomplete="off"
+                            />
                         </div>
                         <div class="space-y-1.5">
                             <label class="text-sm font-medium text-muted-foreground">{{ t('qr.fields.vcard.address') }}</label>

@@ -380,7 +380,12 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <Button v-if="canCompare" size="sm" variant="outline" @click="goToCompare">
+                <Button
+                    v-if="canCompare"
+                    size="sm"
+                    variant="outline"
+                    @click="goToCompare"
+                >
                     <GitCompareArrows class="mr-1.5 size-3" />
                     Compare ({{ selectedIds.size }})
                 </Button>
