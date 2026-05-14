@@ -6,7 +6,7 @@ import {
     getCoreRowModel,
     useVueTable,
 } from '@tanstack/vue-table'
-import { ArrowUpDown, Copy, Download, MoreHorizontal, Pause, Pencil, Play, Plus, Trash2 } from 'lucide-vue-next'
+import { ArrowUpDown, Copy, Download, GitCompareArrows, MoreHorizontal, Pause, Pencil, Play, Plus, Trash2 } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
@@ -148,6 +148,14 @@ function executeBulkDelete() {
         },
     })
 }
+
+function goToCompare() {
+    const params = new URLSearchParams()
+    for (const id of selectedIds.value) params.append('ids[]', String(id))
+    router.visit(`/qr/compare?${params.toString()}`)
+}
+
+const canCompare = computed(() => selectedIds.value.size >= 2 && selectedIds.value.size <= 5)
 
 // ── Single-row delete dialog ───────────────────────────────────────
 const deleteTarget = ref<QrCodeRow | null>(null)
@@ -372,6 +380,10 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+                <Button v-if="canCompare" size="sm" variant="outline" @click="goToCompare">
+                    <GitCompareArrows class="mr-1.5 size-3" />
+                    Compare ({{ selectedIds.size }})
+                </Button>
                 <Button size="sm" variant="destructive" @click="bulkDeleteOpen = true">
                     <Trash2 class="mr-1.5 size-3" />
                     {{ t('qr.bulk.delete') }}

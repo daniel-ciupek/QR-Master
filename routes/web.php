@@ -11,6 +11,7 @@ use App\Http\Controllers\Profile\SessionsController;
 use App\Http\Controllers\PublicRedirectController;
 use App\Http\Controllers\QrCode\QrCodeAnalyticsController;
 use App\Http\Controllers\QrCode\QrCodeAnalyticsPdfController;
+use App\Http\Controllers\QrCode\QrCodeCompareController;
 use App\Http\Controllers\QrCode\QrCodeController;
 use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
@@ -46,6 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('qr')->name('qr.')->group(function () {
         Route::get('/', [QrCodeController::class, 'index'])->name('index');
+        Route::get('/compare', QrCodeCompareController::class)->name('compare');
         Route::get('/create', [QrCodeController::class, 'create'])->name('create');
         Route::post('/export', [QrCodeController::class, 'export'])->name('export');
         Route::post('/{qrCode}/logo', [QrCodeController::class, 'uploadLogo'])->name('logo.upload');
