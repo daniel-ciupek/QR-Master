@@ -7,6 +7,7 @@ use App\Http\Controllers\BioLink\BioLinkClickController;
 use App\Http\Controllers\BioLink\BioLinkController;
 use App\Http\Controllers\BioLink\BioLinkItemController;
 use App\Http\Controllers\BioLink\BioLinkPublicController;
+use App\Http\Controllers\BotChallengeController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\Profile\PasskeysController;
 use App\Http\Controllers\Profile\ProfileController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
 use App\Http\Controllers\WebAuthn\WebAuthnRegisterController;
+use App\Http\Middleware\CheckBotSuspicion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,9 +34,9 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Public QR redirect — rate limited, no auth required
+// Public QR redirect — rate limited, bot-suspicion checked
 Route::get('/q/{hash}', PublicRedirectController::class)
-    ->middleware('throttle:public-redirect')
+    ->middleware(['throttle:public-redirect', CheckBotSuspicion::class])
     ->name('qr.redirect');
 
 // Password-protected QR unlock
@@ -44,6 +46,14 @@ Route::get('/q/{hash}/unlock', [QrPasswordController::class, 'show'])
 Route::post('/q/{hash}/unlock', [QrPasswordController::class, 'verify'])
     ->middleware('throttle:qr-password')
     ->name('qr.password.verify');
+
+// Anti-bot Turnstile challenge
+Route::get('/q/{hash}/challenge', [BotChallengeController::class, 'show'])
+    ->middleware('throttle:public-redirect')
+    ->name('qr.challenge.show');
+Route::post('/q/{hash}/challenge', [BotChallengeController::class, 'verify'])
+    ->middleware('throttle:qr-password')
+    ->name('qr.challenge.verify');
 
 // Public Bio-Link pages — no auth, rate limited
 Route::get('/b/{slug}', BioLinkPublicController::class)

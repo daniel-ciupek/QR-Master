@@ -791,6 +791,12 @@ export default {
             fonts: { inter: 'Sans', serif: 'Serif', mono: 'Mono' },
         },
     },
+    botChallenge: {
+        pageTitle: 'Verification',
+        title: 'Please verify you are not a bot',
+        subtitle: 'Suspicious traffic detected. Verify to continue to: {name}',
+        hint: 'Verification takes just a moment.',
+    },
     capReached: {
         pageTitle: 'Promotion ended',
         title: 'Promotion ended',

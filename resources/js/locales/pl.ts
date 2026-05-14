@@ -791,6 +791,12 @@ export default {
             fonts: { inter: 'Sans', serif: 'Szeryfowy', mono: 'Mono' },
         },
     },
+    botChallenge: {
+        pageTitle: 'Weryfikacja',
+        title: 'Potwierdź, że nie jesteś botem',
+        subtitle: 'Wykryliśmy podejrzany ruch. Zweryfikuj się, aby przejść do: {name}',
+        hint: 'Weryfikacja zajmuje tylko chwilę.',
+    },
     capReached: {
         pageTitle: 'Promocja zakończona',
         title: 'Promocja zakończona',
