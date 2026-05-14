@@ -37,7 +37,7 @@ const MAX_CHARS = 900
 
 const ALLOWED_URL_SCHEMES = ['https://', 'http://']
 
-type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf' | 'bio_link' | 'app' | 'calendar' | 'crypto'
+type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf' | 'bio_link' | 'app' | 'calendar' | 'crypto' | 'review'
 type EccLevel = ErrorCorrectionLevel
 
 const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
@@ -65,6 +65,12 @@ const pdfFile = ref<File | null>(null)
 const appIosUrl = ref('')
 const appAndroidUrl = ref('')
 const appFallbackUrl = ref('')
+
+// Review fields
+type ReviewPlatform = 'google' | 'trustpilot' | 'yelp' | 'facebook' | 'tripadvisor' | 'other'
+const REVIEW_PLATFORMS: ReviewPlatform[] = ['google', 'trustpilot', 'yelp', 'facebook', 'tripadvisor', 'other']
+const reviewPlatform = ref<ReviewPlatform>('google')
+const reviewUrl = ref('')
 
 // Crypto fields
 type CryptoCoin = 'bitcoin' | 'ethereum' | 'litecoin' | 'dogecoin'
@@ -228,6 +234,9 @@ function saveQrCode() {
         app_ios_url: activeTab.value === 'app' ? appIosUrl.value.trim() : undefined,
         app_android_url: activeTab.value === 'app' ? appAndroidUrl.value.trim() : undefined,
         app_fallback_url: activeTab.value === 'app' ? appFallbackUrl.value.trim() : undefined,
+        // Review
+        review_platform: activeTab.value === 'review' ? reviewPlatform.value : undefined,
+        review_url: activeTab.value === 'review' ? reviewUrl.value.trim() : undefined,
         // Crypto
         crypto_coin: activeTab.value === 'crypto' ? cryptoCoin.value : undefined,
         crypto_address: activeTab.value === 'crypto' ? cryptoAddress.value.trim() : undefined,
@@ -290,6 +299,8 @@ const qrData = computed<string>(() => {
             return buildCalendarPreview()
         case 'crypto':
             return buildCryptoPreview()
+        case 'review':
+            return reviewUrl.value.trim()
         default:
             return ''
     }
@@ -405,6 +416,7 @@ const exportOpen = ref(false)
                         <TabsTrigger value="app" class="flex-1">{{ t('qr.tabs.app') }}</TabsTrigger>
                         <TabsTrigger value="calendar" class="flex-1">{{ t('qr.tabs.calendar') }}</TabsTrigger>
                         <TabsTrigger value="crypto" class="flex-1">{{ t('qr.tabs.crypto') }}</TabsTrigger>
+                        <TabsTrigger value="review" class="flex-1">{{ t('qr.tabs.review') }}</TabsTrigger>
                     </TabsList>
 
                     <!-- URL -->
@@ -828,6 +840,39 @@ const exportOpen = ref(false)
                         <p v-if="cryptoAddress.trim()" class="break-all rounded bg-muted px-3 py-2 font-mono text-xs text-muted-foreground">
                             {{ buildCryptoPreview() }}
                         </p>
+                    </TabsContent>
+
+                    <!-- Review -->
+                    <TabsContent value="review" class="mt-4 space-y-4">
+                        <p class="text-sm text-muted-foreground">{{ t('qr.fields.review.hint') }}</p>
+
+                        <!-- Platform selector -->
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.review.platform') }}</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button
+                                    v-for="platform in REVIEW_PLATFORMS"
+                                    :key="platform"
+                                    type="button"
+                                    class="rounded-md border px-3 py-1.5 text-sm font-medium transition-colors"
+                                    :class="reviewPlatform === platform ? 'border-primary bg-primary/10' : 'border-border hover:border-muted-foreground'"
+                                    @click="reviewPlatform = platform"
+                                >
+                                    {{ t('qr.fields.review.platforms.' + platform) }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.review.url') }} *</label>
+                            <Input
+                                v-model="reviewUrl"
+                                type="url"
+                                :placeholder="t('qr.fields.review.urlPlaceholder')"
+                                autocomplete="off"
+                            />
+                            <p class="text-xs text-muted-foreground">{{ t('qr.fields.review.urlHint') }}</p>
+                        </div>
                     </TabsContent>
                 </Tabs>
 

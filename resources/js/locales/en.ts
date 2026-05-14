@@ -348,6 +348,7 @@ export default {
             app: 'App',
             calendar: 'Calendar',
             crypto: 'Crypto',
+            review: 'Review',
         },
         fields: {
             url: { label: 'URL address', placeholder: 'https://example.com' },
@@ -459,6 +460,21 @@ export default {
                 feature2: '4 visual templates (Minimal, Bold, Glassmorphism, Retro)',
                 feature3: 'Click tracking per link',
                 afterSave: 'After saving you will be redirected to the Bio-Link editor.',
+            },
+            review: {
+                hint: 'Send customers directly to your review page. Scan count tracks engagement.',
+                platform: 'Platform',
+                platforms: {
+                    google: '★ Google',
+                    trustpilot: '✓ Trustpilot',
+                    yelp: 'Yelp',
+                    facebook: 'Facebook',
+                    tripadvisor: 'TripAdvisor',
+                    other: 'Other',
+                },
+                url: 'Review page URL',
+                urlPlaceholder: 'https://g.page/r/…/review',
+                urlHint: 'Find your Google review link in Google Business Profile.',
             },
         },
         style: {

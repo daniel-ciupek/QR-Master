@@ -348,6 +348,7 @@ export default {
             app: 'Aplikacja',
             calendar: 'Kalendarz',
             crypto: 'Krypto',
+            review: 'Recenzja',
         },
         fields: {
             url: { label: 'Adres URL', placeholder: 'https://example.com' },
@@ -459,6 +460,21 @@ export default {
                 feature2: '4 szablony wizualne (Minimal, Bold, Glassmorphism, Retro)',
                 feature3: 'Śledzenie kliknięć per link',
                 afterSave: 'Po zapisaniu zostaniesz przekierowany/a do edytora Bio-Link.',
+            },
+            review: {
+                hint: 'Odsyła klientów bezpośrednio na stronę z recenzjami. Liczba skanów śledzi zaangażowanie.',
+                platform: 'Platforma',
+                platforms: {
+                    google: '★ Google',
+                    trustpilot: '✓ Trustpilot',
+                    yelp: 'Yelp',
+                    facebook: 'Facebook',
+                    tripadvisor: 'TripAdvisor',
+                    other: 'Inna',
+                },
+                url: 'URL strony z recenzjami',
+                urlPlaceholder: 'https://g.page/r/…/review',
+                urlHint: 'Link do recenzji Google znajdziesz w Google Business Profile.',
             },
         },
         style: {

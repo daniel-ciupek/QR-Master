@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services\QrContent;
 
 use App\Enums\QrCodeType;
-use InvalidArgumentException;
 
 final class QrContentBuilderService
 {
@@ -44,7 +43,7 @@ final class QrContentBuilderService
             QrCodeType::App => '',
             QrCodeType::Calendar => $this->calendarBuilder->build($fields),
             QrCodeType::Crypto => $this->cryptoBuilder->build($fields),
-            default => throw new InvalidArgumentException("Unsupported QR type: {$type->value}"),
+            QrCodeType::Review => (string) ($fields['review_url'] ?? ''),
         };
     }
 

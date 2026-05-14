@@ -231,6 +231,9 @@ final class QrCodeController extends Controller
                 'calendar_location' => $validated['calendar_location'] ?? null,
                 'calendar_all_day' => ($validated['calendar_all_day'] ?? null) ? true : null,
             ], fn ($v) => $v !== null && $v !== ''),
+            QrCodeType::Review => array_filter([
+                'review_platform' => $validated['review_platform'] ?? null,
+            ], fn ($v) => $v !== null && $v !== ''),
             QrCodeType::Crypto => array_filter([
                 'crypto_coin' => $validated['crypto_coin'] ?? null,
                 'crypto_address' => $validated['crypto_address'] ?? null,

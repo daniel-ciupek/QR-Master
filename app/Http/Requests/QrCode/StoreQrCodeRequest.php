@@ -93,6 +93,10 @@ final class StoreQrCodeRequest extends FormRequest
             'crypto_label' => ['nullable', 'string', 'max:100'],
             'crypto_message' => ['nullable', 'string', 'max:255'],
 
+            // Review — platform metadata + URL (becomes destination_url via builder)
+            'review_platform' => ['required_if:type,review', 'nullable', Rule::in(['google', 'trustpilot', 'yelp', 'facebook', 'tripadvisor', 'other'])],
+            'review_url' => ['required_if:type,review', 'nullable', 'url', 'max:2000', 'regex:/^https?:\/\/.+/'],
+
             // Visual settings (pass-through, no deep validation)
             'settings' => ['nullable', 'array'],
         ];
