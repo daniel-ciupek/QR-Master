@@ -327,6 +327,12 @@ export default {
                 activatesAtHint: 'Before this date the code returns 404. Leave empty to activate immediately.',
                 expiresAt: 'Expires',
                 expiresAtHint: 'Leave empty so the code never expires.',
+                geo: {
+                    label: 'Geofencing — allowed countries',
+                    hint: 'Enter ISO-2 country codes (e.g. PL, DE, US). Empty = no restriction.',
+                    placeholder: 'US',
+                    add: 'Add',
+                },
             },
             preview: {
                 title: 'Redirect QR code',
@@ -775,6 +781,12 @@ export default {
             shapes: { rounded: 'Rounded', square: 'Square', pill: 'Pill' },
             fonts: { inter: 'Sans', serif: 'Serif', mono: 'Mono' },
         },
+    },
+    geoBlocked: {
+        pageTitle: 'Not available in your region',
+        title: 'Not available in your region',
+        subtitle: 'This QR code ({name}) is not available in your country.',
+        hint: 'Contact the QR code owner if you believe this is an error.',
     },
     qrPassword: {
         pageTitle: 'Password-protected QR code',

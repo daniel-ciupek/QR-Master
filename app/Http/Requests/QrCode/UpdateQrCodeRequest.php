@@ -22,6 +22,8 @@ final class UpdateQrCodeRequest extends FormRequest
             'is_active' => ['required', 'boolean'],
             'expires_at' => ['nullable', 'date'],
             'activates_at' => ['nullable', 'date'],
+            'geo_allowed_countries' => ['nullable', 'array'],
+            'geo_allowed_countries.*' => ['string', 'size:2', 'alpha'],
             'tag_ids' => ['nullable', 'array'],
             'tag_ids.*' => ['integer'],
         ];

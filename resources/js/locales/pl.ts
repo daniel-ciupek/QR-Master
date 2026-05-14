@@ -327,6 +327,12 @@ export default {
                 activatesAtHint: 'Przed tą datą kod zwróci 404. Pozostaw puste, aby był aktywny od razu.',
                 expiresAt: 'Wygasa',
                 expiresAtHint: 'Pozostaw puste, aby kod nie wygasał.',
+                geo: {
+                    label: 'Geofencing — dozwolone kraje',
+                    hint: 'Wprowadź kody ISO-2 krajów (np. PL, DE, US). Puste = brak ograniczeń.',
+                    placeholder: 'PL',
+                    add: 'Dodaj',
+                },
             },
             preview: {
                 title: 'QR kod przekierowania',
@@ -775,6 +781,12 @@ export default {
             shapes: { rounded: 'Zaokrąglony', square: 'Kwadratowy', pill: 'Pigułka' },
             fonts: { inter: 'Sans', serif: 'Szeryfowy', mono: 'Mono' },
         },
+    },
+    geoBlocked: {
+        pageTitle: 'Niedostępne w Twoim regionie',
+        title: 'Niedostępne w Twoim regionie',
+        subtitle: 'Ten kod QR ({name}) nie jest dostępny w Twoim kraju.',
+        hint: 'Skontaktuj się z właścicielem kodu, jeśli uważasz, że to błąd.',
     },
     qrPassword: {
         pageTitle: 'Kod chroniony hasłem',

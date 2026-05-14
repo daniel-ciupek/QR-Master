@@ -26,6 +26,7 @@ interface QrCodeProp {
     is_active: boolean
     expires_at: string | null
     activates_at: string | null
+    geo_allowed_countries: string[]
     tag_ids: number[]
     logo_url: string | null
 }
@@ -43,6 +44,7 @@ const form = useForm({
     is_active: props.qrCode.is_active,
     expires_at: props.qrCode.expires_at ?? '',
     activates_at: props.qrCode.activates_at ?? '',
+    geo_allowed_countries: [...props.qrCode.geo_allowed_countries] as string[],
     tag_ids: [...props.qrCode.tag_ids] as number[],
 })
 
@@ -86,6 +88,22 @@ function onLogoUpload(file: File) {
 
 function onLogoRemove() {
     router.delete(`/qr/${props.qrCode.id}/logo`, { preserveScroll: true })
+}
+
+// ── Geofencing ─────────────────────────────────────────────────────
+const geoInput = ref('')
+
+function addCountry() {
+    const code = geoInput.value.trim().toUpperCase().slice(0, 2)
+    if (code.length === 2 && /^[A-Z]{2}$/.test(code) && !form.geo_allowed_countries.includes(code)) {
+        form.geo_allowed_countries.push(code)
+    }
+    geoInput.value = ''
+}
+
+function removeCountry(code: string) {
+    const idx = form.geo_allowed_countries.indexOf(code)
+    if (idx !== -1) form.geo_allowed_countries.splice(idx, 1)
 }
 
 // ── QR preview ─────────────────────────────────────────────────────
@@ -299,6 +317,46 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
                         </p>
                         <p v-else class="text-xs text-muted-foreground">{{ t('qr.edit.fields.expiresAtHint') }}</p>
                     </div>
+                </div>
+
+                <!-- Geofencing -->
+                <div class="space-y-2">
+                    <p class="text-sm font-medium leading-none">{{ t('qr.edit.fields.geo.label') }}</p>
+                    <p class="text-xs text-muted-foreground">{{ t('qr.edit.fields.geo.hint') }}</p>
+                    <div class="flex gap-2">
+                        <Input
+                            v-model="geoInput"
+                            :placeholder="t('qr.edit.fields.geo.placeholder')"
+                            class="w-28 uppercase"
+                            maxlength="2"
+                            @keydown.enter.prevent="addCountry"
+                        />
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            @click="addCountry"
+                        >
+                            {{ t('qr.edit.fields.geo.add') }}
+                        </Button>
+                    </div>
+                    <div v-if="form.geo_allowed_countries.length > 0" class="flex flex-wrap gap-1.5">
+                        <span
+                            v-for="code in form.geo_allowed_countries"
+                            :key="code"
+                            class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                        >
+                            {{ code }}
+                            <button
+                                type="button"
+                                class="ml-0.5 rounded-full hover:bg-primary/20 p-0.5"
+                                @click="removeCountry(code)"
+                            >×</button>
+                        </span>
+                    </div>
+                    <p v-if="form.errors.geo_allowed_countries" class="text-xs text-destructive">
+                        {{ form.errors.geo_allowed_countries }}
+                    </p>
                 </div>
 
                 <!-- Submit -->

@@ -136,6 +136,9 @@ final class QrCodeController extends Controller
             is_active: (bool) ($validated['is_active'] ?? true),
             expires_at: isset($validated['expires_at']) ? Carbon::parse($validated['expires_at']) : null,
             activates_at: isset($validated['activates_at']) ? Carbon::parse($validated['activates_at']) : null,
+            geo_allowed_countries: ! empty($validated['geo_allowed_countries'])
+                ? array_map('strtoupper', (array) $validated['geo_allowed_countries'])
+                : null,
         );
 
         $bioLink = null;
@@ -271,6 +274,7 @@ final class QrCodeController extends Controller
                 'is_active' => $qrCode->is_active,
                 'expires_at' => $qrCode->expires_at?->toDateString(),
                 'activates_at' => $qrCode->activates_at?->toDateString(),
+                'geo_allowed_countries' => $qrCode->geo_allowed_countries ?? [],
                 'tag_ids' => $qrCode->tags->pluck('id')->toArray(),
                 'logo_url' => $qrCode->getFirstMediaUrl('logo') ?: null,
             ],
@@ -302,6 +306,9 @@ final class QrCodeController extends Controller
                 : null,
             activates_at: $request->filled('activates_at')
                 ? Carbon::parse($request->input('activates_at'))
+                : null,
+            geo_allowed_countries: ! empty($request->array('geo_allowed_countries'))
+                ? array_map('strtoupper', $request->array('geo_allowed_countries'))
                 : null,
         );
 

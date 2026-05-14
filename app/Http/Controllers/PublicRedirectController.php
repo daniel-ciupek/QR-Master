@@ -8,6 +8,7 @@ use App\Enums\QrCodeType;
 use App\Jobs\RecordScanJob;
 use App\Models\QrCode;
 use App\Services\AbTestService;
+use App\Services\GeoLookupService;
 use App\Services\SmartRedirectService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -70,6 +71,19 @@ final class PublicRedirectController extends Controller
         // Password-protected: require session unlock token from QrPasswordController
         if ($qrCode->isPasswordProtected() && ! $request->session()->get("qr_unlocked_{$hash}")) {
             return redirect()->route('qr.password.show', $hash);
+        }
+
+        // Geofencing: check allowlist of countries (fail-open — allow if GeoIP unavailable)
+        $allowedCountries = $qrCode->geo_allowed_countries;
+        if (! empty($allowedCountries)) {
+            $geo = app(GeoLookupService::class)->lookup($request->ip() ?? '');
+            $country = $geo['country'] ?? null;
+            if ($country !== null && ! in_array($country, $allowedCountries, true)) {
+                return Inertia::render('QrCode/GeoBlocked', [
+                    'title' => $qrCode->title,
+                    'allowedCountries' => $allowedCountries,
+                ]);
+            }
         }
 
         // Smart redirect rules take priority over everything

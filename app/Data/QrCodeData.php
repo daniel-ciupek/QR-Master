@@ -30,6 +30,9 @@ final class QrCodeData extends Data
 
         public readonly ?Carbon $activates_at = null,
 
+        /** @var array<int, string>|null */
+        public readonly ?array $geo_allowed_countries = null,
+
         public readonly ?string $password = null,
     ) {}
 }
