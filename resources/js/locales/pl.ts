@@ -341,6 +341,7 @@ export default {
             phone: 'Telefon',
             sms: 'SMS',
             vcard: 'vCard',
+            wifi: 'WiFi',
         },
         fields: {
             url: { label: 'Adres URL', placeholder: 'https://example.com' },
@@ -377,6 +378,22 @@ export default {
                 websitePlaceholder: 'https://firma.pl',
                 address: 'Adres (opcjonalnie)',
                 addressPlaceholder: 'ul. Główna 1, Warszawa, Polska',
+            },
+            wifi: {
+                ssid: 'Nazwa sieci (SSID)',
+                ssidPlaceholder: 'MojaWiFi',
+                security: 'Typ zabezpieczenia',
+                password: 'Hasło',
+                passwordPlaceholder: 'Hasło sieci',
+                hidden: 'Ukryta sieć',
+                hiddenHint: 'Włącz jeśli SSID nie jest rozgłaszany',
+                securityTypes: {
+                    wpa: 'WPA',
+                    wpa2: 'WPA2',
+                    wpa3: 'WPA3',
+                    wep: 'WEP',
+                    open: 'Otwarta (bez hasła)',
+                },
             },
         },
         style: {

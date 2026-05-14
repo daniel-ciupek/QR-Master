@@ -9,7 +9,10 @@ use InvalidArgumentException;
 
 final class QrContentBuilderService
 {
-    public function __construct(private readonly VCardBuilder $vCardBuilder) {}
+    public function __construct(
+        private readonly VCardBuilder $vCardBuilder,
+        private readonly WifiBuilder $wifiBuilder,
+    ) {}
 
     /**
      * Build the QR string content (destination_url) for a given type.
@@ -29,6 +32,7 @@ final class QrContentBuilderService
                 $fields['vcard_phone'] ?? null,
                 $fields['vcard_email'] ?? null,
             ),
+            QrCodeType::Wifi => $this->wifiBuilder->build($fields, $fields['wifi_password'] ?? null),
             QrCodeType::Geo => $this->buildGeo($fields),
             default => throw new InvalidArgumentException("Unsupported QR type: {$type->value}"),
         };

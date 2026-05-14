@@ -167,6 +167,11 @@ final class QrCodeController extends Controller
                 'vcard_address' => $validated['vcard_address'] ?? null,
                 'vcard_photo_url' => $validated['vcard_photo_url'] ?? null,
             ], fn ($v) => $v !== null && $v !== ''),
+            QrCodeType::Wifi => array_filter([
+                'wifi_ssid' => $validated['wifi_ssid'] ?? null,
+                'wifi_security' => $validated['wifi_security'] ?? null,
+                'wifi_hidden' => isset($validated['wifi_hidden']) ? (bool) $validated['wifi_hidden'] : null,
+            ], fn ($v) => $v !== null && $v !== ''),
             QrCodeType::Email => array_filter([
                 'email_address' => $validated['email_address'] ?? null,
                 'email_subject' => $validated['email_subject'] ?? null,

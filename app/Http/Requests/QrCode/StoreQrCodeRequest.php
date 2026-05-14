@@ -59,6 +59,12 @@ final class StoreQrCodeRequest extends FormRequest
             'vcard_phone' => ['nullable', 'string', 'max:30'],
             'vcard_email' => ['nullable', 'email', 'max:255'],
 
+            // WiFi — password stored encrypted, SSID required
+            'wifi_ssid' => ['required_if:type,wifi', 'nullable', 'string', 'max:32'],
+            'wifi_security' => ['required_if:type,wifi', 'nullable', Rule::in(['open', 'wpa', 'wpa2', 'wpa3', 'wep'])],
+            'wifi_password' => ['nullable', 'string', 'max:63'],
+            'wifi_hidden' => ['nullable', 'boolean'],
+
             // Geo — both coordinates required together
             'geo_lat' => ['required_if:type,geo', 'nullable', 'numeric', 'between:-90,90'],
             'geo_lng' => ['required_if:type,geo', 'nullable', 'numeric', 'between:-180,180'],

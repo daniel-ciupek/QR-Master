@@ -37,7 +37,7 @@ const MAX_CHARS = 900
 
 const ALLOWED_URL_SCHEMES = ['https://', 'http://']
 
-type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard'
+type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi'
 type EccLevel = ErrorCorrectionLevel
 
 const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
@@ -53,6 +53,14 @@ const emailBody = ref('')
 const phone = ref('')
 const smsNumber = ref('')
 const smsMessage = ref('')
+
+// WiFi fields
+type WifiSecurity = 'wpa' | 'wpa2' | 'wpa3' | 'wep' | 'open'
+const WIFI_SECURITY_TYPES: WifiSecurity[] = ['wpa', 'wpa2', 'wpa3', 'wep', 'open']
+const wifiSsid = ref('')
+const wifiSecurity = ref<WifiSecurity>('wpa2')
+const wifiPassword = ref('')
+const wifiHidden = ref(false)
 
 // vCard fields
 const vcardFirstName = ref('')
@@ -81,6 +89,23 @@ function buildVCardPreview(): string {
     if (vcardAddress.value.trim()) lines.push(`ADR;TYPE=WORK:;;${vcardAddress.value.trim()};;;;`)
     lines.push('END:VCARD')
     return lines.join('\r\n')
+}
+
+const WIFI_SECURITY_MAP: Record<WifiSecurity, string> = {
+    wpa: 'WPA', wpa2: 'WPA2', wpa3: 'WPA3', wep: 'WEP', open: 'nopass',
+}
+
+function escapeWifi(v: string): string {
+    return v.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/"/g, '\\"')
+}
+
+function buildWifiPreview(): string {
+    const ssid = escapeWifi(wifiSsid.value.trim())
+    if (!ssid) return ''
+    const sec = WIFI_SECURITY_MAP[wifiSecurity.value]
+    const pass = escapeWifi(wifiPassword.value)
+    const hidden = wifiHidden.value ? 'true' : 'false'
+    return `WIFI:T:${sec};S:${ssid};P:${pass};H:${hidden};;`
 }
 
 function saveQrCode() {
@@ -112,6 +137,11 @@ function saveQrCode() {
         vcard_email: activeTab.value === 'vcard' ? vcardEmail.value.trim() : undefined,
         vcard_website: activeTab.value === 'vcard' ? vcardWebsite.value.trim() : undefined,
         vcard_address: activeTab.value === 'vcard' ? vcardAddress.value.trim() : undefined,
+        // WiFi
+        wifi_ssid: activeTab.value === 'wifi' ? wifiSsid.value.trim() : undefined,
+        wifi_security: activeTab.value === 'wifi' ? wifiSecurity.value : undefined,
+        wifi_password: activeTab.value === 'wifi' ? wifiPassword.value : undefined,
+        wifi_hidden: activeTab.value === 'wifi' ? wifiHidden.value : undefined,
         // Visual settings
         settings: currentStyle.value,
     }, {
@@ -143,6 +173,8 @@ const qrData = computed<string>(() => {
         }
         case 'vcard':
             return buildVCardPreview()
+        case 'wifi':
+            return buildWifiPreview()
         default:
             return ''
     }
@@ -251,6 +283,7 @@ const exportOpen = ref(false)
                         <TabsTrigger value="phone" class="flex-1">{{ t('qr.tabs.phone') }}</TabsTrigger>
                         <TabsTrigger value="sms" class="flex-1">{{ t('qr.tabs.sms') }}</TabsTrigger>
                         <TabsTrigger value="vcard" class="flex-1">{{ t('qr.tabs.vcard') }}</TabsTrigger>
+                        <TabsTrigger value="wifi" class="flex-1">{{ t('qr.tabs.wifi') }}</TabsTrigger>
                     </TabsList>
 
                     <!-- URL -->
@@ -338,6 +371,55 @@ const exportOpen = ref(false)
                                 class="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] dark:bg-input/30 resize-none transition-[color,box-shadow]"
                             />
                         </div>
+                    </TabsContent>
+
+                    <!-- WiFi -->
+                    <TabsContent value="wifi" class="mt-4 space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.wifi.ssid') }}</label>
+                            <Input
+                                v-model="wifiSsid"
+                                :placeholder="t('qr.fields.wifi.ssidPlaceholder')"
+                                autocomplete="off"
+                            />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.wifi.security') }}</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button
+                                    v-for="sec in WIFI_SECURITY_TYPES"
+                                    :key="sec"
+                                    type="button"
+                                    :class="[
+                                        'rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors',
+                                        wifiSecurity === sec
+                                            ? 'bg-primary text-primary-foreground border-primary'
+                                            : 'border-border text-muted-foreground hover:border-ring hover:text-foreground',
+                                    ]"
+                                    @click="wifiSecurity = sec"
+                                >
+                                    {{ t(`qr.fields.wifi.securityTypes.${sec}`) }}
+                                </button>
+                            </div>
+                        </div>
+                        <div v-if="wifiSecurity !== 'open'" class="space-y-2">
+                            <label class="text-sm font-medium text-muted-foreground">{{ t('qr.fields.wifi.password') }}</label>
+                            <Input
+                                v-model="wifiPassword"
+                                type="password"
+                                :placeholder="t('qr.fields.wifi.passwordPlaceholder')"
+                                autocomplete="new-password"
+                            />
+                        </div>
+                        <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                            <input
+                                v-model="wifiHidden"
+                                type="checkbox"
+                                class="size-4 rounded border-border accent-primary"
+                            >
+                            <span class="text-sm font-medium">{{ t('qr.fields.wifi.hidden') }}</span>
+                            <span class="text-xs text-muted-foreground">{{ t('qr.fields.wifi.hiddenHint') }}</span>
+                        </label>
                     </TabsContent>
 
                     <!-- vCard -->
