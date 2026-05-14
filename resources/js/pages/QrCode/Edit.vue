@@ -290,6 +290,17 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
                         <Link href="/qr">{{ t('qr.edit.cancel') }}</Link>
                     </Button>
                 </div>
+
+                <!-- Smart Redirect Rules link -->
+                <div class="rounded-lg border border-border bg-muted/30 px-4 py-3 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium">{{ t('qr.edit.smartRedirect.title') }}</p>
+                        <p class="text-xs text-muted-foreground">{{ t('qr.edit.smartRedirect.hint') }}</p>
+                    </div>
+                    <Button variant="outline" size="sm" as-child>
+                        <Link :href="`/qr/${props.qrCode.id}/rules`">{{ t('qr.edit.smartRedirect.manage') }}</Link>
+                    </Button>
+                </div>
             </form>
 
             <!-- QR Preview -->

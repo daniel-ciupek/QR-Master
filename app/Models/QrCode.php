@@ -117,6 +117,12 @@ class QrCode extends Model implements HasMedia
         return $this->hasOne(BioLink::class);
     }
 
+    /** @return HasMany<RedirectRule, $this> */
+    public function redirectRules(): HasMany
+    {
+        return $this->hasMany(RedirectRule::class)->orderBy('priority');
+    }
+
     /** @return BelongsToMany<Tag, $this> */
     public function tags(): BelongsToMany
     {

@@ -189,7 +189,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 *Cel: Zaawansowane reguły — wartość premium dla marketerów.*
 
-- [ ] **7.1** **Smart Redirect Rules** — silnik reguł:
+- [x] **7.1** **Smart Redirect Rules** — silnik reguł:
   - Device type (iOS / Android / Desktop / Tablet)
   - Country / region (GeoIP-based)
   - Language (Accept-Language)

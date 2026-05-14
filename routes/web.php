@@ -17,6 +17,7 @@ use App\Http\Controllers\QrCode\QrCodeAnalyticsController;
 use App\Http\Controllers\QrCode\QrCodeAnalyticsPdfController;
 use App\Http\Controllers\QrCode\QrCodeCompareController;
 use App\Http\Controllers\QrCode\QrCodeController;
+use App\Http\Controllers\QrCode\RedirectRuleController;
 use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
@@ -67,6 +68,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{qrCode}/logo', [QrCodeController::class, 'uploadLogo'])->name('logo.upload');
         Route::delete('/{qrCode}/logo', [QrCodeController::class, 'deleteLogo'])->name('logo.delete');
         Route::post('/{qrCode}/pdf', [QrCodeController::class, 'uploadPdf'])->name('pdf.upload');
+        Route::get('/{qrCode}/rules', [RedirectRuleController::class, 'index'])->name('rules.index');
+        Route::post('/{qrCode}/rules', [RedirectRuleController::class, 'store'])->name('rules.store');
+        Route::post('/{qrCode}/rules/reorder', [RedirectRuleController::class, 'reorder'])->name('rules.reorder');
+        Route::patch('/{qrCode}/rules/{rule}', [RedirectRuleController::class, 'update'])->name('rules.update');
+        Route::delete('/{qrCode}/rules/{rule}', [RedirectRuleController::class, 'destroy'])->name('rules.destroy');
         // Bulk actions — must come before /{qrCode} wildcard
         Route::post('/bulk/delete', [QrCodeController::class, 'bulkDestroy'])->name('bulk.destroy');
         Route::post('/bulk/pause', [QrCodeController::class, 'bulkPause'])->name('bulk.pause');

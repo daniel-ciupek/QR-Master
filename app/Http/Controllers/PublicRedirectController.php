@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Enums\QrCodeType;
 use App\Jobs\RecordScanJob;
 use App\Models\QrCode;
+use App\Services\SmartRedirectService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -70,10 +71,14 @@ final class PublicRedirectController extends Controller
             abort(403);
         }
 
+        // Smart redirect rules take priority over destination_url
+        $smartUrl = app(SmartRedirectService::class)->resolve($qrCode, $request);
+        $redirectTo = $smartUrl ?? $qrCode->destination_url;
+
         dispatch(RecordScanJob::fromRequest($qrCode, $request));
 
         return redirect()
-            ->away($qrCode->destination_url, 302)
+            ->away($redirectTo, 302)
             ->withHeaders([
                 'Cache-Control' => 'no-store, no-cache, must-revalidate',
                 'X-Robots-Tag' => 'noindex',
