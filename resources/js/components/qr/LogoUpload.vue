@@ -85,7 +85,7 @@ function onFileChange(e: Event) {
             >
                 {{ t('qr.logo.upload') }}
             </Button>
-            <span class="text-xs text-muted-foreground">PNG, JPG, SVG, WEBP · max 2 MB</span>
+            <span class="text-xs text-muted-foreground">{{ t('qr.logo.formats') }}</span>
         </div>
 
         <p v-if="clientError" class="text-xs text-destructive">{{ clientError }}</p>

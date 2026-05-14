@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import { usePreferredDark } from '@vueuse/core'
 import { Activity, ArrowLeft, Download, Monitor, Smartphone, Tablet } from 'lucide-vue-next'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import VueApexCharts from 'vue3-apexcharts'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -77,6 +78,7 @@ const props = defineProps<{
     hourlyHeatmap: HourlyRow[]
 }>()
 
+const { t } = useI18n()
 const isDark = usePreferredDark()
 const themeMode = computed((): 'dark' | 'light' => (isDark.value ? 'dark' : 'light'))
 
@@ -255,7 +257,7 @@ onUnmounted(() => {
                 <div class="flex items-center gap-2">
                     <h1 class="text-xl font-semibold">{{ qrCode.title }}</h1>
                     <Badge :variant="qrCode.is_active ? 'default' : 'secondary'">
-                        {{ qrCode.is_active ? 'Active' : 'Paused' }}
+                        {{ qrCode.is_active ? t('qr.analytics.active') : t('qr.analytics.paused') }}
                     </Badge>
                 </div>
                 <p class="text-muted-foreground text-sm">{{ publicUrl }}</p>
@@ -263,11 +265,11 @@ onUnmounted(() => {
             <Button variant="outline" size="sm" as-child>
                 <a :href="`/qr/${qrCode.id}/analytics/export-pdf`" target="_blank" rel="noopener noreferrer">
                     <Download class="mr-1.5 size-3.5" />
-                    Export PDF
+                    {{ t('qr.analytics.exportPdf') }}
                 </a>
             </Button>
             <Button variant="outline" size="sm" as-child>
-                <Link :href="`/qr/${qrCode.id}/edit`">Edit</Link>
+                <Link :href="`/qr/${qrCode.id}/edit`">{{ t('qr.analytics.edit') }}</Link>
             </Button>
         </div>
 
@@ -276,7 +278,7 @@ onUnmounted(() => {
             <Card>
                 <CardHeader class="pb-2">
                     <CardTitle class="flex items-center gap-1.5">
-                        Total Scans
+                        {{ t('qr.analytics.totalScans') }}
                         <span class="relative flex size-2">
                             <span class="bg-primary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" />
                             <span class="bg-primary relative inline-flex size-2 rounded-full" />
@@ -289,16 +291,16 @@ onUnmounted(() => {
             </Card>
             <Card>
                 <CardHeader class="pb-2">
-                    <CardTitle>Unique</CardTitle>
+                    <CardTitle>{{ t('qr.analytics.unique') }}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <p class="text-3xl font-bold">{{ stats.unique.toLocaleString() }}</p>
-                    <p class="text-muted-foreground mt-1 text-xs">distinct IPs</p>
+                    <p class="text-muted-foreground mt-1 text-xs">{{ t('qr.analytics.distinctIps') }}</p>
                 </CardContent>
             </Card>
             <Card>
                 <CardHeader class="pb-2">
-                    <CardTitle>Today</CardTitle>
+                    <CardTitle>{{ t('qr.analytics.today') }}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <p class="text-3xl font-bold">{{ stats.today.toLocaleString() }}</p>
@@ -306,7 +308,7 @@ onUnmounted(() => {
             </Card>
             <Card>
                 <CardHeader class="pb-2">
-                    <CardTitle>This Month</CardTitle>
+                    <CardTitle>{{ t('qr.analytics.thisMonth') }}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <p class="text-3xl font-bold">{{ stats.this_month.toLocaleString() }}</p>
@@ -317,7 +319,7 @@ onUnmounted(() => {
         <!-- Timeline chart -->
         <Card>
             <CardHeader>
-                <CardTitle>Scans — Last 30 Days</CardTitle>
+                <CardTitle>{{ t('qr.analytics.timelineTitle') }}</CardTitle>
             </CardHeader>
             <CardContent class="pt-0">
                 <VueApexCharts
@@ -333,7 +335,7 @@ onUnmounted(() => {
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Card>
                 <CardHeader>
-                    <CardTitle>Country Distribution</CardTitle>
+                    <CardTitle>{{ t('qr.analytics.countryDistribution') }}</CardTitle>
                 </CardHeader>
                 <CardContent class="pt-0">
                     <VueApexCharts
@@ -347,7 +349,7 @@ onUnmounted(() => {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Device Types</CardTitle>
+                    <CardTitle>{{ t('qr.analytics.deviceTypes') }}</CardTitle>
                 </CardHeader>
                 <CardContent class="pt-0">
                     <template v-if="deviceBreakdown.length">
@@ -359,7 +361,7 @@ onUnmounted(() => {
                         />
                     </template>
                     <div v-else class="text-muted-foreground flex h-48 items-center justify-center text-sm">
-                        No device data yet
+                        {{ t('qr.analytics.noDeviceData') }}
                     </div>
                 </CardContent>
             </Card>
@@ -369,7 +371,7 @@ onUnmounted(() => {
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Card>
                 <CardHeader>
-                    <CardTitle>Top Browsers</CardTitle>
+                    <CardTitle>{{ t('qr.analytics.topBrowsers') }}</CardTitle>
                 </CardHeader>
                 <CardContent class="pt-0">
                     <template v-if="topBrowsers.length">
@@ -381,7 +383,7 @@ onUnmounted(() => {
                         />
                     </template>
                     <div v-else class="text-muted-foreground flex h-48 items-center justify-center text-sm">
-                        No browser data yet
+                        {{ t('qr.analytics.noBrowserData') }}
                     </div>
                 </CardContent>
             </Card>
@@ -389,11 +391,11 @@ onUnmounted(() => {
             <!-- This week stat card -->
             <Card class="flex flex-col justify-between">
                 <CardHeader>
-                    <CardTitle>This Week</CardTitle>
+                    <CardTitle>{{ t('qr.analytics.thisWeek') }}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <p class="text-5xl font-bold">{{ stats.this_week.toLocaleString() }}</p>
-                    <p class="text-muted-foreground mt-2 text-sm">scans in the last 7 days</p>
+                    <p class="text-muted-foreground mt-2 text-sm">{{ t('qr.analytics.scansLastWeek') }}</p>
                 </CardContent>
             </Card>
         </div>
@@ -401,7 +403,7 @@ onUnmounted(() => {
         <!-- Hourly heatmap -->
         <Card>
             <CardHeader>
-                <CardTitle>Scan Activity by Hour &amp; Day</CardTitle>
+                <CardTitle>{{ t('qr.analytics.heatmapTitle') }}</CardTitle>
             </CardHeader>
             <CardContent class="pt-0">
                 <VueApexCharts
@@ -418,7 +420,7 @@ onUnmounted(() => {
             <CardHeader>
                 <CardTitle class="flex items-center gap-2">
                     <Activity class="size-4" />
-                    Recent Scans
+                    {{ t('qr.analytics.recentScans') }}
                 </CardTitle>
             </CardHeader>
             <CardContent class="p-0">
@@ -435,14 +437,14 @@ onUnmounted(() => {
                         />
                         <div class="min-w-0 flex-1">
                             <p class="truncate font-medium">
-                                {{ scan.city ?? scan.country ?? 'Unknown location' }}
+                                {{ scan.city ?? scan.country ?? t('qr.analytics.unknownLocation') }}
                                 <span
                                     v-if="scan.country && scan.city"
                                     class="text-muted-foreground font-normal"
                                 >, {{ scan.country }}</span>
                             </p>
                             <p class="text-muted-foreground truncate text-xs">
-                                {{ scan.browser ?? 'Unknown browser' }} · {{ scan.os ?? 'Unknown OS' }}
+                                {{ scan.browser ?? t('qr.analytics.unknownBrowser') }} · {{ scan.os ?? t('qr.analytics.unknownOs') }}
                             </p>
                         </div>
                         <span class="text-muted-foreground shrink-0 text-xs">
@@ -451,7 +453,7 @@ onUnmounted(() => {
                     </div>
                 </template>
                 <div v-else class="text-muted-foreground px-6 py-8 text-center text-sm">
-                    No scans recorded yet
+                    {{ t('qr.analytics.noScansRecorded') }}
                 </div>
             </CardContent>
         </Card>

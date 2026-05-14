@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import { usePreferredDark } from '@vueuse/core'
 import { ArrowLeft, TrendingUp } from 'lucide-vue-next'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import VueApexCharts from 'vue3-apexcharts'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -39,6 +40,7 @@ interface CompareItem {
 
 const props = defineProps<{ items: CompareItem[] }>()
 
+const { t } = useI18n()
 const isDark = usePreferredDark()
 const themeMode = computed((): 'dark' | 'light' => (isDark.value ? 'dark' : 'light'))
 
@@ -126,7 +128,7 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
 </script>
 
 <template>
-    <Head title="Compare QR Codes" />
+    <Head :title="t('qr.compare.title')" />
 
     <div class="mx-auto max-w-7xl space-y-6 px-4 py-6">
 
@@ -138,9 +140,9 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
                 </Link>
             </Button>
             <div class="flex-1">
-                <h1 class="text-xl font-semibold">Compare QR Codes</h1>
+                <h1 class="text-xl font-semibold">{{ t('qr.compare.title') }}</h1>
                 <p class="text-muted-foreground text-sm">
-                    Side-by-side analytics for {{ items.length }} codes
+                    {{ t('qr.compare.subtitle', { count: items.length }) }}
                 </p>
             </div>
         </div>
@@ -150,7 +152,7 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
             <CardHeader>
                 <CardTitle class="flex items-center gap-2">
                     <TrendingUp class="size-4" />
-                    Scans — Last 30 Days (all codes)
+                    {{ t('qr.compare.timelineTitle') }}
                 </CardTitle>
             </CardHeader>
             <CardContent class="pt-0">
@@ -187,7 +189,7 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
                             <p class="text-muted-foreground mt-0.5 truncate text-xs">{{ item.destination_url ?? '—' }}</p>
                         </div>
                         <Badge :variant="item.is_active ? 'default' : 'secondary'" class="shrink-0 text-[10px]">
-                            {{ item.is_active ? 'Active' : 'Paused' }}
+                            {{ item.is_active ? t('qr.compare.active') : t('qr.compare.paused') }}
                         </Badge>
                     </div>
                     <div class="flex items-center gap-2 mt-1">
@@ -212,7 +214,7 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
                         <!-- Total -->
                         <div>
                             <div class="mb-1 flex items-center justify-between text-xs">
-                                <span class="text-muted-foreground">Total scans</span>
+                                <span class="text-muted-foreground">{{ t('qr.compare.stats.totalScans') }}</span>
                                 <span
                                     class="font-semibold"
                                     :class="isWinner(item, 'total') ? 'text-emerald-500' : ''"
@@ -232,7 +234,7 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
                         <!-- Unique -->
                         <div>
                             <div class="mb-1 flex items-center justify-between text-xs">
-                                <span class="text-muted-foreground">Unique visitors</span>
+                                <span class="text-muted-foreground">{{ t('qr.compare.stats.uniqueVisitors') }}</span>
                                 <span
                                     class="font-semibold"
                                     :class="isWinner(item, 'unique') ? 'text-emerald-500' : ''"
@@ -252,7 +254,7 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
                         <!-- This month -->
                         <div>
                             <div class="mb-1 flex items-center justify-between text-xs">
-                                <span class="text-muted-foreground">This month</span>
+                                <span class="text-muted-foreground">{{ t('qr.compare.stats.thisMonth') }}</span>
                                 <span
                                     class="font-semibold"
                                     :class="isWinner(item, 'this_month') ? 'text-emerald-500' : ''"
@@ -272,14 +274,14 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
                         <!-- Today / This week inline -->
                         <div class="flex gap-4 pt-1 text-xs">
                             <div>
-                                <span class="text-muted-foreground">Today </span>
+                                <span class="text-muted-foreground">{{ t('qr.compare.stats.today') }}</span>
                                 <span
                                     class="font-semibold"
                                     :class="isWinner(item, 'today') ? 'text-emerald-500' : ''"
                                 >{{ item.stats.today }}</span>
                             </div>
                             <div>
-                                <span class="text-muted-foreground">This week </span>
+                                <span class="text-muted-foreground">{{ t('qr.compare.stats.thisWeek') }}</span>
                                 <span
                                     class="font-semibold"
                                     :class="isWinner(item, 'this_week') ? 'text-emerald-500' : ''"
@@ -290,7 +292,7 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
 
                     <!-- Top countries -->
                     <div v-if="item.topCountries.length > 0">
-                        <p class="text-muted-foreground mb-1.5 text-[10px] font-semibold uppercase tracking-wider">Top Countries</p>
+                        <p class="text-muted-foreground mb-1.5 text-[10px] font-semibold uppercase tracking-wider">{{ t('qr.compare.topCountries') }}</p>
                         <div class="space-y-1">
                             <div
                                 v-for="row in item.topCountries"
@@ -305,7 +307,7 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
 
                     <!-- Device breakdown -->
                     <div v-if="item.deviceBreakdown.length > 0">
-                        <p class="text-muted-foreground mb-1.5 text-[10px] font-semibold uppercase tracking-wider">Devices</p>
+                        <p class="text-muted-foreground mb-1.5 text-[10px] font-semibold uppercase tracking-wider">{{ t('qr.compare.devices') }}</p>
                         <div class="space-y-1">
                             <div
                                 v-for="row in item.deviceBreakdown"
@@ -335,7 +337,7 @@ function isWinner(item: CompareItem, key: keyof Stats): boolean {
                             class="w-full text-xs"
                             as-child
                         >
-                            <Link :href="`/qr/${item.id}/analytics`">View full analytics</Link>
+                            <Link :href="`/qr/${item.id}/analytics`">{{ t('qr.compare.viewFullAnalytics') }}</Link>
                         </Button>
                     </div>
                 </CardContent>

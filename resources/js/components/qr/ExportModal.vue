@@ -47,10 +47,10 @@ const downloading = ref<ExportFormat | null>(null)
 const previewRef = ref<InstanceType<typeof LivePreview>>()
 
 const formats: { id: ExportFormat; label: string; description: string }[] = [
-    { id: 'png', label: 'PNG', description: 'Raster, ideal for web & print' },
-    { id: 'svg', label: 'SVG', description: 'Vector, scales to any size' },
-    { id: 'pdf', label: 'PDF', description: 'Print-ready, A-series compatible' },
-    { id: 'eps', label: 'EPS', description: 'Professional pre-press format' },
+    { id: 'png', label: 'PNG', description: t('qr.export.pngDesc') },
+    { id: 'svg', label: 'SVG', description: t('qr.export.svgDesc') },
+    { id: 'pdf', label: 'PDF', description: t('qr.export.pdfDesc') },
+    { id: 'eps', label: 'EPS', description: t('qr.export.epsDesc') },
 ]
 
 async function download(format: ExportFormat): Promise<void> {

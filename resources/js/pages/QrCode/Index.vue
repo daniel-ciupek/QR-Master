@@ -387,7 +387,7 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                     @click="goToCompare"
                 >
                     <GitCompareArrows class="mr-1.5 size-3" />
-                    Compare ({{ selectedIds.size }})
+                    {{ t('qr.index.actions.compare', { n: selectedIds.size }) }}
                 </Button>
                 <Button size="sm" variant="destructive" @click="bulkDeleteOpen = true">
                     <Trash2 class="mr-1.5 size-3" />
