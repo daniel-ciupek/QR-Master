@@ -25,6 +25,7 @@ interface QrCodeProp {
     destination_url: string | null
     is_active: boolean
     expires_at: string | null
+    activates_at: string | null
     tag_ids: number[]
     logo_url: string | null
 }
@@ -41,6 +42,7 @@ const form = useForm({
     destination_url: props.qrCode.destination_url ?? '',
     is_active: props.qrCode.is_active,
     expires_at: props.qrCode.expires_at ?? '',
+    activates_at: props.qrCode.activates_at ?? '',
     tag_ids: [...props.qrCode.tag_ids] as number[],
 })
 
@@ -263,22 +265,40 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
                     <p class="text-xs text-muted-foreground">{{ t('qr.edit.fields.isActiveHint') }}</p>
                 </div>
 
-                <!-- expires_at -->
-                <div class="space-y-1.5">
-                    <label class="text-sm font-medium leading-none" for="expires_at">
-                        {{ t('qr.edit.fields.expiresAt') }}
-                    </label>
-                    <Input
-                        id="expires_at"
-                        v-model="form.expires_at"
-                        type="date"
-                        :class="{ 'border-destructive': form.errors.expires_at }"
-                        class="w-48"
-                    />
-                    <p v-if="form.errors.expires_at" class="text-xs text-destructive">
-                        {{ form.errors.expires_at }}
-                    </p>
-                    <p v-else class="text-xs text-muted-foreground">{{ t('qr.edit.fields.expiresAtHint') }}</p>
+                <!-- Scheduling: activates_at + expires_at -->
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium leading-none" for="activates_at">
+                            {{ t('qr.edit.fields.activatesAt') }}
+                        </label>
+                        <Input
+                            id="activates_at"
+                            v-model="form.activates_at"
+                            type="date"
+                            :class="{ 'border-destructive': form.errors.activates_at }"
+                            class="w-full"
+                        />
+                        <p v-if="form.errors.activates_at" class="text-xs text-destructive">
+                            {{ form.errors.activates_at }}
+                        </p>
+                        <p v-else class="text-xs text-muted-foreground">{{ t('qr.edit.fields.activatesAtHint') }}</p>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-medium leading-none" for="expires_at">
+                            {{ t('qr.edit.fields.expiresAt') }}
+                        </label>
+                        <Input
+                            id="expires_at"
+                            v-model="form.expires_at"
+                            type="date"
+                            :class="{ 'border-destructive': form.errors.expires_at }"
+                            class="w-full"
+                        />
+                        <p v-if="form.errors.expires_at" class="text-xs text-destructive">
+                            {{ form.errors.expires_at }}
+                        </p>
+                        <p v-else class="text-xs text-muted-foreground">{{ t('qr.edit.fields.expiresAtHint') }}</p>
+                    </div>
                 </div>
 
                 <!-- Submit -->

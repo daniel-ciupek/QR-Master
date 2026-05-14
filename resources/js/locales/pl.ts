@@ -323,6 +323,8 @@ export default {
                 destinationPlaceholder: 'https://example.com',
                 isActive: 'Aktywny',
                 isActiveHint: 'Nieaktywny kod zwróci błąd 404 przy skanowaniu.',
+                activatesAt: 'Aktywuje się',
+                activatesAtHint: 'Przed tą datą kod zwróci 404. Pozostaw puste, aby był aktywny od razu.',
                 expiresAt: 'Wygasa',
                 expiresAtHint: 'Pozostaw puste, aby kod nie wygasał.',
             },

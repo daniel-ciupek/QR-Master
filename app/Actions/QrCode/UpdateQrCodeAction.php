@@ -19,6 +19,7 @@ final class UpdateQrCodeAction
             'settings' => $data->settings,
             'is_active' => $data->is_active,
             'expires_at' => $data->expires_at,
+            'activates_at' => $data->activates_at,
         ];
 
         if ($data->password !== null) {

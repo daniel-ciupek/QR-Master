@@ -323,6 +323,8 @@ export default {
                 destinationPlaceholder: 'https://example.com',
                 isActive: 'Active',
                 isActiveHint: 'An inactive code returns 404 when scanned.',
+                activatesAt: 'Activates',
+                activatesAtHint: 'Before this date the code returns 404. Leave empty to activate immediately.',
                 expiresAt: 'Expires',
                 expiresAtHint: 'Leave empty so the code never expires.',
             },

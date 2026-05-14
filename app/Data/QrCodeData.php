@@ -28,6 +28,8 @@ final class QrCodeData extends Data
 
         public readonly ?Carbon $expires_at = null,
 
+        public readonly ?Carbon $activates_at = null,
+
         public readonly ?string $password = null,
     ) {}
 }

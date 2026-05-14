@@ -24,6 +24,7 @@ final class StoreQrCodeRequest extends FormRequest
             'type' => ['required', Rule::enum(QrCodeType::class)],
             'is_active' => ['boolean'],
             'expires_at' => ['nullable', 'date', 'after:today'],
+            'activates_at' => ['nullable', 'date'],
 
             // URL — required when type=url, scheme restricted to http/https
             'destination_url' => [

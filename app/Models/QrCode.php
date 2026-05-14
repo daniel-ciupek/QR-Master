@@ -32,6 +32,7 @@ use Spatie\Sluggable\SlugOptions;
  * @property array<string, mixed> $settings
  * @property bool $is_active
  * @property Carbon|null $expires_at
+ * @property Carbon|null $activates_at
  * @property string|null $password_hash
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -54,6 +55,7 @@ class QrCode extends Model implements HasMedia
             'settings' => 'array',
             'is_active' => 'boolean',
             'expires_at' => 'datetime',
+            'activates_at' => 'datetime',
             // PII — encrypted at rest
             'vcard_phone' => 'encrypted',
             'vcard_email' => 'encrypted',
@@ -144,6 +146,10 @@ class QrCode extends Model implements HasMedia
             ->where(function (Builder $q) {
                 $q->whereNull('expires_at')
                     ->orWhere('expires_at', '>', now());
+            })
+            ->where(function (Builder $q) {
+                $q->whereNull('activates_at')
+                    ->orWhere('activates_at', '<=', now());
             });
     }
 
