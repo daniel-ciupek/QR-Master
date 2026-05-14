@@ -195,7 +195,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
   - Language (Accept-Language)
   - Time of day / day of week (godziny otwarcia)
   - Custom (operator user-agent contains, IP range)
-- [ ] **7.2** UI builder reguł — drag-drop, preview „co by się stało gdyby"
+- [x] **7.2** UI builder reguł — drag-drop, preview „co by się stało gdyby"
 - [ ] **7.3** **A/B Testing** — wiele URL pod jednym QR z procentowym podziałem
   - Statistical significance calculator
   - Winner auto-selection po N skanach

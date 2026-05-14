@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -150,27 +150,123 @@ function submitForm() {
     }
 }
 
-// ── Reorder ──────────────────────────────────────────────────────────
+// ── Drag-and-drop reorder ─────────────────────────────────────────────
 
-function moveUp(rule: RuleProp) {
-    const idx = props.rules.findIndex((r) => r.id === rule.id)
-    if (idx <= 0) return
-    const ids = props.rules.map((r) => r.id)
-    const tmp = ids[idx - 1]!; ids[idx - 1] = ids[idx]!; ids[idx] = tmp
-    router.post(`/qr/${props.qrCode.id}/rules/reorder`, { ids }, { preserveScroll: true })
+const draggedId = ref<number | null>(null)
+const dragOverId = ref<number | null>(null)
+
+function onDragStart(ruleId: number) {
+    draggedId.value = ruleId
 }
 
-function moveDown(rule: RuleProp) {
-    const idx = props.rules.findIndex((r) => r.id === rule.id)
-    if (idx < 0 || idx >= props.rules.length - 1) return
+function onDragOver(event: DragEvent, ruleId: number) {
+    event.preventDefault()
+    dragOverId.value = ruleId
+}
+
+function onDragLeave() {
+    dragOverId.value = null
+}
+
+function onDragEnd() {
+    draggedId.value = null
+    dragOverId.value = null
+}
+
+function onDrop(targetId: number) {
+    if (draggedId.value === null || draggedId.value === targetId) {
+        draggedId.value = null; dragOverId.value = null; return
+    }
     const ids = props.rules.map((r) => r.id)
-    const tmp = ids[idx]!; ids[idx] = ids[idx + 1]!; ids[idx + 1] = tmp
+    const fromIdx = ids.indexOf(draggedId.value)
+    const toIdx = ids.indexOf(targetId)
+    if (fromIdx === -1 || toIdx === -1) { draggedId.value = null; dragOverId.value = null; return }
+    ids.splice(fromIdx, 1)
+    ids.splice(toIdx, 0, draggedId.value)
+    draggedId.value = null; dragOverId.value = null
     router.post(`/qr/${props.qrCode.id}/rules/reorder`, { ids }, { preserveScroll: true })
 }
 
 function deleteRule(rule: RuleProp) {
     if (!confirm(t('rules.deleteConfirm'))) return
     router.delete(`/qr/${props.qrCode.id}/rules/${rule.id}`, { preserveScroll: true })
+}
+
+// ── Simulator "what would happen if" ─────────────────────────────────
+
+interface SimParams {
+    device: string
+    country: string
+    language: string
+    time: string
+    day: number
+    userAgent: string
+}
+
+const _now = new Date()
+const _isoDay = _now.getDay() === 0 ? 7 : _now.getDay()
+const _hhmm = `${String(_now.getHours()).padStart(2, '0')}:${String(_now.getMinutes()).padStart(2, '0')}`
+
+const showSim = ref(false)
+const simParams = ref<SimParams>({
+    device: 'mobile',
+    country: 'PL',
+    language: 'pl',
+    time: _hhmm,
+    day: _isoDay,
+    userAgent: '',
+})
+
+interface SimResult {
+    ruleId: number | null
+    ruleName: string | null
+    url: string
+}
+
+const simResult = computed<SimResult | null>(() => {
+    if (!showSim.value) return null
+    const p = simParams.value
+    for (const rule of props.rules) {
+        if (!rule.is_active) continue
+        if (rule.conditions.every((c) => simMatchCondition(c, p))) {
+            return { ruleId: rule.id, ruleName: rule.name, url: rule.destination_url }
+        }
+    }
+    return { ruleId: null, ruleName: null, url: props.qrCode.destination_url ?? '—' }
+})
+
+function simMatchCondition(cond: Condition, p: SimParams): boolean {
+    switch (cond.type) {
+        case 'device': {
+            const val = (cond.value as string) ?? ''
+            const m = p.device === val || (val === 'mobile' && ['ios', 'android'].includes(p.device))
+            return cond.operator === 'is_not' ? !m : m
+        }
+        case 'country': {
+            const vals = (Array.isArray(cond.value) ? cond.value : []) as string[]
+            const inList = vals.includes(p.country.toUpperCase())
+            return cond.operator === 'not_in' ? !inList : inList
+        }
+        case 'language': {
+            const primary = p.language.toLowerCase()
+            const val = ((cond.value as string) || '').toLowerCase()
+            return cond.operator === 'is'
+                ? primary === val || primary.startsWith(`${val}-`)
+                : primary.startsWith(val)
+        }
+        case 'time_range': {
+            const days = (cond.days ?? []) as number[]
+            if (!days.includes(p.day)) return false
+            return p.time >= (cond.from ?? '00:00') && p.time <= (cond.to ?? '23:59')
+        }
+        case 'user_agent': {
+            const val = ((cond.value as string) || '').toLowerCase()
+            if (!val) return false
+            const contains = p.userAgent.toLowerCase().includes(val)
+            return cond.operator === 'not_contains' ? !contains : contains
+        }
+        default: return false
+    }
 }
 
 // ── Condition summary label ───────────────────────────────────────────
@@ -227,29 +323,91 @@ function condAt(idx: number): Condition {
             <p class="truncate text-sm font-mono">{{ props.qrCode.destination_url ?? '—' }}</p>
         </div>
 
+        <!-- Simulator panel -->
+        <details class="rounded-lg border border-border" :open="showSim" @toggle="showSim = ($event.target as HTMLDetailsElement).open">
+            <summary class="cursor-pointer select-none px-4 py-3 text-sm font-medium">
+                🔍 {{ t('rules.simulate.title') }}
+            </summary>
+            <div class="space-y-3 px-4 pb-4">
+                <p class="text-xs text-muted-foreground">{{ t('rules.simulate.hint') }}</p>
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <div class="space-y-1">
+                        <label class="text-xs text-muted-foreground">{{ t('rules.simulate.device') }}</label>
+                        <select v-model="simParams.device" class="w-full rounded border border-input bg-background px-2 py-1 text-sm">
+                            <option v-for="dv in DEVICE_VALUES" :key="dv" :value="dv">{{ t('rules.deviceValues.' + dv) }}</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs text-muted-foreground">{{ t('rules.simulate.country') }}</label>
+                        <Input
+                            v-model="simParams.country"
+                            placeholder="PL"
+                            maxlength="2"
+                            class="uppercase"
+                        />
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs text-muted-foreground">{{ t('rules.simulate.language') }}</label>
+                        <Input v-model="simParams.language" placeholder="pl-PL" />
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs text-muted-foreground">{{ t('rules.simulate.time') }}</label>
+                        <Input v-model="simParams.time" type="time" />
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs text-muted-foreground">{{ t('rules.simulate.day') }}</label>
+                        <select v-model.number="simParams.day" class="w-full rounded border border-input bg-background px-2 py-1 text-sm">
+                            <option v-for="d in DAYS_ISO" :key="d.value" :value="d.value">{{ d.label }}</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs text-muted-foreground">{{ t('rules.simulate.ua') }}</label>
+                        <Input v-model="simParams.userAgent" placeholder="Mozilla/5.0…" />
+                    </div>
+                </div>
+
+                <!-- Result -->
+                <div
+                    v-if="simResult !== null"
+                    class="rounded-md px-3 py-2 text-sm"
+                    :class="simResult.ruleId !== null ? 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-muted text-muted-foreground'"
+                >
+                    <span v-if="simResult.ruleId !== null">
+                        ✓ {{ t('rules.simulate.matchedRule') }}: <strong>{{ simResult.ruleName ?? t('rules.unnamed', { n: props.rules.findIndex(r => r.id === simResult!.ruleId) + 1 }) }}</strong>
+                    </span>
+                    <span v-else>{{ t('rules.simulate.noMatch') }}</span>
+                    <br>
+                    → <span class="font-mono break-all">{{ simResult.url }}</span>
+                </div>
+            </div>
+        </details>
+
         <!-- Rules list -->
         <div v-if="props.rules.length === 0 && !showForm" class="rounded-lg border border-dashed border-border p-8 text-center">
             <p class="text-sm text-muted-foreground">{{ t('rules.empty') }}</p>
         </div>
 
-        <div v-for="(rule, idx) in props.rules" :key="rule.id" class="rounded-lg border border-border bg-card">
+        <div
+            v-for="(rule, idx) in props.rules"
+            :key="rule.id"
+            class="rounded-lg border bg-card transition-opacity"
+            :class="[
+                draggedId === rule.id ? 'opacity-40' : 'opacity-100',
+                dragOverId === rule.id && draggedId !== rule.id ? 'border-primary' : 'border-border',
+            ]"
+            draggable="true"
+            @dragstart="onDragStart(rule.id)"
+            @dragover="onDragOver($event, rule.id)"
+            @dragleave="onDragLeave"
+            @drop="onDrop(rule.id)"
+            @dragend="onDragEnd"
+        >
             <div class="flex items-start gap-3 p-4">
-                <div class="flex shrink-0 flex-col gap-1">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        class="size-6"
-                        :disabled="idx === 0"
-                        @click="moveUp(rule)"
-                    >↑</Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        class="size-6"
-                        :disabled="idx === props.rules.length - 1"
-                        @click="moveDown(rule)"
-                    >↓</Button>
-                </div>
+                <!-- Drag handle -->
+                <span
+                    class="mt-0.5 shrink-0 cursor-grab text-muted-foreground/50 hover:text-muted-foreground select-none"
+                    title="Drag to reorder"
+                >⠿</span>
 
                 <div class="min-w-0 flex-1 space-y-2">
                     <div class="flex items-center gap-2">

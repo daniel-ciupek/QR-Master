@@ -684,6 +684,18 @@ export default {
             ios: 'iOS',
             android: 'Android',
         },
+        simulate: {
+            title: 'Podgląd — „Co by się stało gdyby…"',
+            hint: 'Zasymuluj żądanie odwiedzającego, aby zobaczyć która reguła by pasowała.',
+            device: 'Urządzenie',
+            country: 'Kraj (ISO)',
+            language: 'Język',
+            time: 'Godzina (HH:mm)',
+            day: 'Dzień tygodnia',
+            ua: 'User-Agent (opcjonalnie)',
+            matchedRule: 'Pasująca reguła',
+            noMatch: 'Żadna reguła nie pasuje — używany jest domyślny URL',
+        },
     },
 
     common: {

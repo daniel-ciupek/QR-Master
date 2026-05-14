@@ -684,6 +684,18 @@ export default {
             ios: 'iOS',
             android: 'Android',
         },
+        simulate: {
+            title: 'Preview — "What would happen if…"',
+            hint: 'Simulate a visitor request to see which rule would match.',
+            device: 'Device',
+            country: 'Country (ISO)',
+            language: 'Language',
+            time: 'Time (HH:mm)',
+            day: 'Day of week',
+            ua: 'User-Agent (optional)',
+            matchedRule: 'Matched rule',
+            noMatch: 'No rule matched — using default URL',
+        },
     },
 
     common: {
