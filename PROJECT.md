@@ -178,7 +178,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
   - Analytics dedykowane Bio-Link
 - [x] **6.7** **Moduł App Store / Play Store** — auto-detekcja platformy w smart redirect
 - [x] **6.8** **Moduł Calendar (.ics)** — eventy z datami, miejscem, opisem
-- [ ] **6.9** **Moduł Crypto Address** — Bitcoin/ETH wallet z optional kwotą i memo
+- [x] **6.9** **Moduł Crypto Address** — Bitcoin/ETH wallet z optional kwotą i memo
 - [ ] **6.10** **Moduł Review (Google/Trustpilot)** — link do napisania recenzji z trackingiem
 
 **Kryterium ukończenia:** Każdy typ kodu działa end-to-end: tworzenie → preview → skan → docelowe działanie (np. zapis kontaktu, dołączenie do WiFi).

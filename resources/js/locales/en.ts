@@ -347,6 +347,7 @@ export default {
             bio_link: 'Bio-Link',
             app: 'App',
             calendar: 'Calendar',
+            crypto: 'Crypto',
         },
         fields: {
             url: { label: 'URL address', placeholder: 'https://example.com' },
@@ -413,6 +414,22 @@ export default {
                 selectFile: 'Click to select a PDF file',
                 maxSize: 'Maximum 10 MB',
                 remove: 'Remove file',
+            },
+            crypto: {
+                coin: 'Cryptocurrency',
+                coins: {
+                    bitcoin: '₿ Bitcoin (BTC)',
+                    ethereum: 'Ξ Ethereum (ETH)',
+                    litecoin: 'Ł Litecoin (LTC)',
+                    dogecoin: 'Ð Dogecoin (DOGE)',
+                },
+                address: 'Wallet address',
+                addressPlaceholder: 'bc1q… / 0x… / L…',
+                amount: 'Amount (optional)',
+                label: 'Recipient label (optional)',
+                labelPlaceholder: 'Donation',
+                message: 'Message / memo (optional)',
+                messagePlaceholder: 'Invoice #123',
             },
             calendar: {
                 title: 'Event title',

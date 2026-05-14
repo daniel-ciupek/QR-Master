@@ -13,6 +13,7 @@ final class QrContentBuilderService
         private readonly VCardBuilder $vCardBuilder,
         private readonly WifiBuilder $wifiBuilder,
         private readonly CalendarBuilder $calendarBuilder,
+        private readonly CryptoBuilder $cryptoBuilder,
     ) {}
 
     /**
@@ -42,6 +43,7 @@ final class QrContentBuilderService
             // App Store redirect URL is the dynamic QR hash — set after creation
             QrCodeType::App => '',
             QrCodeType::Calendar => $this->calendarBuilder->build($fields),
+            QrCodeType::Crypto => $this->cryptoBuilder->build($fields),
             default => throw new InvalidArgumentException("Unsupported QR type: {$type->value}"),
         };
     }

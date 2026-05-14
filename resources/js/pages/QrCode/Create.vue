@@ -37,7 +37,7 @@ const MAX_CHARS = 900
 
 const ALLOWED_URL_SCHEMES = ['https://', 'http://']
 
-type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf' | 'bio_link' | 'app' | 'calendar'
+type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf' | 'bio_link' | 'app' | 'calendar' | 'crypto'
 type EccLevel = ErrorCorrectionLevel
 
 const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
@@ -65,6 +65,15 @@ const pdfFile = ref<File | null>(null)
 const appIosUrl = ref('')
 const appAndroidUrl = ref('')
 const appFallbackUrl = ref('')
+
+// Crypto fields
+type CryptoCoin = 'bitcoin' | 'ethereum' | 'litecoin' | 'dogecoin'
+const CRYPTO_COINS: CryptoCoin[] = ['bitcoin', 'ethereum', 'litecoin', 'dogecoin']
+const cryptoCoin = ref<CryptoCoin>('bitcoin')
+const cryptoAddress = ref('')
+const cryptoAmount = ref('')
+const cryptoLabel = ref('')
+const cryptoMessage = ref('')
 
 // Calendar fields
 const calendarTitle = ref('')
@@ -165,6 +174,17 @@ function buildCalendarPreview(): string {
     return lines.join('\r\n')
 }
 
+function buildCryptoPreview(): string {
+    const address = cryptoAddress.value.trim()
+    if (!address) return ''
+    const params: string[] = []
+    const amount = cryptoAmount.value.trim()
+    if (amount && parseFloat(amount) > 0) params.push(`amount=${encodeURIComponent(amount)}`)
+    if (cryptoLabel.value.trim()) params.push(`label=${encodeURIComponent(cryptoLabel.value.trim())}`)
+    if (cryptoMessage.value.trim()) params.push(`message=${encodeURIComponent(cryptoMessage.value.trim())}`)
+    return `${cryptoCoin.value}:${address}${params.length ? '?' + params.join('&') : ''}`
+}
+
 function saveQrCode() {
     if (!qrTitle.value.trim()) return
     isSaving.value = true
@@ -208,6 +228,12 @@ function saveQrCode() {
         app_ios_url: activeTab.value === 'app' ? appIosUrl.value.trim() : undefined,
         app_android_url: activeTab.value === 'app' ? appAndroidUrl.value.trim() : undefined,
         app_fallback_url: activeTab.value === 'app' ? appFallbackUrl.value.trim() : undefined,
+        // Crypto
+        crypto_coin: activeTab.value === 'crypto' ? cryptoCoin.value : undefined,
+        crypto_address: activeTab.value === 'crypto' ? cryptoAddress.value.trim() : undefined,
+        crypto_amount: activeTab.value === 'crypto' ? cryptoAmount.value.trim() : undefined,
+        crypto_label: activeTab.value === 'crypto' ? cryptoLabel.value.trim() : undefined,
+        crypto_message: activeTab.value === 'crypto' ? cryptoMessage.value.trim() : undefined,
         // Calendar
         calendar_title: activeTab.value === 'calendar' ? calendarTitle.value.trim() : undefined,
         calendar_start: activeTab.value === 'calendar' ? calendarStart.value : undefined,
@@ -262,6 +288,8 @@ const qrData = computed<string>(() => {
             return appIosUrl.value.trim() || appAndroidUrl.value.trim() || appFallbackUrl.value.trim()
         case 'calendar':
             return buildCalendarPreview()
+        case 'crypto':
+            return buildCryptoPreview()
         default:
             return ''
     }
@@ -376,6 +404,7 @@ const exportOpen = ref(false)
                         <TabsTrigger value="bio_link" class="flex-1">{{ t('qr.tabs.bio_link') }}</TabsTrigger>
                         <TabsTrigger value="app" class="flex-1">{{ t('qr.tabs.app') }}</TabsTrigger>
                         <TabsTrigger value="calendar" class="flex-1">{{ t('qr.tabs.calendar') }}</TabsTrigger>
+                        <TabsTrigger value="crypto" class="flex-1">{{ t('qr.tabs.crypto') }}</TabsTrigger>
                     </TabsList>
 
                     <!-- URL -->
@@ -747,6 +776,58 @@ const exportOpen = ref(false)
                                 class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                             />
                         </div>
+                    </TabsContent>
+
+                    <!-- Crypto Address -->
+                    <TabsContent value="crypto" class="mt-4 space-y-4">
+                        <!-- Coin selector -->
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.crypto.coin') }}</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button
+                                    v-for="coin in CRYPTO_COINS"
+                                    :key="coin"
+                                    type="button"
+                                    class="rounded-md border px-3 py-1.5 text-sm font-medium transition-colors"
+                                    :class="cryptoCoin === coin ? 'border-primary bg-primary/10' : 'border-border hover:border-muted-foreground'"
+                                    @click="cryptoCoin = coin"
+                                >
+                                    {{ t('qr.fields.crypto.coins.' + coin) }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.crypto.address') }} *</label>
+                            <Input v-model="cryptoAddress" :placeholder="t('qr.fields.crypto.addressPlaceholder')" autocomplete="off" />
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-sm font-medium">{{ t('qr.fields.crypto.amount') }}</label>
+                                <Input
+                                    v-model="cryptoAmount"
+                                    type="number"
+                                    step="any"
+                                    min="0"
+                                    placeholder="0.001"
+                                    autocomplete="off"
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-sm font-medium">{{ t('qr.fields.crypto.label') }}</label>
+                                <Input v-model="cryptoLabel" :placeholder="t('qr.fields.crypto.labelPlaceholder')" autocomplete="off" />
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.crypto.message') }}</label>
+                            <Input v-model="cryptoMessage" :placeholder="t('qr.fields.crypto.messagePlaceholder')" autocomplete="off" />
+                        </div>
+
+                        <p v-if="cryptoAddress.trim()" class="break-all rounded bg-muted px-3 py-2 font-mono text-xs text-muted-foreground">
+                            {{ buildCryptoPreview() }}
+                        </p>
                     </TabsContent>
                 </Tabs>
 

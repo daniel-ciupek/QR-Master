@@ -86,6 +86,13 @@ final class StoreQrCodeRequest extends FormRequest
             'calendar_location' => ['nullable', 'string', 'max:500'],
             'calendar_all_day' => ['nullable', 'boolean'],
 
+            // Crypto Address
+            'crypto_coin' => ['required_if:type,crypto', 'nullable', 'string', Rule::in(['bitcoin', 'ethereum', 'litecoin', 'dogecoin'])],
+            'crypto_address' => ['required_if:type,crypto', 'nullable', 'string', 'min:20', 'max:200'],
+            'crypto_amount' => ['nullable', 'numeric', 'min:0'],
+            'crypto_label' => ['nullable', 'string', 'max:100'],
+            'crypto_message' => ['nullable', 'string', 'max:255'],
+
             // Visual settings (pass-through, no deep validation)
             'settings' => ['nullable', 'array'],
         ];
