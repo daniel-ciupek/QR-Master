@@ -31,6 +31,7 @@ use App\Services\QrRendering\QrRenderer;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -134,13 +135,16 @@ final class QrCodeController extends Controller
             expires_at: isset($validated['expires_at']) ? Carbon::parse($validated['expires_at']) : null,
         );
 
-        $qrCode = $action->handle($user, $data);
+        $qrCode = DB::transaction(function () use ($user, $data, $validated, $action): QrCode {
+            $qrCode = $action->handle($user, $data);
 
-        // Store encrypted PII fields
-        $qrCode->vcard_phone = $validated['vcard_phone'] ?? null;
-        $qrCode->vcard_email = $validated['vcard_email'] ?? null;
-        $qrCode->wifi_password = $validated['wifi_password'] ?? null;
-        $qrCode->save();
+            $qrCode->vcard_phone = $validated['vcard_phone'] ?? null;
+            $qrCode->vcard_email = $validated['vcard_email'] ?? null;
+            $qrCode->wifi_password = $validated['wifi_password'] ?? null;
+            $qrCode->save();
+
+            return $qrCode;
+        });
 
         return redirect()->route('qr.index')->with('success', 'Kod QR został utworzony.');
     }

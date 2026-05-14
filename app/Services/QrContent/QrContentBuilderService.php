@@ -67,8 +67,12 @@ final class QrContentBuilderService
     /** @param array<string, string|null> $fields */
     private function buildGeo(array $fields): string
     {
-        $lat = $fields['geo_lat'] ?? '';
-        $lng = $fields['geo_lng'] ?? '';
+        $lat = (string) ($fields['geo_lat'] ?? '');
+        $lng = (string) ($fields['geo_lng'] ?? '');
+
+        if ($lat === '' || $lng === '') {
+            return '';
+        }
 
         return "geo:{$lat},{$lng}";
     }

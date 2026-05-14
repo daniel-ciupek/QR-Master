@@ -24,39 +24,44 @@ final class StoreQrCodeRequest extends FormRequest
             'is_active' => ['boolean'],
             'expires_at' => ['nullable', 'date', 'after:today'],
 
-            // URL
-            'destination_url' => ['nullable', 'string', 'max:900'],
+            // URL — required when type=url, scheme restricted to http/https
+            'destination_url' => [
+                'required_if:type,url',
+                'nullable',
+                'string',
+                'max:2000',
+                'regex:/^https?:\/\/.+/',
+            ],
 
             // Text
-            'text_content' => ['nullable', 'string', 'max:900'],
+            'text_content' => ['required_if:type,text', 'nullable', 'string', 'max:2000'],
 
             // Email
-            'email_address' => ['nullable', 'email', 'max:255'],
+            'email_address' => ['required_if:type,email', 'nullable', 'email', 'max:255'],
             'email_subject' => ['nullable', 'string', 'max:255'],
             'email_body' => ['nullable', 'string', 'max:900'],
 
             // Phone
-            'phone_number' => ['nullable', 'string', 'max:30'],
+            'phone_number' => ['required_if:type,phone', 'nullable', 'string', 'max:30'],
 
             // SMS
-            'sms_number' => ['nullable', 'string', 'max:30'],
+            'sms_number' => ['required_if:type,sms', 'nullable', 'string', 'max:30'],
             'sms_message' => ['nullable', 'string', 'max:160'],
 
-            // vCard — non-sensitive
-            'vcard_first_name' => ['nullable', 'string', 'max:100'],
+            // vCard — first name required, phone/email go to encrypted columns
+            'vcard_first_name' => ['required_if:type,vcard', 'nullable', 'string', 'max:100'],
             'vcard_last_name' => ['nullable', 'string', 'max:100'],
             'vcard_company' => ['nullable', 'string', 'max:200'],
             'vcard_job_title' => ['nullable', 'string', 'max:200'],
             'vcard_website' => ['nullable', 'url', 'max:900'],
             'vcard_address' => ['nullable', 'string', 'max:500'],
             'vcard_photo_url' => ['nullable', 'url', 'max:900'],
-            // vCard — sensitive (encrypted columns)
             'vcard_phone' => ['nullable', 'string', 'max:30'],
             'vcard_email' => ['nullable', 'email', 'max:255'],
 
-            // Geo
-            'geo_lat' => ['nullable', 'numeric', 'between:-90,90'],
-            'geo_lng' => ['nullable', 'numeric', 'between:-180,180'],
+            // Geo — both coordinates required together
+            'geo_lat' => ['required_if:type,geo', 'nullable', 'numeric', 'between:-90,90'],
+            'geo_lng' => ['required_if:type,geo', 'nullable', 'numeric', 'between:-180,180'],
 
             // Visual settings (pass-through, no deep validation)
             'settings' => ['nullable', 'array'],
