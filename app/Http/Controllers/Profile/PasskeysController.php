@@ -19,11 +19,11 @@ final class PasskeysController extends Controller
 
         return Inertia::render('Profile/Passkeys', [
             'credentials' => $user->webAuthnCredentials()
-                ->select(['id', 'name', 'transports', 'created_at', 'updated_at'])
+                ->select(['id', 'alias', 'transports', 'created_at', 'updated_at'])
                 ->get()
                 ->map(fn ($c) => [
                     'id' => $c->id,
-                    'name' => $c->name ?? 'Passkey',
+                    'name' => $c->alias ?? 'Passkey',
                     'transports' => $c->transports,
                     'created_at' => $c->created_at->toIso8601String(),
                 ]),
