@@ -29,6 +29,8 @@ final class StoreQrCodeRequest extends FormRequest
             'geo_allowed_countries.*' => ['string', 'size:2', 'alpha'],
             'scan_limit' => ['nullable', 'integer', 'min:1', 'max:1000000'],
 
+            'fallback_url' => ['nullable', 'url', 'max:2000', 'regex:/^https?:\/\/.+/'],
+
             // URL — required when type=url, scheme restricted to http/https
             'destination_url' => [
                 'required_if:type,url',

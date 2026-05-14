@@ -325,6 +325,9 @@ export default {
                 isActiveHint: 'An inactive code returns 404 when scanned.',
                 activatesAt: 'Activates',
                 activatesAtHint: 'Before this date the code returns 404. Leave empty to activate immediately.',
+                fallbackUrl: 'Fallback URL',
+                fallbackUrlPlaceholder: 'https://…',
+                fallbackUrlHint: 'When no Smart Redirect rule matches, the visitor is sent here.',
                 expiresAt: 'Expires',
                 expiresAtHint: 'Leave empty so the code never expires.',
                 scanLimit: {

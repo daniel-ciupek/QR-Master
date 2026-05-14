@@ -22,6 +22,7 @@ final class CreateQrCodeAction
             'title' => $data->title,
             'short_hash' => $this->hashGenerator->generate(),
             'destination_url' => $data->destination_url,
+            'fallback_url' => $data->fallback_url,
             'settings' => $data->settings,
             'is_active' => $data->is_active,
             'expires_at' => $data->expires_at,

@@ -21,6 +21,9 @@ final class QrCodeData extends Data
         #[Max(900)]
         public readonly ?string $destination_url,
 
+        #[Max(2000)]
+        public readonly ?string $fallback_url = null,
+
         /** @var array<string, mixed> */
         public readonly array $settings = [],
 

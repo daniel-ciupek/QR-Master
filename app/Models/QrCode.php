@@ -29,6 +29,7 @@ use Spatie\Sluggable\SlugOptions;
  * @property string $slug
  * @property string $short_hash
  * @property string|null $destination_url
+ * @property string|null $fallback_url
  * @property array<string, mixed> $settings
  * @property bool $is_active
  * @property Carbon|null $expires_at

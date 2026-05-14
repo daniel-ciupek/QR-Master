@@ -132,6 +132,7 @@ final class QrCodeController extends Controller
             title: $validated['title'],
             type: $type,
             destination_url: $destinationUrl !== '' ? $destinationUrl : null,
+            fallback_url: $validated['fallback_url'] ?? null,
             settings: $settings,
             is_active: (bool) ($validated['is_active'] ?? true),
             expires_at: isset($validated['expires_at']) ? Carbon::parse($validated['expires_at']) : null,
@@ -272,6 +273,7 @@ final class QrCodeController extends Controller
                 'type' => $qrCode->type->value,
                 'short_hash' => $qrCode->short_hash,
                 'destination_url' => $qrCode->destination_url,
+                'fallback_url' => $qrCode->fallback_url ?? '',
                 'is_active' => $qrCode->is_active,
                 'expires_at' => $qrCode->expires_at?->toDateString(),
                 'activates_at' => $qrCode->activates_at?->toDateString(),
@@ -301,6 +303,9 @@ final class QrCodeController extends Controller
             type: $qrCode->type,
             destination_url: $request->filled('destination_url')
                 ? $request->string('destination_url')->trim()->toString()
+                : null,
+            fallback_url: $request->filled('fallback_url')
+                ? $request->string('fallback_url')->trim()->toString()
                 : null,
             settings: $qrCode->settings,
             is_active: $request->boolean('is_active'),

@@ -107,6 +107,9 @@ final class PublicRedirectController extends Controller
 
         if ($smartUrl !== null) {
             $redirectTo = $smartUrl;
+        } elseif ($qrCode->fallback_url !== null) {
+            // Fallback URL: used when no smart redirect rule matched
+            $redirectTo = $qrCode->fallback_url;
         } else {
             // A/B test: weighted random variant selection (if no smart rule matched)
             $abTest = $qrCode->abTest;

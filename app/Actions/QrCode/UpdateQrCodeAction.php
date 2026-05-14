@@ -16,6 +16,7 @@ final class UpdateQrCodeAction
             'type' => $data->type,
             'title' => $data->title,
             'destination_url' => $data->destination_url,
+            'fallback_url' => $data->fallback_url,
             'settings' => $data->settings,
             'is_active' => $data->is_active,
             'expires_at' => $data->expires_at,

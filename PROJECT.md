@@ -203,7 +203,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **7.5** **Password-protected QR** — przed redirectem prompt o hasło (Argon2id hash)
 - [x] **7.6** **Geofencing** — zezwól tylko z określonych krajów/regionów (anti-leak na inne rynki)
 - [x] **7.7** **Click cap** — maksymalna liczba skanów (np. promocja na pierwsze 100 osób)
-- [ ] **7.8** **Fallback URL** — jeśli żadna reguła nie pasuje
+- [x] **7.8** **Fallback URL** — jeśli żadna reguła nie pasuje
 - [ ] **7.9** **Anti-bot middleware** — Cloudflare Turnstile dla podejrzanego ruchu (boost > 100/min)
 
 **Kryterium ukończenia:** Marketer tworzy kampanię z 3 wariantami URL → po 1000 skanów system wybiera zwycięzcę → harmonogram aktywuje promocję 1 stycznia.

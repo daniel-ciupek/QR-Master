@@ -19,6 +19,7 @@ final class UpdateQrCodeRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'destination_url' => ['nullable', 'string', 'max:2000', 'regex:/^https?:\/\/.+/'],
+            'fallback_url' => ['nullable', 'url', 'max:2000', 'regex:/^https?:\/\/.+/'],
             'is_active' => ['required', 'boolean'],
             'expires_at' => ['nullable', 'date'],
             'activates_at' => ['nullable', 'date'],

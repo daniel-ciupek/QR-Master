@@ -325,6 +325,9 @@ export default {
                 isActiveHint: 'Nieaktywny kod zwróci błąd 404 przy skanowaniu.',
                 activatesAt: 'Aktywuje się',
                 activatesAtHint: 'Przed tą datą kod zwróci 404. Pozostaw puste, aby był aktywny od razu.',
+                fallbackUrl: 'Fallback URL',
+                fallbackUrlPlaceholder: 'https://…',
+                fallbackUrlHint: 'Gdy żadna reguła Smart Redirect nie pasuje, użytkownik trafi tutaj.',
                 expiresAt: 'Wygasa',
                 expiresAtHint: 'Pozostaw puste, aby kod nie wygasał.',
                 scanLimit: {

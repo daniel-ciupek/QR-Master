@@ -23,6 +23,7 @@ interface QrCodeProp {
     type: string
     short_hash: string
     destination_url: string | null
+    fallback_url: string
     is_active: boolean
     expires_at: string | null
     activates_at: string | null
@@ -43,6 +44,7 @@ const { t } = useI18n()
 const form = useForm({
     title: props.qrCode.title,
     destination_url: props.qrCode.destination_url ?? '',
+    fallback_url: props.qrCode.fallback_url,
     is_active: props.qrCode.is_active,
     expires_at: props.qrCode.expires_at ?? '',
     activates_at: props.qrCode.activates_at ?? '',
@@ -172,6 +174,24 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
                     <p v-if="form.errors.destination_url" class="text-xs text-destructive">
                         {{ form.errors.destination_url }}
                     </p>
+                </div>
+
+                <!-- Fallback URL -->
+                <div class="space-y-1.5">
+                    <label class="text-sm font-medium leading-none" for="fallback_url">
+                        {{ t('qr.edit.fields.fallbackUrl') }}
+                    </label>
+                    <Input
+                        id="fallback_url"
+                        v-model="form.fallback_url"
+                        :placeholder="t('qr.edit.fields.fallbackUrlPlaceholder')"
+                        :class="{ 'border-destructive': form.errors.fallback_url }"
+                        autocomplete="off"
+                    />
+                    <p v-if="form.errors.fallback_url" class="text-xs text-destructive">
+                        {{ form.errors.fallback_url }}
+                    </p>
+                    <p v-else class="text-xs text-muted-foreground">{{ t('qr.edit.fields.fallbackUrlHint') }}</p>
                 </div>
 
                 <!-- Tags -->
