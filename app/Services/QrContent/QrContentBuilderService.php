@@ -34,6 +34,8 @@ final class QrContentBuilderService
             ),
             QrCodeType::Wifi => $this->wifiBuilder->build($fields, $fields['wifi_password'] ?? null),
             QrCodeType::Geo => $this->buildGeo($fields),
+            // PDF viewer URL is self-referential — set after QrCode creation in controller
+            QrCodeType::Pdf => '',
             default => throw new InvalidArgumentException("Unsupported QR type: {$type->value}"),
         };
     }

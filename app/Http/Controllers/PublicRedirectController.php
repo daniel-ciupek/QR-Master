@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\QrCodeType;
 use App\Jobs\RecordScanJob;
 use App\Models\QrCode;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 /**
  * Public QR redirect — highest security priority.
@@ -24,11 +27,26 @@ use Illuminate\Http\Request;
  */
 final class PublicRedirectController extends Controller
 {
-    public function __invoke(Request $request, string $hash): RedirectResponse
+    public function __invoke(Request $request, string $hash): RedirectResponse|Response
     {
         $qrCode = QrCode::active()->where('short_hash', $hash)->first();
 
-        if ($qrCode === null || $qrCode->destination_url === null) {
+        if ($qrCode === null) {
+            abort(404);
+        }
+
+        if ($qrCode->type === QrCodeType::Pdf) {
+            dispatch(RecordScanJob::fromRequest($qrCode, $request));
+
+            $pdfUrl = $qrCode->getFirstMediaUrl('pdf_menu');
+
+            return Inertia::render('QrCode/Pdf/View', [
+                'pdfUrl' => $pdfUrl !== '' ? $pdfUrl : null,
+                'title' => $qrCode->title,
+            ]);
+        }
+
+        if ($qrCode->destination_url === null) {
             abort(404);
         }
 

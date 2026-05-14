@@ -343,6 +343,7 @@ export default {
             vcard: 'vCard',
             wifi: 'WiFi',
             geo: 'Geo',
+            pdf: 'PDF',
         },
         fields: {
             url: { label: 'Adres URL', placeholder: 'https://example.com' },
@@ -403,6 +404,12 @@ export default {
                     wep: 'WEP',
                     open: 'Otwarta (bez hasła)',
                 },
+            },
+            pdf: {
+                hint: 'Wgraj plik PDF (np. menu). Możesz go wymienić w dowolnym momencie bez zmiany kodu QR.',
+                selectFile: 'Kliknij, aby wybrać plik PDF',
+                maxSize: 'Maksymalnie 10 MB',
+                remove: 'Usuń plik',
             },
         },
         style: {

@@ -37,7 +37,7 @@ const MAX_CHARS = 900
 
 const ALLOWED_URL_SCHEMES = ['https://', 'http://']
 
-type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo'
+type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf'
 type EccLevel = ErrorCorrectionLevel
 
 const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
@@ -57,6 +57,9 @@ const smsMessage = ref('')
 // Geo fields
 const geoLat = ref('')
 const geoLng = ref('')
+
+// PDF fields
+const pdfFile = ref<File | null>(null)
 
 // WiFi fields
 type WifiSecurity = 'wpa' | 'wpa2' | 'wpa3' | 'wep' | 'open'
@@ -149,6 +152,8 @@ function saveQrCode() {
         wifi_security: activeTab.value === 'wifi' ? wifiSecurity.value : undefined,
         wifi_password: activeTab.value === 'wifi' ? wifiPassword.value : undefined,
         wifi_hidden: activeTab.value === 'wifi' ? wifiHidden.value : undefined,
+        // PDF — Inertia auto-converts to multipart/form-data when File is present
+        pdf_file: activeTab.value === 'pdf' ? pdfFile.value : undefined,
         // Visual settings
         settings: currentStyle.value,
     }, {
@@ -187,6 +192,9 @@ const qrData = computed<string>(() => {
             const lng = geoLng.value.trim()
             return lat && lng ? `geo:${lat},${lng}` : ''
         }
+        case 'pdf':
+            // URL is set server-side after creation; preview uses placeholder
+            return pdfFile.value ? pdfFile.value.name : ''
         default:
             return ''
     }
@@ -297,6 +305,7 @@ const exportOpen = ref(false)
                         <TabsTrigger value="vcard" class="flex-1">{{ t('qr.tabs.vcard') }}</TabsTrigger>
                         <TabsTrigger value="wifi" class="flex-1">{{ t('qr.tabs.wifi') }}</TabsTrigger>
                         <TabsTrigger value="geo" class="flex-1">{{ t('qr.tabs.geo') }}</TabsTrigger>
+                        <TabsTrigger value="pdf" class="flex-1">{{ t('qr.tabs.pdf') }}</TabsTrigger>
                     </TabsList>
 
                     <!-- URL -->
@@ -529,12 +538,52 @@ const exportOpen = ref(false)
                             <Input v-model="vcardAddress" :placeholder="t('qr.fields.vcard.addressPlaceholder')" autocomplete="off" />
                         </div>
                     </TabsContent>
+
+                    <!-- PDF Menu -->
+                    <TabsContent value="pdf" class="mt-4 space-y-4">
+                        <p class="text-sm text-muted-foreground">{{ t('qr.fields.pdf.hint') }}</p>
+                        <label
+                            class="flex cursor-pointer flex-col items-center gap-3 rounded-lg border-2 border-dashed border-border p-6 text-center transition-colors hover:border-primary hover:bg-accent/30"
+                            :class="{ 'border-primary bg-accent/30': pdfFile !== null }"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="size-8 text-muted-foreground"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                            </svg>
+                            <div>
+                                <p v-if="pdfFile" class="text-sm font-medium text-foreground">{{ pdfFile.name }}</p>
+                                <p v-else class="text-sm font-medium">{{ t('qr.fields.pdf.selectFile') }}</p>
+                                <p class="mt-1 text-xs text-muted-foreground">{{ t('qr.fields.pdf.maxSize') }}</p>
+                            </div>
+                            <input
+                                type="file"
+                                accept="application/pdf"
+                                class="sr-only"
+                                @change="(e) => { const f = (e.target as HTMLInputElement).files?.[0]; pdfFile = f ?? null }"
+                            >
+                        </label>
+
+                        <Button
+                            v-if="pdfFile"
+                            variant="ghost"
+                            size="sm"
+                            @click="pdfFile = null"
+                        >
+                            {{ t('qr.fields.pdf.remove') }}
+                        </Button>
+                    </TabsContent>
                 </Tabs>
 
                 <!-- Save button -->
                 <div class="flex items-center gap-3 pt-1">
                     <Button
-                        :disabled="!qrTitle.trim() || isSaving"
+                        :disabled="!qrTitle.trim() || isSaving || (activeTab === 'pdf' && !pdfFile)"
                         @click="saveQrCode"
                     >
                         {{ isSaving ? t('qr.create.saving') : t('qr.create.save') }}

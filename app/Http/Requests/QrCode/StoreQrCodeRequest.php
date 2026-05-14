@@ -69,6 +69,9 @@ final class StoreQrCodeRequest extends FormRequest
             'geo_lat' => ['required_if:type,geo', 'nullable', 'numeric', 'between:-90,90'],
             'geo_lng' => ['required_if:type,geo', 'nullable', 'numeric', 'between:-180,180'],
 
+            // PDF Menu — file required when type=pdf, max 10 MB
+            'pdf_file' => ['required_if:type,pdf', 'nullable', 'file', 'mimes:pdf', 'max:10240'],
+
             // Visual settings (pass-through, no deep validation)
             'settings' => ['nullable', 'array'],
         ];

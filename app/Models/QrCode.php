@@ -73,6 +73,10 @@ class QrCode extends Model implements HasMedia
         $this->addMediaCollection('logo')
             ->singleFile()
             ->acceptsMimeTypes(['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp']);
+
+        $this->addMediaCollection('pdf_menu')
+            ->singleFile()
+            ->acceptsMimeTypes(['application/pdf']);
     }
 
     public function registerMediaConversions(?Media $media = null): void

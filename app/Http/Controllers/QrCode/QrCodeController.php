@@ -13,6 +13,7 @@ use App\Actions\QrCode\DuplicateQrCodeAction;
 use App\Actions\QrCode\SyncQrCodeTagsAction;
 use App\Actions\QrCode\ToggleActiveQrCodeAction;
 use App\Actions\QrCode\UpdateQrCodeAction;
+use App\Actions\QrCode\UploadPdfMenuAction;
 use App\Actions\QrCode\UploadQrLogoAction;
 use App\Data\QrCodeData;
 use App\Enums\QrCodeType;
@@ -138,6 +139,11 @@ final class QrCodeController extends Controller
         $qrCode = DB::transaction(function () use ($user, $data, $validated, $action): QrCode {
             $qrCode = $action->handle($user, $data);
 
+            if ($data->type === QrCodeType::Pdf) {
+                // destination_url = self-referential viewer URL; must be set after short_hash is generated
+                $qrCode->destination_url = route('qr.redirect', $qrCode->short_hash);
+            }
+
             $qrCode->vcard_phone = $validated['vcard_phone'] ?? null;
             $qrCode->vcard_email = $validated['vcard_email'] ?? null;
             $qrCode->wifi_password = $validated['wifi_password'] ?? null;
@@ -145,6 +151,12 @@ final class QrCodeController extends Controller
 
             return $qrCode;
         });
+
+        // PDF upload outside transaction — medialibrary manages its own DB state
+        if ($type === QrCodeType::Pdf && $request->hasFile('pdf_file')) {
+            $qrCode->addMediaFromRequest('pdf_file')
+                ->toMediaCollection('pdf_menu');
+        }
 
         return redirect()->route('qr.index')->with('success', 'Kod QR został utworzony.');
     }
@@ -294,6 +306,16 @@ final class QrCodeController extends Controller
         $qrCode->clearMediaCollection('logo');
 
         return back();
+    }
+
+    public function uploadPdf(Request $request, QrCode $qrCode, UploadPdfMenuAction $action): RedirectResponse
+    {
+        Gate::authorize('update', $qrCode);
+        $request->validate(['pdf_file' => ['required', 'file', 'mimes:pdf', 'max:10240']]);
+
+        $action->handle($qrCode, $request->file('pdf_file'));
+
+        return back()->with('success', 'Plik PDF został zaktualizowany.');
     }
 
     public function bulkDestroy(BulkQrRequest $request, BulkDeleteQrCodesAction $action): RedirectResponse
