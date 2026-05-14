@@ -12,6 +12,7 @@ final class QrContentBuilderService
     public function __construct(
         private readonly VCardBuilder $vCardBuilder,
         private readonly WifiBuilder $wifiBuilder,
+        private readonly CalendarBuilder $calendarBuilder,
     ) {}
 
     /**
@@ -40,6 +41,7 @@ final class QrContentBuilderService
             QrCodeType::BioLink => '',
             // App Store redirect URL is the dynamic QR hash — set after creation
             QrCodeType::App => '',
+            QrCodeType::Calendar => $this->calendarBuilder->build($fields),
             default => throw new InvalidArgumentException("Unsupported QR type: {$type->value}"),
         };
     }

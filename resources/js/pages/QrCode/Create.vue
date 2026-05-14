@@ -37,7 +37,7 @@ const MAX_CHARS = 900
 
 const ALLOWED_URL_SCHEMES = ['https://', 'http://']
 
-type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf' | 'bio_link' | 'app'
+type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf' | 'bio_link' | 'app' | 'calendar'
 type EccLevel = ErrorCorrectionLevel
 
 const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
@@ -65,6 +65,14 @@ const pdfFile = ref<File | null>(null)
 const appIosUrl = ref('')
 const appAndroidUrl = ref('')
 const appFallbackUrl = ref('')
+
+// Calendar fields
+const calendarTitle = ref('')
+const calendarStart = ref('')
+const calendarEnd = ref('')
+const calendarDescription = ref('')
+const calendarLocation = ref('')
+const calendarAllDay = ref(false)
 
 // WiFi fields
 type WifiSecurity = 'wpa' | 'wpa2' | 'wpa3' | 'wep' | 'open'
@@ -120,6 +128,43 @@ function buildWifiPreview(): string {
     return `WIFI:T:${sec};S:${ssid};P:${pass};H:${hidden};;`
 }
 
+function escapeIcs(v: string): string {
+    return v.replace(/\\/g, '\\\\').replace(/,/g, '\\,').replace(/;/g, '\\;').replace(/\n/g, '\\n')
+}
+
+function formatIcsDt(dt: string, allDay: boolean): string {
+    // dt is "YYYY-MM-DDTHH:mm" (datetime-local) or "YYYY-MM-DD" (date)
+    const datePart = dt.slice(0, 10).replace(/-/g, '')
+    if (allDay) return datePart
+    const timePart = (dt.slice(11, 16) || '00:00').replace(':', '') + '00'
+    return `${datePart}T${timePart}`
+}
+
+function buildCalendarPreview(): string {
+    const title = escapeIcs(calendarTitle.value.trim())
+    if (!title || !calendarStart.value) return ''
+    const uid = encodeURIComponent(title + calendarStart.value).slice(0, 32) + '@qr-master.app'
+    const allDay = calendarAllDay.value
+    const lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//QR-Master//EN',
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTART${allDay ? ';VALUE=DATE:' : ':'}${formatIcsDt(calendarStart.value, allDay)}`,
+    ]
+    if (calendarEnd.value) {
+        lines.push(`DTEND${allDay ? ';VALUE=DATE:' : ':'}${formatIcsDt(calendarEnd.value, allDay)}`)
+    }
+    lines.push(`SUMMARY:${title}`)
+    const desc = escapeIcs(calendarDescription.value.trim())
+    if (desc) lines.push(`DESCRIPTION:${desc}`)
+    const loc = escapeIcs(calendarLocation.value.trim())
+    if (loc) lines.push(`LOCATION:${loc}`)
+    lines.push('END:VEVENT', 'END:VCALENDAR')
+    return lines.join('\r\n')
+}
+
 function saveQrCode() {
     if (!qrTitle.value.trim()) return
     isSaving.value = true
@@ -163,6 +208,13 @@ function saveQrCode() {
         app_ios_url: activeTab.value === 'app' ? appIosUrl.value.trim() : undefined,
         app_android_url: activeTab.value === 'app' ? appAndroidUrl.value.trim() : undefined,
         app_fallback_url: activeTab.value === 'app' ? appFallbackUrl.value.trim() : undefined,
+        // Calendar
+        calendar_title: activeTab.value === 'calendar' ? calendarTitle.value.trim() : undefined,
+        calendar_start: activeTab.value === 'calendar' ? calendarStart.value : undefined,
+        calendar_end: activeTab.value === 'calendar' ? calendarEnd.value : undefined,
+        calendar_description: activeTab.value === 'calendar' ? calendarDescription.value.trim() : undefined,
+        calendar_location: activeTab.value === 'calendar' ? calendarLocation.value.trim() : undefined,
+        calendar_all_day: activeTab.value === 'calendar' ? calendarAllDay.value : undefined,
         // Visual settings
         settings: currentStyle.value,
     }, {
@@ -208,6 +260,8 @@ const qrData = computed<string>(() => {
             return ''
         case 'app':
             return appIosUrl.value.trim() || appAndroidUrl.value.trim() || appFallbackUrl.value.trim()
+        case 'calendar':
+            return buildCalendarPreview()
         default:
             return ''
     }
@@ -321,6 +375,7 @@ const exportOpen = ref(false)
                         <TabsTrigger value="pdf" class="flex-1">{{ t('qr.tabs.pdf') }}</TabsTrigger>
                         <TabsTrigger value="bio_link" class="flex-1">{{ t('qr.tabs.bio_link') }}</TabsTrigger>
                         <TabsTrigger value="app" class="flex-1">{{ t('qr.tabs.app') }}</TabsTrigger>
+                        <TabsTrigger value="calendar" class="flex-1">{{ t('qr.tabs.calendar') }}</TabsTrigger>
                     </TabsList>
 
                     <!-- URL -->
@@ -638,6 +693,59 @@ const exportOpen = ref(false)
                                 autocomplete="off"
                             />
                             <p class="text-xs text-muted-foreground">{{ t('qr.fields.app.fallbackHint') }}</p>
+                        </div>
+                    </TabsContent>
+
+                    <!-- Calendar -->
+                    <TabsContent value="calendar" class="mt-4 space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.calendar.title') }} *</label>
+                            <Input v-model="calendarTitle" :placeholder="t('qr.fields.calendar.titlePlaceholder')" autocomplete="off" />
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <input
+                                id="cal-allday"
+                                v-model="calendarAllDay"
+                                type="checkbox"
+                                class="rounded"
+                            >
+                            <label for="cal-allday" class="text-sm">{{ t('qr.fields.calendar.allDay') }}</label>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-sm font-medium">{{ t('qr.fields.calendar.start') }} *</label>
+                                <Input
+                                    v-model="calendarStart"
+                                    :type="calendarAllDay ? 'date' : 'datetime-local'"
+                                    autocomplete="off"
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-sm font-medium">{{ t('qr.fields.calendar.end') }}</label>
+                                <Input
+                                    v-model="calendarEnd"
+                                    :type="calendarAllDay ? 'date' : 'datetime-local'"
+                                    autocomplete="off"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.calendar.location') }}</label>
+                            <Input v-model="calendarLocation" :placeholder="t('qr.fields.calendar.locationPlaceholder')" autocomplete="off" />
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium">{{ t('qr.fields.calendar.description') }}</label>
+                            <textarea
+                                v-model="calendarDescription"
+                                rows="3"
+                                maxlength="1000"
+                                :placeholder="t('qr.fields.calendar.descriptionPlaceholder')"
+                                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                            />
                         </div>
                     </TabsContent>
                 </Tabs>

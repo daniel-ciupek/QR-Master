@@ -346,6 +346,7 @@ export default {
             pdf: 'PDF',
             bio_link: 'Bio-Link',
             app: 'Aplikacja',
+            calendar: 'Kalendarz',
         },
         fields: {
             url: { label: 'Adres URL', placeholder: 'https://example.com' },
@@ -412,6 +413,17 @@ export default {
                 selectFile: 'Kliknij, aby wybrać plik PDF',
                 maxSize: 'Maksymalnie 10 MB',
                 remove: 'Usuń plik',
+            },
+            calendar: {
+                title: 'Nazwa wydarzenia',
+                titlePlaceholder: 'Spotkanie zespołu',
+                allDay: 'Wydarzenie całodniowe',
+                start: 'Początek',
+                end: 'Koniec (opcjonalnie)',
+                location: 'Lokalizacja (opcjonalnie)',
+                locationPlaceholder: 'Sala konferencyjna A, Warszawa',
+                description: 'Opis (opcjonalnie)',
+                descriptionPlaceholder: 'Szczegóły wydarzenia…',
             },
             app: {
                 hint: 'Automatycznie przekierowuje użytkowników iOS do App Store, Android do Google Play, pozostałych do fallback URL.',

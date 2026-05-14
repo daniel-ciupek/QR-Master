@@ -223,6 +223,14 @@ final class QrCodeController extends Controller
                 'app_android_url' => $validated['app_android_url'] ?? null,
                 'app_fallback_url' => $validated['app_fallback_url'] ?? null,
             ], fn ($v) => $v !== null && $v !== ''),
+            QrCodeType::Calendar => array_filter([
+                'calendar_title' => $validated['calendar_title'] ?? null,
+                'calendar_start' => $validated['calendar_start'] ?? null,
+                'calendar_end' => $validated['calendar_end'] ?? null,
+                'calendar_description' => $validated['calendar_description'] ?? null,
+                'calendar_location' => $validated['calendar_location'] ?? null,
+                'calendar_all_day' => ($validated['calendar_all_day'] ?? null) ? true : null,
+            ], fn ($v) => $v !== null && $v !== ''),
             default => [],
         };
     }

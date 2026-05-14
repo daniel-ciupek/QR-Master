@@ -346,6 +346,7 @@ export default {
             pdf: 'PDF',
             bio_link: 'Bio-Link',
             app: 'App',
+            calendar: 'Calendar',
         },
         fields: {
             url: { label: 'URL address', placeholder: 'https://example.com' },
@@ -412,6 +413,17 @@ export default {
                 selectFile: 'Click to select a PDF file',
                 maxSize: 'Maximum 10 MB',
                 remove: 'Remove file',
+            },
+            calendar: {
+                title: 'Event title',
+                titlePlaceholder: 'Team meeting',
+                allDay: 'All-day event',
+                start: 'Start',
+                end: 'End (optional)',
+                location: 'Location (optional)',
+                locationPlaceholder: 'Conference room A, Warsaw',
+                description: 'Description (optional)',
+                descriptionPlaceholder: 'Event details…',
             },
             app: {
                 hint: 'Automatically redirects iOS users to App Store, Android users to Google Play, others to the fallback URL.',

@@ -78,6 +78,14 @@ final class StoreQrCodeRequest extends FormRequest
             'app_android_url' => ['nullable', 'url', 'max:2000', 'regex:/^https?:\/\/.+/'],
             'app_fallback_url' => ['nullable', 'url', 'max:2000', 'regex:/^https?:\/\/.+/'],
 
+            // Calendar — title + start required
+            'calendar_title' => ['required_if:type,calendar', 'nullable', 'string', 'max:255'],
+            'calendar_start' => ['required_if:type,calendar', 'nullable', 'date'],
+            'calendar_end' => ['nullable', 'date', 'after_or_equal:calendar_start'],
+            'calendar_description' => ['nullable', 'string', 'max:1000'],
+            'calendar_location' => ['nullable', 'string', 'max:500'],
+            'calendar_all_day' => ['nullable', 'boolean'],
+
             // Visual settings (pass-through, no deep validation)
             'settings' => ['nullable', 'array'],
         ];
