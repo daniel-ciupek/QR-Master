@@ -27,6 +27,7 @@ final class StoreQrCodeRequest extends FormRequest
             'activates_at' => ['nullable', 'date'],
             'geo_allowed_countries' => ['nullable', 'array'],
             'geo_allowed_countries.*' => ['string', 'size:2', 'alpha'],
+            'scan_limit' => ['nullable', 'integer', 'min:1', 'max:1000000'],
 
             // URL — required when type=url, scheme restricted to http/https
             'destination_url' => [

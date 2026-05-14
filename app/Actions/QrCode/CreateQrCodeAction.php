@@ -25,6 +25,7 @@ final class CreateQrCodeAction
             'settings' => $data->settings,
             'is_active' => $data->is_active,
             'expires_at' => $data->expires_at,
+            'scan_limit' => $data->scan_limit,
             'password_hash' => $data->password !== null
                 ? Hash::make($data->password)
                 : null,

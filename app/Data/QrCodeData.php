@@ -33,6 +33,8 @@ final class QrCodeData extends Data
         /** @var array<int, string>|null */
         public readonly ?array $geo_allowed_countries = null,
 
+        public readonly ?int $scan_limit = null,
+
         public readonly ?string $password = null,
     ) {}
 }

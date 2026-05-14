@@ -12,6 +12,7 @@ use App\Services\GeoLookupService;
 use App\Services\SmartRedirectService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -82,6 +83,21 @@ final class PublicRedirectController extends Controller
                 return Inertia::render('QrCode/GeoBlocked', [
                     'title' => $qrCode->title,
                     'allowedCountries' => $allowedCountries,
+                ]);
+            }
+        }
+
+        // Click cap: atomic increment — only succeeds while scan_count < scan_limit
+        if ($qrCode->scan_limit !== null) {
+            $incremented = DB::table('qr_codes')
+                ->where('id', $qrCode->id)
+                ->whereColumn('scan_count', '<', 'scan_limit')
+                ->increment('scan_count');
+
+            if ($incremented === 0) {
+                return Inertia::render('QrCode/CapReached', [
+                    'title' => $qrCode->title,
+                    'limit' => $qrCode->scan_limit,
                 ]);
             }
         }

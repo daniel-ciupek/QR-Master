@@ -327,6 +327,12 @@ export default {
                 activatesAtHint: 'Przed tą datą kod zwróci 404. Pozostaw puste, aby był aktywny od razu.',
                 expiresAt: 'Wygasa',
                 expiresAtHint: 'Pozostaw puste, aby kod nie wygasał.',
+                scanLimit: {
+                    label: 'Limit skanów',
+                    placeholder: 'np. 100',
+                    hint: 'Pozostaw puste, aby zezwolić na nieograniczoną liczbę skanów.',
+                    used: 'Wykorzystano: {count}',
+                },
                 geo: {
                     label: 'Geofencing — dozwolone kraje',
                     hint: 'Wprowadź kody ISO-2 krajów (np. PL, DE, US). Puste = brak ograniczeń.',
@@ -781,6 +787,12 @@ export default {
             shapes: { rounded: 'Zaokrąglony', square: 'Kwadratowy', pill: 'Pigułka' },
             fonts: { inter: 'Sans', serif: 'Szeryfowy', mono: 'Mono' },
         },
+    },
+    capReached: {
+        pageTitle: 'Promocja zakończona',
+        title: 'Promocja zakończona',
+        subtitle: 'Limit {limit} skanów dla „{name}" został osiągnięty.',
+        hint: 'Skontaktuj się z właścicielem kodu, aby uzyskać więcej informacji.',
     },
     geoBlocked: {
         pageTitle: 'Niedostępne w Twoim regionie',

@@ -327,6 +327,12 @@ export default {
                 activatesAtHint: 'Before this date the code returns 404. Leave empty to activate immediately.',
                 expiresAt: 'Expires',
                 expiresAtHint: 'Leave empty so the code never expires.',
+                scanLimit: {
+                    label: 'Scan limit',
+                    placeholder: 'e.g. 100',
+                    hint: 'Leave empty to allow unlimited scans.',
+                    used: 'Used: {count}',
+                },
                 geo: {
                     label: 'Geofencing — allowed countries',
                     hint: 'Enter ISO-2 country codes (e.g. PL, DE, US). Empty = no restriction.',
@@ -781,6 +787,12 @@ export default {
             shapes: { rounded: 'Rounded', square: 'Square', pill: 'Pill' },
             fonts: { inter: 'Sans', serif: 'Serif', mono: 'Mono' },
         },
+    },
+    capReached: {
+        pageTitle: 'Promotion ended',
+        title: 'Promotion ended',
+        subtitle: 'The limit of {limit} scans for "{name}" has been reached.',
+        hint: 'Contact the QR code owner for more information.',
     },
     geoBlocked: {
         pageTitle: 'Not available in your region',

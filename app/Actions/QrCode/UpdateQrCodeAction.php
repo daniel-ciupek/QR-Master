@@ -21,6 +21,7 @@ final class UpdateQrCodeAction
             'expires_at' => $data->expires_at,
             'activates_at' => $data->activates_at,
             'geo_allowed_countries' => $data->geo_allowed_countries,
+            'scan_limit' => $data->scan_limit,
         ];
 
         if ($data->password !== null) {

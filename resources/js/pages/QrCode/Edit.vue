@@ -27,6 +27,8 @@ interface QrCodeProp {
     expires_at: string | null
     activates_at: string | null
     geo_allowed_countries: string[]
+    scan_limit: number | null
+    scan_count: number
     tag_ids: number[]
     logo_url: string | null
 }
@@ -45,6 +47,7 @@ const form = useForm({
     expires_at: props.qrCode.expires_at ?? '',
     activates_at: props.qrCode.activates_at ?? '',
     geo_allowed_countries: [...props.qrCode.geo_allowed_countries] as string[],
+    scan_limit: props.qrCode.scan_limit as number | null,
     tag_ids: [...props.qrCode.tag_ids] as number[],
 })
 
@@ -357,6 +360,33 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
                     <p v-if="form.errors.geo_allowed_countries" class="text-xs text-destructive">
                         {{ form.errors.geo_allowed_countries }}
                     </p>
+                </div>
+
+                <!-- Click cap -->
+                <div class="space-y-1.5">
+                    <label class="text-sm font-medium leading-none" for="scan_limit">
+                        {{ t('qr.edit.fields.scanLimit.label') }}
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <Input
+                            id="scan_limit"
+                            type="number"
+                            :value="form.scan_limit ?? ''"
+                            min="1"
+                            max="1000000"
+                            :placeholder="t('qr.edit.fields.scanLimit.placeholder')"
+                            class="w-36"
+                            :class="{ 'border-destructive': form.errors.scan_limit }"
+                            @input="form.scan_limit = ($event.target as HTMLInputElement).value ? Number(($event.target as HTMLInputElement).value) : null"
+                        />
+                        <span v-if="props.qrCode.scan_count > 0" class="text-xs text-muted-foreground">
+                            {{ t('qr.edit.fields.scanLimit.used', { count: props.qrCode.scan_count }) }}
+                        </span>
+                    </div>
+                    <p v-if="form.errors.scan_limit" class="text-xs text-destructive">
+                        {{ form.errors.scan_limit }}
+                    </p>
+                    <p v-else class="text-xs text-muted-foreground">{{ t('qr.edit.fields.scanLimit.hint') }}</p>
                 </div>
 
                 <!-- Submit -->

@@ -139,6 +139,7 @@ final class QrCodeController extends Controller
             geo_allowed_countries: ! empty($validated['geo_allowed_countries'])
                 ? array_map('strtoupper', (array) $validated['geo_allowed_countries'])
                 : null,
+            scan_limit: isset($validated['scan_limit']) ? (int) $validated['scan_limit'] : null,
         );
 
         $bioLink = null;
@@ -275,6 +276,8 @@ final class QrCodeController extends Controller
                 'expires_at' => $qrCode->expires_at?->toDateString(),
                 'activates_at' => $qrCode->activates_at?->toDateString(),
                 'geo_allowed_countries' => $qrCode->geo_allowed_countries ?? [],
+                'scan_limit' => $qrCode->scan_limit,
+                'scan_count' => $qrCode->scan_count,
                 'tag_ids' => $qrCode->tags->pluck('id')->toArray(),
                 'logo_url' => $qrCode->getFirstMediaUrl('logo') ?: null,
             ],
@@ -310,6 +313,7 @@ final class QrCodeController extends Controller
             geo_allowed_countries: ! empty($request->array('geo_allowed_countries'))
                 ? array_map('strtoupper', $request->array('geo_allowed_countries'))
                 : null,
+            scan_limit: $request->filled('scan_limit') ? (int) $request->input('scan_limit') : null,
         );
 
         $action->handle($qrCode, $data);

@@ -34,6 +34,8 @@ use Spatie\Sluggable\SlugOptions;
  * @property Carbon|null $expires_at
  * @property Carbon|null $activates_at
  * @property array<int, string>|null $geo_allowed_countries
+ * @property int|null $scan_limit
+ * @property int $scan_count
  * @property string|null $password_hash
  * @property Carbon $created_at
  * @property Carbon $updated_at
