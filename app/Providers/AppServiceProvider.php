@@ -6,10 +6,13 @@ namespace App\Providers;
 
 use App\Contracts\GeoLookupInterface;
 use App\Contracts\UserAgentParserInterface;
+use App\Listeners\StartProTrialOnRegistration;
 use App\Services\GeoLookupService;
 use App\Services\UserAgentParserService;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -29,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureSentry();
         $this->configurePulseGate();
         $this->configureRateLimiters();
+        $this->configureEvents();
     }
 
     private function configureSentry(): void
@@ -47,6 +51,11 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('viewPulse', function (): bool {
             return ! app()->isProduction();
         });
+    }
+
+    private function configureEvents(): void
+    {
+        Event::listen(Registered::class, StartProTrialOnRegistration::class);
     }
 
     private function configureRateLimiters(): void

@@ -225,7 +225,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **8.9** Customer Portal Stripe — faktury, zmiana karty, anulowanie
 - [x] **8.10** Dashboard subskrypcji — widoczne limity (np. „5/100 dynamicznych QR"), upsell hints
 - [x] **8.11** Powiadomienia email: przed wygaśnięciem (7d), po opłacie, problem z płatnością
-- [ ] **8.12** **Trial 14 dni** dla Pro przy rejestracji (bez karty), z reminder email
+- [x] **8.12** **Trial 14 dni** dla Pro przy rejestracji (bez karty), z reminder email
 - [ ] **8.13** **Affiliate program** (rewardful.com lub własny) — 20% commission
 
 **Kryterium ukończenia:** User upgrade'uje plan → odblokowane premium features → faktura w Customer Portal → webhook synchronizuje status.

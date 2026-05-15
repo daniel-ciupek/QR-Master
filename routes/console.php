@@ -28,3 +28,9 @@ Schedule::command('billing:send-expiry-reminders')
     ->dailyAt('09:00')
     ->withoutOverlapping()
     ->runInBackground();
+
+// Billing: downgrade users whose trial has expired (no active subscription)
+Schedule::command('billing:expire-trials')
+    ->hourly()
+    ->withoutOverlapping()
+    ->runInBackground();
