@@ -821,6 +821,33 @@ export default {
     },
 
     billing: {
+        dashboard: {
+            pageTitle: 'Subscription — QR-Master',
+            title: 'Your subscription',
+            subtitle: 'Manage your plan, limits and invoices.',
+            viewPlans: 'Compare plans',
+            active: 'Active',
+            cancelled: 'Cancelled',
+            trialEnds: 'Trial ends {date}',
+            renewsAt: 'Renews {date}',
+            accessUntil: 'Access until {date}',
+            manageSubscription: 'Manage subscription',
+            upgrade: 'Upgrade plan',
+            usageTitle: 'Plan usage',
+            dynamicQr: 'Dynamic QR codes',
+            scansPerMonth: 'Scans / month',
+            unlimited: 'Unlimited',
+            featuresTitle: 'Available features',
+            featureNames: {
+                analytics: 'Full analytics',
+                abTest: 'A/B Testing',
+                smartRedirect: 'Smart Redirect',
+                api: 'REST API',
+            },
+            upsellTitle: 'Unlock the full potential of QR-Master',
+            upsellSubtitle: 'Upgrade to Pro and get analytics, A/B testing, logo and gradients.',
+            upsellCta: 'Try Pro — 14 days free',
+        },
         success: {
             pageTitle: 'Payment successful — QR-Master',
             title: 'Payment successful!',
