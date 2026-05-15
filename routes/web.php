@@ -35,6 +35,7 @@ use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
 use App\Http\Controllers\WebAuthn\WebAuthnRegisterController;
+use App\Http\Controllers\Webhook\WebhookController;
 use App\Http\Middleware\CheckBotSuspicion;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Request;
@@ -160,6 +161,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('tags')->name('tags.')->group(function () {
         Route::post('/', [TagController::class, 'store'])->name('store');
         Route::delete('/{tag}', [TagController::class, 'destroy'])->name('destroy');
+    });
+
+    // Webhooks outbound
+    Route::prefix('webhooks')->name('webhooks.')->group(function () {
+        Route::get('/', [WebhookController::class, 'index'])->name('index');
+        Route::post('/', [WebhookController::class, 'store'])->name('store');
+        Route::delete('/{webhook}', [WebhookController::class, 'destroy'])->name('destroy');
+        Route::get('/{webhook}/deliveries', [WebhookController::class, 'deliveries'])->name('deliveries');
     });
 
     // Affiliate dashboard

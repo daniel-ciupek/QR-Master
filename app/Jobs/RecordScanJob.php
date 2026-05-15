@@ -9,6 +9,8 @@ use App\Contracts\UserAgentParserInterface;
 use App\Events\QrCodeScanned;
 use App\Models\QrCode;
 use App\Models\ScanLog;
+use App\Models\Webhook;
+use App\Models\WebhookDelivery;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Http\Request;
@@ -79,5 +81,46 @@ final class RecordScanJob implements ShouldQueue
         ]);
 
         QrCodeScanned::dispatch($this->qrCodeId, $scannedAt->toIso8601String());
+
+        $this->dispatchWebhooks($this->qrCodeId, $scannedAt->toIso8601String(), [
+            'country' => $geoData['country'] ?? null,
+            'device_type' => $uaData['device_type'],
+            'browser' => $uaData['browser'],
+            'os' => $uaData['os'],
+        ]);
+    }
+
+    /**
+     * @param  array<string, string|null>  $meta
+     */
+    private function dispatchWebhooks(int $qrCodeId, string $scannedAt, array $meta): void
+    {
+        $qrCode = QrCode::with('user')->find($qrCodeId);
+
+        if ($qrCode === null || $qrCode->user === null) {
+            return;
+        }
+
+        $webhooks = Webhook::where('user_id', $qrCode->user_id)
+            ->where('is_active', true)
+            ->whereJsonContains('events', 'qr.scanned')
+            ->get();
+
+        foreach ($webhooks as $webhook) {
+            $delivery = WebhookDelivery::create([
+                'webhook_id' => $webhook->id,
+                'event' => 'qr.scanned',
+                'payload' => [
+                    'event' => 'qr.scanned',
+                    'timestamp' => $scannedAt,
+                    'data' => array_merge(['qr_code_id' => $qrCodeId, 'scanned_at' => $scannedAt], $meta),
+                ],
+                'status' => 'pending',
+                'attempts' => 0,
+                'created_at' => now(),
+            ]);
+
+            DeliverWebhookJob::dispatch($delivery->id);
+        }
     }
 }
