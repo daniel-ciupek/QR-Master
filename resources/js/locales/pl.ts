@@ -820,6 +820,13 @@ export default {
         wrong: 'Nieprawidłowe hasło.',
     },
 
+    zipExport: {
+        btnLabel: 'Eksport ZIP',
+        png: 'Pobierz jako PNG',
+        svg: 'Pobierz jako SVG',
+        tooltip: 'Pobierz wszystkie kody QR jako archiwum ZIP',
+    },
+
     csvImport: {
         pageTitle: 'Import CSV — QR-Master',
         title: 'Importuj kody QR z pliku CSV',

@@ -6,7 +6,7 @@ import {
     getCoreRowModel,
     useVueTable,
 } from '@tanstack/vue-table'
-import { ArrowUpDown, Copy, Download, GitCompareArrows, MoreHorizontal, Pause, Pencil, Play, Plus, Trash2 } from 'lucide-vue-next'
+import { ArrowUpDown, Archive, Copy, Download, GitCompareArrows, MoreHorizontal, Pause, Pencil, Play, Plus, Trash2, Upload } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
@@ -297,12 +297,45 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                 <h1 class="text-2xl font-bold">{{ t('qr.index.title') }}</h1>
                 <p class="text-sm text-muted-foreground mt-1">{{ t('qr.index.subtitle') }}</p>
             </div>
-            <Button as-child>
-                <Link href="/qr/create">
-                    <Plus class="size-4 mr-2" />
-                    {{ t('qr.index.createBtn') }}
-                </Link>
-            </Button>
+            <div class="flex items-center gap-2">
+                <!-- Import CSV -->
+                <Button variant="outline" as-child :title="t('csvImport.subtitle')">
+                    <Link href="/qr/import">
+                        <Upload class="mr-2 size-4" />
+                        {{ t('csvImport.title').split(' ').slice(0, 2).join(' ') }}
+                    </Link>
+                </Button>
+
+                <!-- Export ZIP dropdown -->
+                <DropdownMenu>
+                    <DropdownMenuTrigger as-child>
+                        <Button variant="outline" :title="t('zipExport.tooltip')">
+                            <Archive class="mr-2 size-4" />
+                            {{ t('zipExport.btnLabel') }}
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem as-child>
+                            <a href="/qr/export/zip?format=png" target="_blank" download>
+                                {{ t('zipExport.png') }}
+                            </a>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem as-child>
+                            <a href="/qr/export/zip?format=svg" target="_blank" download>
+                                {{ t('zipExport.svg') }}
+                            </a>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+                <!-- New QR -->
+                <Button as-child>
+                    <Link href="/qr/create">
+                        <Plus class="mr-2 size-4" />
+                        {{ t('qr.index.createBtn') }}
+                    </Link>
+                </Button>
+            </div>
         </div>
 
         <!-- Search -->

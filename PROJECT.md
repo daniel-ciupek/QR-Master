@@ -246,7 +246,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **9.4** **Rate limiting per plan tier** (Free: 60/h, Pro: 1000/h, Business: 10000/h)
 - [x] **9.5** **Bulk operations** — `POST /api/v1/qrcodes/bulk` (max 1000 na request, queue processing)
 - [x] **9.6** **CSV import** w UI — wgranie pliku → preview → konfiguracja mapowania → batch generation z queue progress bar (Reverb)
-- [ ] **9.7** **Eksport ZIP** — wszystkie QR jako PNG/SVG w archiwum
+- [x] **9.7** **Eksport ZIP** — wszystkie QR jako PNG/SVG w archiwum
 - [ ] **9.8** **Webhooks outbound** — klient B2B otrzymuje POST na każdy skan
   - Endpoints w panelu, secret signing (HMAC-SHA256)
   - Retry logic (exponential backoff, max 5 prób)

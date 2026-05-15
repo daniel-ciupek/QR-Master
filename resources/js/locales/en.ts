@@ -820,6 +820,13 @@ export default {
         wrong: 'Incorrect password.',
     },
 
+    zipExport: {
+        btnLabel: 'Export ZIP',
+        png: 'Download as PNG',
+        svg: 'Download as SVG',
+        tooltip: 'Download all QR codes as a ZIP archive',
+    },
+
     csvImport: {
         pageTitle: 'Import CSV — QR-Master',
         title: 'Import QR codes from CSV',

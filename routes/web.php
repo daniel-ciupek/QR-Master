@@ -28,6 +28,7 @@ use App\Http\Controllers\QrCode\QrCodeAnalyticsPdfController;
 use App\Http\Controllers\QrCode\QrCodeCompareController;
 use App\Http\Controllers\QrCode\QrCodeController;
 use App\Http\Controllers\QrCode\QrCodeImportController;
+use App\Http\Controllers\QrCode\QrCodeZipExportController;
 use App\Http\Controllers\QrCode\RedirectRuleController;
 use App\Http\Controllers\QrPasswordController;
 use App\Http\Controllers\QrUserTemplateController;
@@ -103,6 +104,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/create', [QrCodeController::class, 'create'])->name('create');
         Route::post('/', [QrCodeController::class, 'store'])->name('store');
         Route::post('/export', [QrCodeController::class, 'export'])->name('export');
+        Route::get('/export/zip', QrCodeZipExportController::class)->name('export.zip');
         Route::post('/{qrCode}/logo', [QrCodeController::class, 'uploadLogo'])->name('logo.upload');
         Route::delete('/{qrCode}/logo', [QrCodeController::class, 'deleteLogo'])->name('logo.delete');
         Route::post('/{qrCode}/pdf', [QrCodeController::class, 'uploadPdf'])->name('pdf.upload');
