@@ -69,5 +69,17 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('qr-password', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
         });
+
+        // API — per-user, per-hour quota based on plan tier
+        RateLimiter::for('api', function (Request $request) {
+            $user = $request->user();
+
+            if ($user === null) {
+                return Limit::perHour(0)->by($request->ip());
+            }
+
+            return Limit::perHour($user->plan_tier->apiRequestsPerHour())
+                ->by('api:'.$user->id);
+        });
     }
 }

@@ -77,4 +77,14 @@ enum PlanTier: string
     {
         return $this !== self::Free;
     }
+
+    public function apiRequestsPerHour(): int
+    {
+        return match ($this) {
+            self::Free => 60,
+            self::Pro => 1_000,
+            self::Business => 10_000,
+            self::Enterprise => 100_000,
+        };
+    }
 }

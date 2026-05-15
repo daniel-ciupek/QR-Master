@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'plan.feature:api'])->group(function () {
+Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'plan.feature:api', 'throttle:api'])->group(function () {
     // QR Codes — CRUD
     Route::apiResource('qrcodes', QrCodeController::class);
 
