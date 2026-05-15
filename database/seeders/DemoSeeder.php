@@ -26,38 +26,59 @@ class DemoSeeder extends Seeder
     /** @return array<string, User> */
     private function seedUsers(): array
     {
-        $admin = User::factory()->create([
-            'name' => 'Admin QR-Master',
-            'email' => 'admin@qr-master.test',
-            'email_verified_at' => now(),
-        ]);
-        $admin->assignRole(Role::Admin);
+        [$admin, $adminCreated] = $this->firstOrCreateUser('admin@qr-master.test', 'Admin QR-Master');
+        if ($adminCreated) {
+            $admin->assignRole(Role::Admin);
+        }
 
-        $pro = User::factory()->create([
-            'name' => 'Demo Pro User',
-            'email' => 'pro@qr-master.test',
-            'email_verified_at' => now(),
-        ]);
-        $pro->assignRole(Role::User);
+        [$pro, $proCreated] = $this->firstOrCreateUser('pro@qr-master.test', 'Demo Pro User');
+        if ($proCreated) {
+            $pro->assignRole(Role::User);
+        }
 
-        $free = User::factory()->create([
-            'name' => 'Demo Free User',
-            'email' => 'free@qr-master.test',
-            'email_verified_at' => now(),
-        ]);
-        $free->assignRole(Role::User);
+        [$free, $freeCreated] = $this->firstOrCreateUser('free@qr-master.test', 'Demo Free User');
+        if ($freeCreated) {
+            $free->assignRole(Role::User);
+        }
 
-        User::factory(7)->create()->each->assignRole(Role::User);
+        if (User::count() < 10) {
+            User::factory(7)->create()->each->assignRole(Role::User);
+        }
 
         return ['admin' => $admin, 'pro' => $pro, 'free' => $free];
     }
 
+    /** @return array{User, bool} */
+    private function firstOrCreateUser(string $email, string $name): array
+    {
+        $existing = User::where('email', $email)->first();
+        if ($existing !== null) {
+            return [$existing, false];
+        }
+
+        $user = User::factory()->create([
+            'name' => $name,
+            'email' => $email,
+            'email_verified_at' => now(),
+        ]);
+
+        return [$user, true];
+    }
+
     private function seedQrCodes(User $admin, User $pro, User $free): void
     {
+        // Skip QR seeding if data already exists for these users
+        if ($admin->qrCodes()->exists() || $pro->qrCodes()->exists() || $free->qrCodes()->exists()) {
+            return;
+        }
+
         $action = app(CreateQrCodeAction::class);
 
         // ── Admin tags + codes ─────────────────────────────────────────
-        $tagDocs = Tag::create(['user_id' => $admin->id, 'name' => 'Dokumenty', 'color' => '#6366f1']);
+        $tagDocs = Tag::firstOrCreate(
+            ['user_id' => $admin->id, 'name' => 'Dokumenty'],
+            ['color' => '#6366f1']
+        );
 
         $action->handle($admin, new QrCodeData(
             title: 'Strona główna QR-Master',
@@ -75,9 +96,9 @@ class DemoSeeder extends Seeder
         $qr2->tags()->attach($tagDocs->id);
 
         // ── Pro user tags + codes ──────────────────────────────────────
-        $tagMarketing = Tag::create(['user_id' => $pro->id, 'name' => 'Marketing', 'color' => '#22c55e']);
-        $tagKontakt = Tag::create(['user_id' => $pro->id, 'name' => 'Kontakt', 'color' => '#06b6d4']);
-        $tagPromo = Tag::create(['user_id' => $pro->id, 'name' => 'Promo', 'color' => '#f97316']);
+        $tagMarketing = Tag::firstOrCreate(['user_id' => $pro->id, 'name' => 'Marketing'], ['color' => '#22c55e']);
+        $tagKontakt = Tag::firstOrCreate(['user_id' => $pro->id, 'name' => 'Kontakt'], ['color' => '#06b6d4']);
+        $tagPromo = Tag::firstOrCreate(['user_id' => $pro->id, 'name' => 'Promo'], ['color' => '#f97316']);
 
         $qr3 = $action->handle($pro, new QrCodeData(
             title: 'Kampania letnia 2026',
@@ -127,6 +148,5 @@ class DemoSeeder extends Seeder
             type: QrCodeType::Sms,
             destination_url: 'smsto:+48987654321:Hej, masz mój QR!',
         ));
-
     }
 }
