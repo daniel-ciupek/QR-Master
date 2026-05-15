@@ -25,8 +25,31 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
+/**
+ * @group QR Codes
+ *
+ * Create, read, update, delete and analyse QR codes programmatically.
+ * All endpoints require the `qrcodes:read` or `qrcodes:write` token ability.
+ */
 final class QrCodeController extends Controller
 {
+    /**
+     * List QR codes
+     *
+     * Returns a paginated list (15 per page) of the authenticated user's QR codes.
+     *
+     * @queryParam type string Filter by QR type. Example: url
+     * @queryParam is_active boolean Filter by active status. Example: true
+     * @queryParam tag_id integer Filter by folder (tag) ID. Example: 1
+     * @queryParam search string Search by title (case-insensitive). Example: Campaign
+     * @queryParam page integer Page number. Example: 1
+     *
+     * @response 200 {
+     *   "data": [{"id": 1, "type": "url", "title": "My QR", "short_hash": "abc123", "destination_url": "https://example.com", "is_active": true, "scan_count": 42, "redirect_url": "https://app.qr-master.app/q/abc123", "created_at": "2026-05-15T10:00:00+00:00"}],
+     *   "meta": {"current_page": 1, "last_page": 3, "per_page": 15, "total": 42},
+     *   "links": {"first": "...", "last": "...", "prev": null, "next": "..."}
+     * }
+     */
     public function index(Request $request): AnonymousResourceCollection
     {
         abort_unless((bool) $request->user()?->tokenCan('qrcodes:read'), 403, 'Missing ability: qrcodes:read');
@@ -46,6 +69,25 @@ final class QrCodeController extends Controller
         return QrCodeResource::collection($qrCodes);
     }
 
+    /**
+     * Create QR code
+     *
+     * Creates a new dynamic QR code. PDF and bio-link types are not supported via API.
+     * Requires the `qrcodes:write` token ability.
+     *
+     * @bodyParam title string required Human-readable name. Example: Summer Campaign
+     * @bodyParam type string required QR type (url|text|email|phone|sms|vcard|wifi|geo|app|calendar|crypto|review). Example: url
+     * @bodyParam destination_url string URL for `type=url`. Example: https://example.com
+     * @bodyParam is_active boolean Whether the QR is active. Example: true
+     * @bodyParam expires_at string|null ISO date for expiry. Example: 2026-12-31
+     * @bodyParam scan_limit integer|null Maximum number of scans. Example: 1000
+     * @bodyParam tag_ids integer[] Folder IDs to assign. Example: [1, 2]
+     * @bodyParam settings object Visual settings (dot style, colors, logo, etc.).
+     *
+     * @response 201 {"data": {"id": 1, "type": "url", "title": "Summer Campaign", "short_hash": "abc123", "destination_url": "https://example.com", "is_active": true, "scan_count": 0, "redirect_url": "https://app.qr-master.app/q/abc123", "created_at": "2026-05-15T10:00:00+00:00"}}
+     * @response 403 {"message": "Missing ability: qrcodes:write"}
+     * @response 422 {"message": "The title field is required.", "errors": {"title": ["The title field is required."]}}
+     */
     public function store(
         StoreQrCodeApiRequest $request,
         CreateQrCodeAction $action,
@@ -104,6 +146,17 @@ final class QrCodeController extends Controller
         return (new QrCodeResource($qrCode))->response()->setStatusCode(201);
     }
 
+    /**
+     * Get QR code
+     *
+     * Returns a single QR code by ID. Requires `qrcodes:read` ability.
+     *
+     * @urlParam qrCode integer required The QR code ID. Example: 1
+     *
+     * @response 200 {"data": {"id": 1, "type": "url", "title": "My QR", "short_hash": "abc123", "destination_url": "https://example.com", "is_active": true, "scan_count": 42, "redirect_url": "https://app.qr-master.app/q/abc123", "tags": [], "created_at": "2026-05-15T10:00:00+00:00"}}
+     * @response 403 {"message": "Forbidden."}
+     * @response 404 {"message": "No query results for model [App\\Models\\QrCode] 999."}
+     */
     public function show(Request $request, QrCode $qrCode): QrCodeResource
     {
         abort_unless((bool) $request->user()?->tokenCan('qrcodes:read'), 403, 'Missing ability: qrcodes:read');
@@ -117,6 +170,21 @@ final class QrCodeController extends Controller
         return new QrCodeResource($qrCode);
     }
 
+    /**
+     * Update QR code
+     *
+     * Updates an existing QR code. Type cannot be changed. Requires `qrcodes:write` ability.
+     *
+     * @urlParam qrCode integer required The QR code ID. Example: 1
+     *
+     * @bodyParam title string required New title. Example: Updated Campaign
+     * @bodyParam destination_url string New destination URL (for url type). Example: https://new-example.com
+     * @bodyParam is_active boolean required Whether the QR is active. Example: true
+     * @bodyParam tag_ids integer[] Folder IDs (replaces existing folders). Example: [1]
+     *
+     * @response 200 {"data": {"id": 1, "type": "url", "title": "Updated Campaign", "short_hash": "abc123", "is_active": true}}
+     * @response 403 {"message": "This action is unauthorized."}
+     */
     public function update(
         UpdateQrCodeApiRequest $request,
         QrCode $qrCode,
@@ -156,6 +224,17 @@ final class QrCodeController extends Controller
         return new QrCodeResource($qrCode);
     }
 
+    /**
+     * Delete QR code
+     *
+     * Soft-deletes a QR code. The code will stop redirecting immediately.
+     * Hard deletion happens automatically after 30 days. Requires `qrcodes:write` ability.
+     *
+     * @urlParam qrCode integer required The QR code ID. Example: 1
+     *
+     * @response 204 {}
+     * @response 403 {"message": "This action is unauthorized."}
+     */
     public function destroy(Request $request, QrCode $qrCode, DeleteQrCodeAction $action): JsonResponse
     {
         abort_unless((bool) $request->user()?->tokenCan('qrcodes:write'), 403, 'Missing ability: qrcodes:write');
@@ -166,6 +245,16 @@ final class QrCodeController extends Controller
         return response()->json(null, 204);
     }
 
+    /**
+     * QR code statistics
+     *
+     * Returns aggregate scan statistics for a QR code. Requires `analytics:read` token ability.
+     *
+     * @urlParam qrCode integer required The QR code ID. Example: 1
+     *
+     * @response 200 {"total_scans": 1500, "unique_countries": 12, "top_countries": {"PL": 900, "DE": 300, "GB": 180}, "device_breakdown": {"mobile": 1100, "desktop": 350, "tablet": 50}, "scans_last_7_days": 210, "scans_last_30_days": 840}
+     * @response 403 {"message": "Missing ability: analytics:read"}
+     */
     public function stats(Request $request, QrCode $qrCode): JsonResponse
     {
         abort_unless((bool) $request->user()?->tokenCan('analytics:read'), 403, 'Missing ability: analytics:read');
@@ -199,6 +288,18 @@ final class QrCodeController extends Controller
         ]);
     }
 
+    /**
+     * List scan logs
+     *
+     * Returns paginated scan log entries (50 per page). IP addresses are never returned (GDPR).
+     * Requires `analytics:read` token ability.
+     *
+     * @urlParam qrCode integer required The QR code ID. Example: 1
+     *
+     * @queryParam page integer Page number. Example: 1
+     *
+     * @response 200 {"data": [{"id": 1, "scanned_at": "2026-05-15T10:00:00+00:00", "country": "PL", "city": "Warsaw", "device_type": "mobile", "os": "iOS", "browser": "Safari", "referrer": null}], "meta": {"current_page": 1, "total": 1500}}
+     */
     public function scans(Request $request, QrCode $qrCode): AnonymousResourceCollection
     {
         abort_unless((bool) $request->user()?->tokenCan('analytics:read'), 403, 'Missing ability: analytics:read');

@@ -251,9 +251,9 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
   - Endpoints w panelu, secret signing (HMAC-SHA256)
   - Retry logic (exponential backoff, max 5 prób)
   - Delivery log + status w UI
-- [ ] **9.9** **API dokumentacja** — Scribe (auto-generated z PHPDoc) + przykłady curl/PHP/JS/Python
-- [ ] **9.10** **OpenAPI 3.1 spec** wystawiony pod `/api/openapi.json` (do importu w Postmanie)
-- [ ] **9.11** **API Playground** w docs — interaktywne testowanie endpointów
+- [x] **9.9** **API dokumentacja** — Scribe (auto-generated z PHPDoc) + przykłady curl/PHP/JS/Python
+- [x] **9.10** **OpenAPI 3.1 spec** wystawiony pod `/api/openapi.json` (do importu w Postmanie)
+- [x] **9.11** **API Playground** w docs — interaktywne testowanie endpointów
 
 **Kryterium ukończenia:** Klient generuje 1000 QR przez API w 30s, otrzymuje webhook na każdy skan, dokumentacja jest interaktywna.
 

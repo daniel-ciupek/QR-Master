@@ -66,3 +66,8 @@ secrets.*
 **/caddy
 frankenphp
 frankenphp-worker.php
+
+# Scribe generated API docs (regenerated via php artisan scribe:generate)
+/public/vendor/scribe/
+/resources/views/scribe/
+/.scribe/

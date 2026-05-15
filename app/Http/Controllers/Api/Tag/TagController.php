@@ -10,8 +10,20 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @group Folders
+ *
+ * Manage folders (tags) to organise your QR codes.
+ */
 final class TagController extends Controller
 {
+    /**
+     * List folders
+     *
+     * Returns all folders (tags) belonging to the authenticated user.
+     *
+     * @response 200 {"data": [{"id": 1, "name": "Marketing", "color": "#6366f1", "created_at": "2026-05-15T10:00:00.000000Z"}, {"id": 2, "name": "Events", "color": "#f59e0b", "created_at": "2026-05-15T11:00:00.000000Z"}]}
+     */
     public function index(Request $request): JsonResponse
     {
         /** @var User $user */
@@ -24,6 +36,17 @@ final class TagController extends Controller
         return response()->json(['data' => $tags]);
     }
 
+    /**
+     * Create folder
+     *
+     * Creates a new folder (tag) to organise QR codes.
+     *
+     * @bodyParam name string required Folder name (max 50 characters). Example: Marketing
+     * @bodyParam color string Hex colour code (e.g. #6366f1). Example: #6366f1
+     *
+     * @response 201 {"data": {"id": 3, "name": "Marketing", "color": "#6366f1", "user_id": 1, "updated_at": "2026-05-15T12:00:00.000000Z", "created_at": "2026-05-15T12:00:00.000000Z"}}
+     * @response 422 {"message": "The name field is required.", "errors": {"name": ["The name field is required."]}}
+     */
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
