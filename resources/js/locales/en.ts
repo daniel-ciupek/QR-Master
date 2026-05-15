@@ -820,6 +820,25 @@ export default {
         wrong: 'Incorrect password.',
     },
 
+    affiliate: {
+        pageTitle: 'Affiliate program — QR-Master',
+        title: 'Affiliate program',
+        subtitle: 'Earn 20% commission on every payment from referred users.',
+        referrals: 'Referred users',
+        pending: 'Pending commission',
+        paid: 'Paid commission',
+        yourLink: 'Your referral link',
+        commission: '20% commission on every paid invoice from referred users for the lifetime of their subscription.',
+        history: 'Commission history',
+        noCommissions: 'No commissions yet. Invite friends to start earning!',
+        colUser: 'Referred user',
+        colAmount: 'Invoice amount',
+        colCommission: 'Your commission',
+        colStatus: 'Status',
+        colDate: 'Date',
+        status: { pending: 'Pending', paid: 'Paid' },
+    },
+
     billing: {
         dashboard: {
             pageTitle: 'Subscription — QR-Master',

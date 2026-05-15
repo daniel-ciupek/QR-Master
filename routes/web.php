@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Affiliate\AffiliateDashboardController;
 use App\Http\Controllers\Api\SuggestPaletteController;
 use App\Http\Controllers\Billing\BillingDashboardController;
 use App\Http\Controllers\Billing\BillingSuccessController;
@@ -151,6 +152,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/', [TagController::class, 'store'])->name('store');
         Route::delete('/{tag}', [TagController::class, 'destroy'])->name('destroy');
     });
+
+    // Affiliate dashboard
+    Route::get('/affiliate', AffiliateDashboardController::class)->name('affiliate.dashboard');
 
     // Billing — Stripe Checkout + Customer Portal + Dashboard (8.10)
     Route::prefix('billing')->name('billing.')->group(function () {

@@ -820,6 +820,25 @@ export default {
         wrong: 'Nieprawidłowe hasło.',
     },
 
+    affiliate: {
+        pageTitle: 'Program afiliacyjny — QR-Master',
+        title: 'Program afiliacyjny',
+        subtitle: 'Zarabiaj 20% prowizji od każdej płatności poleconego użytkownika.',
+        referrals: 'Poleceni użytkownicy',
+        pending: 'Prowizja oczekująca',
+        paid: 'Prowizja wypłacona',
+        yourLink: 'Twój link polecający',
+        commission: '20% prowizji od każdej opłaconej faktury poleconego użytkownika przez okres trwania subskrypcji.',
+        history: 'Historia prowizji',
+        noCommissions: 'Brak prowizji. Zaproś znajomych, aby zacząć zarabiać!',
+        colUser: 'Polecony',
+        colAmount: 'Kwota faktury',
+        colCommission: 'Twoja prowizja',
+        colStatus: 'Status',
+        colDate: 'Data',
+        status: { pending: 'Oczekuje', paid: 'Wypłacono' },
+    },
+
     billing: {
         dashboard: {
             pageTitle: 'Subskrypcja — QR-Master',

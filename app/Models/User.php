@@ -34,6 +34,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $pm_last_four
  * @property Carbon|null $trial_ends_at
  * @property PlanTier $plan_tier
+ * @property string|null $referral_code
+ * @property int|null $referred_by_user_id
  */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]

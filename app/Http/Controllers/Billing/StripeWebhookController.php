@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Billing;
 
 use App\Enums\PlanTier;
+use App\Models\AffiliateCommission;
 use App\Models\User;
 use App\Notifications\Billing\PaymentFailedNotification;
 use App\Notifications\Billing\PaymentSucceededNotification;
@@ -44,6 +45,8 @@ final class StripeWebhookController extends WebhookController
             planName: $user->plan_tier->label(),
             amount: $formatted,
         ));
+
+        $this->recordAffiliateCommission($user, (int) $amount, strtoupper((string) ($payload['data']['object']['currency'] ?? 'PLN')), $payload['data']['object']['id'] ?? null);
 
         return $this->successMethod();
     }
@@ -108,6 +111,23 @@ final class StripeWebhookController extends WebhookController
         ));
 
         return $this->successMethod();
+    }
+
+    private function recordAffiliateCommission(User $user, int $amountGross, string $currency, mixed $invoiceId): void
+    {
+        if ($user->referred_by_user_id === null) {
+            return;
+        }
+
+        AffiliateCommission::create([
+            'user_id' => $user->referred_by_user_id,
+            'referred_user_id' => $user->id,
+            'amount_gross' => $amountGross,
+            'commission_amount' => (int) round($amountGross * 0.20),
+            'currency' => $currency,
+            'stripe_invoice_id' => is_string($invoiceId) ? $invoiceId : null,
+            'status' => 'pending',
+        ]);
     }
 
     /** @param array<string, mixed> $payload */

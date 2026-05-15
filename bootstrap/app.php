@@ -7,6 +7,7 @@ use App\Http\Middleware\EnsurePlanFeature;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\TrackAffiliateRef;
 use App\Http\Middleware\TrackUserSession;
 use App\Http\Middleware\ValidateTurnstile;
 use Illuminate\Foundation\Application;
@@ -30,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ValidateTurnstile::class,
             TrackUserSession::class,
             EnsureOnboardingComplete::class,
+            TrackAffiliateRef::class,
         ]);
 
         $middleware->alias([
