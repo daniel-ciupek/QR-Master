@@ -27,6 +27,7 @@ use App\Http\Controllers\QrCode\QrCodeAnalyticsController;
 use App\Http\Controllers\QrCode\QrCodeAnalyticsPdfController;
 use App\Http\Controllers\QrCode\QrCodeCompareController;
 use App\Http\Controllers\QrCode\QrCodeController;
+use App\Http\Controllers\QrCode\QrCodeImportController;
 use App\Http\Controllers\QrCode\RedirectRuleController;
 use App\Http\Controllers\QrPasswordController;
 use App\Http\Controllers\QrUserTemplateController;
@@ -116,6 +117,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{qrCode}/rules/reorder', [RedirectRuleController::class, 'reorder'])->name('rules.reorder')->middleware('plan.feature:smart-redirect');
         Route::patch('/{qrCode}/rules/{rule}', [RedirectRuleController::class, 'update'])->name('rules.update')->middleware('plan.feature:smart-redirect');
         Route::delete('/{qrCode}/rules/{rule}', [RedirectRuleController::class, 'destroy'])->name('rules.destroy')->middleware('plan.feature:smart-redirect');
+        // CSV Import — must come before /{qrCode} wildcard
+        Route::get('/import', [QrCodeImportController::class, 'show'])->name('import');
+        Route::post('/import/upload', [QrCodeImportController::class, 'upload'])->name('import.upload');
+        Route::post('/import/process', [QrCodeImportController::class, 'process'])->name('import.process');
+        Route::get('/import/{batchId}/status', [QrCodeImportController::class, 'status'])->name('import.status');
         // Bulk actions — must come before /{qrCode} wildcard
         Route::post('/bulk/delete', [QrCodeController::class, 'bulkDestroy'])->name('bulk.destroy');
         Route::post('/bulk/pause', [QrCodeController::class, 'bulkPause'])->name('bulk.pause');

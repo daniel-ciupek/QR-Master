@@ -16,3 +16,8 @@ Broadcast::channel('qr-analytics.{qrCodeId}', function (User $user, int $qrCodeI
 
     return $qrCode !== null && $qrCode->user_id === $user->id;
 });
+
+// CSV import progress — only the user who started the import
+Broadcast::channel('csv-import.{userId}', function (User $user, int $userId): bool {
+    return $user->id === $userId;
+});

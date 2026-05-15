@@ -48,5 +48,8 @@ declare global {
         turnstile?: TurnstileInstance
         Pusher: typeof Pusher
         Echo: Echo
+        route?: (name: string, params?: Record<string, string | number | boolean>) => string
     }
+
+    function route(name: string, params?: Record<string, string | number | boolean> | string | number): string
 }
