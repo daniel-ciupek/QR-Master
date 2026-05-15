@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\SuggestPaletteController;
+use App\Http\Controllers\Billing\BillingDashboardController;
 use App\Http\Controllers\Billing\BillingSuccessController;
+use App\Http\Controllers\Billing\CustomerPortalController;
 use App\Http\Controllers\Billing\PricingController;
 use App\Http\Controllers\Billing\StripeWebhookController;
 use App\Http\Controllers\Billing\SubscribeController;
@@ -150,10 +152,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{tag}', [TagController::class, 'destroy'])->name('destroy');
     });
 
-    // Billing — Stripe Checkout
+    // Billing — Stripe Checkout + Customer Portal + Dashboard (8.10)
     Route::prefix('billing')->name('billing.')->group(function () {
         Route::get('/subscribe/{plan}', SubscribeController::class)->name('subscribe');
         Route::get('/success', BillingSuccessController::class)->name('success');
+        Route::get('/portal', CustomerPortalController::class)->name('portal');
+        Route::get('/dashboard', BillingDashboardController::class)->name('dashboard');
     });
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
