@@ -218,7 +218,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **8.2** Migracje Cashier + Customer Portal
 - [x] **8.3** Plany w Stripe: Free, Pro, Business, Enterprise (custom)
 - [x] **8.4** Strona Pricing: shadcn-vue, Bento grid, FAQ accordion, comparison table
-- [ ] **8.5** Stripe Checkout integration (płatność karty + Apple/Google Pay + przelew)
+- [x] **8.5** Stripe Checkout integration (płatność karty + Apple/Google Pay + przelew)
 - [ ] **8.6** Stripe Tax (auto VAT dla EU)
 - [ ] **8.7** Middleware `EnsurePlanFeature` — gate na features wg planu
 - [ ] **8.8** Webhooks Stripe — `invoice.payment_succeeded`, `customer.subscription.deleted`, `customer.subscription.updated`, `payment_failed`

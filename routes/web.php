@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\SuggestPaletteController;
+use App\Http\Controllers\Billing\BillingSuccessController;
 use App\Http\Controllers\Billing\PricingController;
+use App\Http\Controllers\Billing\SubscribeController;
 use App\Http\Controllers\BioLink\BioLinkClickController;
 use App\Http\Controllers\BioLink\BioLinkController;
 use App\Http\Controllers\BioLink\BioLinkItemController;
@@ -139,6 +141,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('tags')->name('tags.')->group(function () {
         Route::post('/', [TagController::class, 'store'])->name('store');
         Route::delete('/{tag}', [TagController::class, 'destroy'])->name('destroy');
+    });
+
+    // Billing — Stripe Checkout
+    Route::prefix('billing')->name('billing.')->group(function () {
+        Route::get('/subscribe/{plan}', SubscribeController::class)->name('subscribe');
+        Route::get('/success', BillingSuccessController::class)->name('success');
     });
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');

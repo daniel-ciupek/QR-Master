@@ -820,6 +820,17 @@ export default {
         wrong: 'Incorrect password.',
     },
 
+    billing: {
+        success: {
+            pageTitle: 'Payment successful — QR-Master',
+            title: 'Payment successful!',
+            subtitle: 'Your {plan} plan is now active. Thank you for your trust.',
+            hint: 'An invoice will be sent to your email address. You can download it anytime from the billing portal.',
+            toDashboard: 'Go to dashboard',
+            viewPricing: 'Back to pricing',
+        },
+    },
+
     pricing: {
         pageTitle: 'Pricing — QR-Master',
         title: 'Simple, transparent pricing',

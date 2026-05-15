@@ -820,6 +820,17 @@ export default {
         wrong: 'Nieprawidłowe hasło.',
     },
 
+    billing: {
+        success: {
+            pageTitle: 'Płatność zakończona — QR-Master',
+            title: 'Płatność zakończona pomyślnie!',
+            subtitle: 'Twój plan {plan} jest aktywny. Dziękujemy za zaufanie.',
+            hint: 'Faktura zostanie wysłana na Twój adres email. Możesz pobrać ją w dowolnym momencie z panelu rozliczeniowego.',
+            toDashboard: 'Przejdź do panelu',
+            viewPricing: 'Wróć do cennika',
+        },
+    },
+
     pricing: {
         pageTitle: 'Cennik — QR-Master',
         title: 'Prosty, przejrzysty cennik',
