@@ -20,6 +20,7 @@ use Laragear\WebAuthn\Contracts\WebAuthnAuthenticatable;
 use Laragear\WebAuthn\WebAuthnAuthentication;
 use Laravel\Cashier\Billable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -42,7 +43,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use Billable, HasFactory, HasRoles, Notifiable, TwoFactorAuthenticatable, WebAuthnAuthentication;
+    use Billable, HasApiTokens, HasFactory, HasRoles, Notifiable, TwoFactorAuthenticatable, WebAuthnAuthentication;
 
     #[\Override]
     protected function casts(): array
