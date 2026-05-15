@@ -232,7 +232,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### Etap 9: Public API + Bulk Operations + Webhooks Outbound
+### ✅ Etap 9: Public API + Bulk Operations + Webhooks Outbound *(ukończony 2026-05-15)*
 
 *Cel: Automatyzacja dla B2B Enterprise — programmatic dostęp.*
 
