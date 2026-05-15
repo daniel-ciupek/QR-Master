@@ -179,12 +179,38 @@ git diff --cached | grep -iE "(api[_-]?key|secret|password|token|bearer|sk_live|
 
 Projekt ma skonfigurowany folder `.claude/` z gotowymi narzędziami. **Używaj ich automatycznie gdy pasuje kontekst — nie czekaj na prośbę usera.**
 
+### Narzędzia ogólne
+
 | Narzędzie | Kiedy używać |
 |---|---|
 | `/close-stage <N>` | Po ukończeniu wszystkich zadań w etapie N — automatyzuje testy, aktualizację PROJECT.md, commit i push (z wymaganymi pytaniami o zgodę) |
 | `/check-gitignore` | Przed każdym commitem, po dodaniu nowych plików, po instalacji nowych narzędzi |
 | Agent `security-redirect-reviewer` | Przy każdej zmianie `PublicRedirectController.php`, `RecordScanJob.php` lub powiązanych middleware — wywołaj proaktywnie |
 | Agent `rodo-pii-auditor` | Przy każdej nowej migracji lub modelu zawierającym PII (email, phone, address, ip) — wywołaj proaktywnie |
+
+### Agenty Code Review (`.claude/commands/`)
+
+Wywoływane komendą `/review-<nazwa>`. Każdy uruchamia 2–3 równoległe agenty Explore i zwraca skonsolidowany raport.
+
+| Komenda | Zakres | Kiedy uruchamiać |
+|---|---|---|
+| `/review-security` | Auth, rate limiting, CSRF, PII, HMAC, injection | Przy każdej zmianie bezpieczeństwa lub **po zamknięciu Stage 9, 10, 11, 12** |
+| `/review-architecture` | Action/Service/DTO, cienkie kontrolery, Jobs | Po każdym etapie z nowymi komponentami backendowymi |
+| `/review-api` | REST conventions, status codes, tokenCan, Scribe | Po zmianach w `routes/api.php` lub kontrolerach API |
+| `/review-frontend` | TypeScript strict, i18n kompletność, Vue 3 patterns | **Po zamknięciu Stage 9** i każdym etapie z nowymi stronami Vue |
+| `/review-performance` | N+1, indeksy, cache, queue | **Po zamknięciu Stage 12** (przed deploymentem) |
+| `/review-full` | Wszystkie 5 domen równolegle | **Checkpoint Stage 9 (teraz)**, **Stage 12 (przed produkcją)** |
+
+### Harmonogram przeglądów kodu
+
+```
+✅ TERAZ (po Stage 9)    → /review-full  [wszystkie domeny, Stage 7–9 szczególnie]
+🔜 PO STAGE 10 (AI)     → /review-security + /review-architecture
+🔜 PO STAGE 11 (PWA)    → /review-security + /review-performance
+🔜 PO STAGE 12 (Enterprise) → /review-full  [OBOWIĄZKOWY przed produkcją]
+```
+
+**WAŻNE:** Gdy zamykamy etap 10, 11 lub 12 — przypomnij userowi o właściwym review z powyższej listy.
 
 `settings.json` w `.claude/` definiuje permissions (co auto-allow, co pyta, co deny) i hook `git-reminder.sh` (PreToolUse przypomnienia dla `git commit/push/tag/pr create`).
 

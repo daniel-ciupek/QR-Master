@@ -259,6 +259,12 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
+> 🔔 **CODE REVIEW CHECKPOINT — przed Stage 10**
+> Uruchom: `/review-full` (wszystkie domeny, skupienie na Stage 7–9: billing, API, webhooks)
+> Napraw wszystkie BLOKERY i WYSOKIE PRIORYTETY przed rozpoczęciem Stage 10.
+
+---
+
 ### Etap 10: AI Features (Laravel 13 AI Primitives)
 
 *Cel: Differentiator vs konkurencja — inteligentne sugestie i automatyzacja.*
@@ -277,6 +283,12 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [ ] **10.12** **Prompt injection protection** — sanityzacja inputu, system prompt z guardrails
 
 **Kryterium ukończenia:** User wgrywa logo → otrzymuje 3 palety w 5s → wpisuje „rzucam nowy produkt" → AI generuje QR z dopasowanym brandingiem i tekstem CTA.
+
+---
+
+> 🔔 **CODE REVIEW CHECKPOINT — przed Stage 11**
+> Uruchom: `/review-security` (AI prompt injection, API keys w env) + `/review-architecture` (AI Services, nowe Actions)
+> Napraw BLOKERY przed Stage 11.
 
 ---
 
@@ -300,6 +312,12 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
+> 🔔 **CODE REVIEW CHECKPOINT — przed Stage 12**
+> Uruchom: `/review-security` (DNS validation, SSL, PWA security) + `/review-performance` (service worker caching, custom domain routing)
+> Napraw BLOKERY przed Stage 12.
+
+---
+
 ### Etap 12: Multi-tenancy, White-label, Enterprise Compliance
 
 *Cel: Sprzedaż Enterprise — duże firmy, RODO-ready, audyty.*
@@ -319,6 +337,12 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [ ] **12.13** **SLA dashboard** publiczny (status.qr-master.app)
 
 **Kryterium ukończenia:** Enterprise klient konfiguruje SSO Microsoft 365, white-labeluje panel pod swoją markę, eksportuje audit raport za ostatni kwartał, ogląda DPA wygenerowane na ich dane.
+
+---
+
+> 🔔 **CODE REVIEW CHECKPOINT — po Stage 12 (OBOWIĄZKOWY przed produkcją)**
+> Uruchom: `/review-full` — pełny przegląd całego projektu 0–12
+> To jest ostatni gate przed deploymentem produkcyjnym. Napraw WSZYSTKIE BLOKERY i WYSOKIE PRIORYTETY.
 
 ---
 
