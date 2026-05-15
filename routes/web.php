@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Affiliate\AffiliateDashboardController;
 use App\Http\Controllers\Api\SuggestPaletteController;
+use App\Http\Controllers\Api\Tokens\ApiTokenController;
 use App\Http\Controllers\Billing\BillingDashboardController;
 use App\Http\Controllers\Billing\BillingSuccessController;
 use App\Http\Controllers\Billing\CustomerPortalController;
@@ -155,6 +156,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Affiliate dashboard
     Route::get('/affiliate', AffiliateDashboardController::class)->name('affiliate.dashboard');
+
+    // API token management
+    Route::get('/api-tokens', [ApiTokenController::class, 'index'])->name('api-tokens.index');
+    Route::post('/api-tokens', [ApiTokenController::class, 'store'])->name('api-tokens.store');
+    Route::delete('/api-tokens/{tokenId}', [ApiTokenController::class, 'destroy'])->name('api-tokens.destroy');
 
     // Billing — Stripe Checkout + Customer Portal + Dashboard (8.10)
     Route::prefix('billing')->name('billing.')->group(function () {

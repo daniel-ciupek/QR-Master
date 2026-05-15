@@ -820,6 +820,26 @@ export default {
         wrong: 'Nieprawidłowe hasło.',
     },
 
+    apiTokens: {
+        pageTitle: 'Tokeny API — QR-Master',
+        title: 'Tokeny API',
+        subtitle: 'Zarządzaj kluczami API do integracji z zewnętrznymi aplikacjami.',
+        newToken: 'Nowy token',
+        tokenName: 'Nazwa tokenu (np. Moja aplikacja)',
+        selectAbilities: 'Wybierz uprawnienia',
+        expiresAt: 'Data wygaśnięcia (opcjonalnie)',
+        create: 'Utwórz token',
+        tokenCreated: 'Token utworzony — skopiuj go teraz, nie będziesz mógł go zobaczyć ponownie.',
+        tokenOnce: 'Ze względów bezpieczeństwa token wyświetlany jest tylko raz.',
+        noTokens: 'Brak tokenów API. Utwórz pierwszy token.',
+        revokeConfirm: 'Czy na pewno chcesz odwołać ten token? Operacja jest nieodwracalna.',
+        colName: 'Nazwa',
+        colAbilities: 'Uprawnienia',
+        colExpires: 'Wygasa',
+        colLastUsed: 'Ostatnio użyty',
+        never: 'Nigdy',
+    },
+
     affiliate: {
         pageTitle: 'Program afiliacyjny — QR-Master',
         title: 'Program afiliacyjny',

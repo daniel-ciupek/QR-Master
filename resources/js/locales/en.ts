@@ -820,6 +820,26 @@ export default {
         wrong: 'Incorrect password.',
     },
 
+    apiTokens: {
+        pageTitle: 'API Tokens — QR-Master',
+        title: 'API Tokens',
+        subtitle: 'Manage API keys for integrations with external applications.',
+        newToken: 'New token',
+        tokenName: 'Token name (e.g. My app)',
+        selectAbilities: 'Select permissions',
+        expiresAt: 'Expiry date (optional)',
+        create: 'Create token',
+        tokenCreated: 'Token created — copy it now, you will not be able to see it again.',
+        tokenOnce: 'For security reasons the token is shown only once.',
+        noTokens: 'No API tokens. Create your first token.',
+        revokeConfirm: 'Are you sure you want to revoke this token? This action is irreversible.',
+        colName: 'Name',
+        colAbilities: 'Permissions',
+        colExpires: 'Expires',
+        colLastUsed: 'Last used',
+        never: 'Never',
+    },
+
     affiliate: {
         pageTitle: 'Affiliate program — QR-Master',
         title: 'Affiliate program',
