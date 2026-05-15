@@ -210,7 +210,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### Etap 8: Subskrypcje i Monetyzacja (Stripe)
+### ✅ Etap 8: Subskrypcje i Monetyzacja (Stripe) *(ukończony 2026-05-15)*
 
 *Cel: Przekształcenie projektu w produkt zarobkowy.*
 
