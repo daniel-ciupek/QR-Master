@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\SuggestPaletteController;
 use App\Http\Controllers\Billing\BillingSuccessController;
 use App\Http\Controllers\Billing\PricingController;
+use App\Http\Controllers\Billing\StripeWebhookController;
 use App\Http\Controllers\Billing\SubscribeController;
 use App\Http\Controllers\BioLink\BioLinkClickController;
 use App\Http\Controllers\BioLink\BioLinkController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
 use App\Http\Controllers\WebAuthn\WebAuthnRegisterController;
 use App\Http\Middleware\CheckBotSuspicion;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -39,6 +41,11 @@ Route::get('/', function () {
 
 // Pricing — public, optional auth (shows current plan if logged in)
 Route::get('/pricing', PricingController::class)->name('pricing')->middleware('web');
+
+// Stripe Webhooks — public, CSRF excluded (verified by Stripe signature)
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
+    ->name('cashier.webhook')
+    ->withoutMiddleware([PreventRequestForgery::class]);
 
 // Public QR redirect — rate limited, bot-suspicion checked
 Route::get('/q/{hash}', PublicRedirectController::class)
