@@ -238,7 +238,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 - [x] **9.1** Laravel Sanctum — token-based auth z **ability scopes** (`qrcodes:read`, `qrcodes:write`, `analytics:read`)
 - [x] **9.2** UI w panelu: tworzenie/podgląd/revoke tokenów, expiration date
-- [ ] **9.3** API endpoints (RESTful + JSON:API standard z Laravel 13):
+- [x] **9.3** API endpoints (RESTful + JSON:API standard z Laravel 13):
   - `GET/POST/PATCH/DELETE /api/v1/qrcodes`
   - `GET /api/v1/qrcodes/{id}/stats`
   - `GET /api/v1/qrcodes/{id}/scans`

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\QrCode\QrCodeController;
+use App\Http\Controllers\Api\Tag\TagController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +16,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'plan.feature:api'])->group(function () {
-    // QR Codes — 9.3
+    // QR Codes — CRUD
+    Route::apiResource('qrcodes', QrCodeController::class);
+
+    // QR Code analytics (token ability: analytics:read)
+    Route::get('qrcodes/{qrCode}/stats', [QrCodeController::class, 'stats'])->name('qrcodes.stats');
+    Route::get('qrcodes/{qrCode}/scans', [QrCodeController::class, 'scans'])->name('qrcodes.scans');
+
+    // Folders (Tags)
+    Route::get('folders', [TagController::class, 'index'])->name('folders.index');
+    Route::post('folders', [TagController::class, 'store'])->name('folders.store');
+
     // Bulk operations — 9.5
-    // Scans — 9.3
 });
