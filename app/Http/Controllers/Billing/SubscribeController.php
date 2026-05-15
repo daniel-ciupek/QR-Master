@@ -38,6 +38,9 @@ final class SubscribeController extends Controller
             ->checkout([
                 'success_url' => route('billing.success').'?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('pricing'),
+                'automatic_tax' => ['enabled' => true],
+                'tax_id_collection' => ['enabled' => true],
+                'customer_update' => ['address' => 'auto', 'name' => 'auto'],
             ]);
 
         return redirect($checkout->url ?? route('pricing'));
