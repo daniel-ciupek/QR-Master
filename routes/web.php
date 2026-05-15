@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\SuggestPaletteController;
+use App\Http\Controllers\Billing\PricingController;
 use App\Http\Controllers\BioLink\BioLinkClickController;
 use App\Http\Controllers\BioLink\BioLinkController;
 use App\Http\Controllers\BioLink\BioLinkItemController;
@@ -33,6 +34,9 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+// Pricing — public, optional auth (shows current plan if logged in)
+Route::get('/pricing', PricingController::class)->name('pricing')->middleware('web');
 
 // Public QR redirect — rate limited, bot-suspicion checked
 Route::get('/q/{hash}', PublicRedirectController::class)

@@ -214,10 +214,10 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 *Cel: Przekształcenie projektu w produkt zarobkowy.*
 
-- [ ] **8.1** Laravel Cashier + konto Stripe (test mode + production)
-- [ ] **8.2** Migracje Cashier + Customer Portal
-- [ ] **8.3** Plany w Stripe: Free, Pro, Business, Enterprise (custom)
-- [ ] **8.4** Strona Pricing: shadcn-vue, Bento grid, FAQ accordion, comparison table
+- [x] **8.1** Laravel Cashier + konto Stripe (test mode + production)
+- [x] **8.2** Migracje Cashier + Customer Portal
+- [x] **8.3** Plany w Stripe: Free, Pro, Business, Enterprise (custom)
+- [x] **8.4** Strona Pricing: shadcn-vue, Bento grid, FAQ accordion, comparison table
 - [ ] **8.5** Stripe Checkout integration (płatność karty + Apple/Google Pay + przelew)
 - [ ] **8.6** Stripe Tax (auto VAT dla EU)
 - [ ] **8.7** Middleware `EnsurePlanFeature` — gate na features wg planu
