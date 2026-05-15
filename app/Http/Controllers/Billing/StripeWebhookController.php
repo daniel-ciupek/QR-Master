@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Billing;
 
 use App\Enums\PlanTier;
 use App\Models\User;
+use App\Notifications\Billing\PaymentFailedNotification;
+use App\Notifications\Billing\PaymentSucceededNotification;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,6 +35,15 @@ final class StripeWebhookController extends WebhookController
         if ($tier !== null) {
             $user->update(['plan_tier' => $tier->value]);
         }
+
+        $amount = $payload['data']['object']['amount_paid'] ?? 0;
+        $currency = strtoupper((string) ($payload['data']['object']['currency'] ?? 'PLN'));
+        $formatted = number_format((int) $amount / 100, 2).' '.$currency;
+
+        $user->notify(new PaymentSucceededNotification(
+            planName: $user->plan_tier->label(),
+            amount: $formatted,
+        ));
 
         return $this->successMethod();
     }
@@ -83,7 +94,19 @@ final class StripeWebhookController extends WebhookController
     /** @param array<string, mixed> $payload */
     public function handleInvoicePaymentFailed(array $payload): Response
     {
-        // Email notification handled in task 8.11 (payment failed email)
+        $customerId = $payload['data']['object']['customer'] ?? null;
+
+        if (! is_string($customerId)) {
+            return $this->successMethod();
+        }
+
+        /** @var User|null $user */
+        $user = $this->getUserByStripeId($customerId);
+
+        $user?->notify(new PaymentFailedNotification(
+            planName: $user->plan_tier->label(),
+        ));
+
         return $this->successMethod();
     }
 

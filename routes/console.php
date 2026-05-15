@@ -22,3 +22,9 @@ Schedule::command('privacy:purge-old-scans')
     ->dailyAt('03:00')
     ->withoutOverlapping()
     ->runInBackground();
+
+// Billing: 7-day expiry reminders for trials and cancelled subscriptions
+Schedule::command('billing:send-expiry-reminders')
+    ->dailyAt('09:00')
+    ->withoutOverlapping()
+    ->runInBackground();
