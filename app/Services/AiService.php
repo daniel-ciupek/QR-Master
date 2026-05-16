@@ -17,16 +17,22 @@ final class AiService
 {
     private const MAX_INPUT_LENGTH = 2000;
 
+    private Provider $provider;
+
     private string $fastModel;
 
     private string $smartModel;
+
+    private bool $visionEnabled;
 
     private int $cacheTtl;
 
     public function __construct()
     {
-        $this->fastModel = (string) config('ai.fast_model', 'claude-haiku-4-5');
-        $this->smartModel = (string) config('ai.smart_model', 'claude-sonnet-4-5');
+        $this->provider = Provider::from((string) config('ai.provider', 'deepseek'));
+        $this->fastModel = (string) config('ai.fast_model', 'deepseek-chat');
+        $this->smartModel = (string) config('ai.smart_model', 'deepseek-chat');
+        $this->visionEnabled = (bool) config('ai.vision_enabled', false);
         $this->cacheTtl = (int) config('ai.cache_ttl', 86400);
     }
 
@@ -42,7 +48,7 @@ final class AiService
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($input): array {
             $response = Prism::text()
-                ->using(Provider::Anthropic, $this->fastModel)
+                ->using($this->provider, $this->fastModel)
                 ->withSystemPrompt($this->systemPrompt())
                 ->withPrompt("Suggest a short, descriptive name (max 50 chars, English) for a QR code pointing to: {$input}\n\nRespond with ONLY the name, no explanation.")
                 ->withMaxTokens(60)
@@ -64,7 +70,7 @@ final class AiService
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($input): array {
             $response = Prism::structured()
-                ->using(Provider::Anthropic, $this->fastModel)
+                ->using($this->provider, $this->fastModel)
                 ->withSystemPrompt($this->systemPrompt())
                 ->withPrompt("Generate 5 short CTA phrases (max 8 words each) for placing under a QR code. Context: {$input}")
                 ->withSchema(new ObjectSchema(
@@ -100,7 +106,7 @@ final class AiService
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($input): array {
             $response = Prism::structured()
-                ->using(Provider::Anthropic, $this->smartModel)
+                ->using($this->provider, $this->smartModel)
                 ->withSystemPrompt($this->systemPrompt())
                 ->withPrompt("Create bio-link content for: {$input}")
                 ->withSchema(new ObjectSchema(
@@ -132,17 +138,22 @@ final class AiService
 
     /**
      * Analyze a logo image and suggest color palettes.
+     * Returns empty array when vision is not supported by the configured provider.
      *
      * @param  string  $base64Image  Base64-encoded image (PNG/JPG)
      * @return array{palettes: list<array{name: string, dotColor: string, bgColor: string}>}
      */
     public function suggestPalettesFromLogo(string $base64Image, string $mimeType = 'image/png'): array
     {
+        if (! $this->visionEnabled) {
+            return ['palettes' => []];
+        }
+
         $cacheKey = 'ai:palette:'.md5($base64Image);
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($base64Image, $mimeType): array {
             $response = Prism::structured()
-                ->using(Provider::Anthropic, $this->smartModel)
+                ->using($this->provider, $this->smartModel)
                 ->withSystemPrompt($this->systemPrompt())
                 ->withMessages([
                     new UserMessage(
