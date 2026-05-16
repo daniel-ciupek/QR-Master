@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\EnsureAiRateLimit;
 use App\Http\Middleware\EnsureOnboardingComplete;
 use App\Http\Middleware\EnsurePlanFeature;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -37,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'plan.feature' => EnsurePlanFeature::class,
+            'ai.rate-limit' => EnsureAiRateLimit::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

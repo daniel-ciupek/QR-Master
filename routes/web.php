@@ -154,7 +154,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{qrCode}/duplicate', [QrCodeController::class, 'duplicate'])->name('duplicate');
     });
 
-    Route::get('/api/ai/suggest-palette', SuggestPaletteController::class)->name('ai.suggest-palette');
+    Route::get('/api/ai/suggest-palette', SuggestPaletteController::class)->name('ai.suggest-palette')->middleware('ai.rate-limit');
 
     // Bio-Link editor (auth required)
     Route::prefix('bio-links')->name('bio-link.')->group(function () {
