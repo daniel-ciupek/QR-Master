@@ -7,6 +7,7 @@ namespace App\Actions\QrCode;
 use App\Models\QrCode;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 final class BulkAttachTagAction
 {
@@ -18,10 +19,16 @@ final class BulkAttachTagAction
             return;
         }
 
-        QrCode::forUser($user->id)
-            ->with('tags')
+        $validIds = QrCode::forUser($user->id)
             ->whereIn('id', $qrCodeIds)
-            ->get()
-            ->each(fn (QrCode $qr) => $qr->tags()->syncWithoutDetaching([$tagId]));
+            ->pluck('id');
+
+        if ($validIds->isEmpty()) {
+            return;
+        }
+
+        $rows = $validIds->map(fn (int $id) => ['qr_code_id' => $id, 'tag_id' => $tagId])->all();
+
+        DB::table('qr_code_tag')->insertOrIgnore($rows);
     }
 }

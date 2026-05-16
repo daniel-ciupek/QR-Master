@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Cache;
 
 final class ProcessCsvImportRowJob implements ShouldQueue
 {
@@ -39,7 +40,8 @@ final class ProcessCsvImportRowJob implements ShouldQueue
         }
 
         $item = $this->mapRow();
-        $user = User::findOrFail($this->userId);
+        /** @var User $user */
+        $user = Cache::remember("csv-user:{$this->userId}", 300, fn () => User::findOrFail($this->userId));
         $type = QrCodeType::from($item['type'] ?? $this->defaultType);
         $destinationUrl = $builder->build($type, $item);
 

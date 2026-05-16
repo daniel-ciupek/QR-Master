@@ -7,6 +7,7 @@ namespace App\Actions\QrCode\Ai;
 use App\Models\User;
 use App\Services\AiService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 final class SemanticSearchAction
@@ -18,7 +19,11 @@ final class SemanticSearchAction
      */
     public function handle(User $user, string $query, int $limit = 10): Collection
     {
-        $embedding = $this->ai->generateEmbedding($query);
+        $embedding = Cache::remember(
+            'search-embed:'.md5($query),
+            3600,
+            fn () => $this->ai->generateEmbedding($query)
+        );
 
         if ($embedding === []) {
             return collect();

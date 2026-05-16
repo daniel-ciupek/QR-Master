@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Contracts\UserAgentParserInterface;
+use Illuminate\Support\Facades\Cache;
 use WhichBrowser\Parser;
 
 final class UserAgentParserService implements UserAgentParserInterface
@@ -18,13 +19,18 @@ final class UserAgentParserService implements UserAgentParserInterface
             return ['device_type' => null, 'os' => null, 'browser' => null];
         }
 
-        $result = new Parser(['User-Agent' => $userAgent]);
+        $cacheKey = 'ua:'.md5($userAgent);
 
-        return [
-            'device_type' => $this->resolveDeviceType($result),
-            'os' => $result->os->name ?: null,
-            'browser' => $result->browser->name ?: null,
-        ];
+        /** @var array{device_type: string|null, os: string|null, browser: string|null} */
+        return Cache::remember($cacheKey, 60 * 60 * 24 * 7, function () use ($userAgent): array {
+            $result = new Parser(['User-Agent' => $userAgent]);
+
+            return [
+                'device_type' => $this->resolveDeviceType($result),
+                'os' => $result->os->name ?: null,
+                'browser' => $result->browser->name ?: null,
+            ];
+        });
     }
 
     private function resolveDeviceType(Parser $result): ?string
