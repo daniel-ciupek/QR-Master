@@ -1084,6 +1084,10 @@ export default {
         },
     },
 
+    collab: {
+        editing: 'Also editing:',
+    },
+
     offline: {
         noConnection: 'No internet connection.',
         draftsWillSync: 'Your work is saved locally and will sync when you reconnect.',

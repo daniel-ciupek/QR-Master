@@ -7,6 +7,7 @@ import LogoUpload from '@/components/qr/LogoUpload.vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import CollaborationPresence from '@/components/CollaborationPresence.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
@@ -146,9 +147,12 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
                 <h1 class="text-2xl font-bold">{{ t('qr.edit.title') }}</h1>
                 <p class="text-sm text-muted-foreground mt-1">{{ t('qr.edit.subtitle') }}</p>
             </div>
-            <Button variant="outline" as-child>
-                <Link href="/qr">{{ t('qr.edit.cancel') }}</Link>
-            </Button>
+            <div class="flex items-center gap-3">
+                <CollaborationPresence :qr-code-id="props.qrCode.id" />
+                <Button variant="outline" as-child>
+                    <Link href="/qr">{{ t('qr.edit.cancel') }}</Link>
+                </Button>
+            </div>
         </div>
 
         <!-- Two-column layout -->

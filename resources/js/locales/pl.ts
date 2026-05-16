@@ -1084,6 +1084,10 @@ export default {
         },
     },
 
+    collab: {
+        editing: 'Edytuje też:',
+    },
+
     offline: {
         noConnection: 'Brak połączenia z internetem.',
         draftsWillSync: 'Praca zapisana lokalnie — zsynchronizuje się po powrocie online.',
