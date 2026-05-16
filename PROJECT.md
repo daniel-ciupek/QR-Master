@@ -296,7 +296,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 *Cel: Enterprise-grade gotowość — własna domena, instalowalna apka, live data.*
 
-- [ ] **11.1** **PWA** — manifest.json, service worker (Workbox), ikony, splash screens
+- [x] **11.1** **PWA** — manifest.json, service worker (Workbox), ikony, splash screens
 - [ ] **11.2** **Offline mode** — drafts kodów zapisywane lokalnie (IndexedDB), sync po online
 - [ ] **11.3** Push notifications (web) — alert przy anomalii skanów, koniec planu, wyczerpanie limitu
 - [ ] **11.4** **Custom domains** — klient B2B dodaje `qr.firma.pl` jako CNAME

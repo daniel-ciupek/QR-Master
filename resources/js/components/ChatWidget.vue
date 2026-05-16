@@ -3,7 +3,6 @@ import { Bot, Loader2, MessageCircle, Minimize2, Send, X } from 'lucide-vue-next
 import { nextTick, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
 
 interface Message {
     role: 'user' | 'assistant'
@@ -207,12 +206,12 @@ function onKeydown(e: KeyboardEvent): void {
                     <!-- Input -->
                     <div class="shrink-0 border-t p-3">
                         <div class="flex items-end gap-2">
-                            <Textarea
+                            <textarea
                                 v-model="input"
                                 :placeholder="t('chat.placeholder')"
                                 :disabled="streaming"
                                 rows="1"
-                                class="min-h-9 max-h-24 resize-none py-2 text-sm"
+                                class="flex min-h-9 max-h-24 w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
                                 @keydown="onKeydown"
                             />
                             <Button
