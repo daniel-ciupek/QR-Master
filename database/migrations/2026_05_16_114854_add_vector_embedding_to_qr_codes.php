@@ -18,8 +18,10 @@ return new class extends Migration
             DB::statement('ALTER TABLE qr_codes ADD COLUMN IF NOT EXISTS embedding vector(768)');
             DB::statement('CREATE INDEX IF NOT EXISTS qr_codes_embedding_idx ON qr_codes USING ivfflat (embedding vector_cosine_ops) WITH (lists = 50)');
         } catch (Exception $e) {
-            if (! str_contains($e->getMessage(), 'does not exist')
-                && ! str_contains($e->getMessage(), 'already exists')
+            $msg = $e->getMessage();
+            if (! str_contains($msg, 'does not exist')
+                && ! str_contains($msg, 'already exists')
+                && ! str_contains($msg, 'is not available')
             ) {
                 throw $e;
             }
