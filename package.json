@@ -5,6 +5,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
+        "postbuild": "cp public/build/manifest.webmanifest public/manifest.webmanifest",
         "typecheck": "vue-tsc --noEmit",
         "lint": "eslint resources/js/"
     },

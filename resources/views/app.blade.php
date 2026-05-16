@@ -25,6 +25,7 @@
             })();
         </script>
 
+        @routes
         @vite(['resources/css/app.css', 'resources/js/app.ts'])
         @inertiaHead
     </head>
