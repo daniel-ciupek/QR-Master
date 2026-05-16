@@ -269,18 +269,18 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 *Cel: Differentiator vs konkurencja — inteligentne sugestie i automatyzacja.*
 
-- [ ] **10.1** Konfiguracja Laravel 13 AI driver (Anthropic Claude / OpenAI / lokalny Ollama)
+- [x] **10.1** Konfiguracja Laravel 13 AI driver (Anthropic Claude / OpenAI / lokalny Ollama)
 - [ ] **10.2** **AI Color Palette Suggestion** — analiza loga (vision model) → 3-5 sugerowanych palet
 - [ ] **10.3** **AI Bio-Link Content Generator** — user wpisuje branżę/zawód → AI sugeruje bio + emoji + kolejność linków
 - [ ] **10.4** **AI Campaign Hooks** — sugestie tekstu pod ramką QR („Skanuj po promocję!")
 - [ ] **10.5** **Anomaly Detection** w skanach — model wykrywa nietypowe wzorce (możliwy bot/fraud)
 - [ ] **10.6** **Vector Search** w analityce (Laravel 13 native) — natural language query: „pokaż kody z największym wzrostem skanów w ostatnim tygodniu"
-- [ ] **10.7** **Smart QR Naming** — AI sugeruje nazwę kodu na podstawie URL/treści
+- [x] **10.7** **Smart QR Naming** — AI sugeruje nazwę kodu na podstawie URL/treści
 - [ ] **10.8** **Chatbot Helper** w panelu — Claude jako asystent ze świadomością kontekstu konta usera
-- [ ] **10.9** **Performance Insights** — AI generuje natural language podsumowanie: „Twoja kampania w marcu osiągnęła 23% lepszy CTR niż lutowa, głównie dzięki..."
-- [ ] **10.10** Rate limiting AI (drogo!) — per plan: Free 0, Pro 50/mc, Business 500/mc, Enterprise unlimited
-- [ ] **10.11** Caching odpowiedzi AI — Redis (klucz: hash inputu)
-- [ ] **10.12** **Prompt injection protection** — sanityzacja inputu, system prompt z guardrails
+- [ ] **10.9** **Performance Insights** — AI generuje natural language podsumowanie: „Twoja kampania w marcu osiągnęła 23% lepszy CTR niż lutową, głównie dzięki..."
+- [x] **10.10** Rate limiting AI (drogo!) — per plan: Free 0, Pro 50/mc, Business 500/mc, Enterprise unlimited
+- [x] **10.11** Caching odpowiedzi AI — Redis (klucz: hash inputu)
+- [x] **10.12** **Prompt injection protection** — sanityzacja inputu, system prompt z guardrails
 
 **Kryterium ukończenia:** User wgrywa logo → otrzymuje 3 palety w 5s → wpisuje „rzucam nowy produkt" → AI generuje QR z dopasowanym brandingiem i tekstem CTA.
 

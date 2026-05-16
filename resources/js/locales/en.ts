@@ -1078,4 +1078,13 @@ export default {
             },
         },
     },
+
+    ai: {
+        suggestName: 'Suggest name with AI',
+        suggestCta: 'Suggest CTA with AI',
+        suggestBio: 'Generate bio with AI',
+        suggestPalette: 'Suggest palette from logo',
+        rateLimitReached: 'Monthly AI request limit reached. Upgrade your plan.',
+        upgradeToPro: 'Upgrade to Pro',
+    },
 }

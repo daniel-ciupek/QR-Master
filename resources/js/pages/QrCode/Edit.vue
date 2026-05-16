@@ -57,6 +57,27 @@ function submit() {
     form.patch(`/qr/${props.qrCode.id}`)
 }
 
+const suggestingName = ref(false)
+
+async function suggestName() {
+    suggestingName.value = true
+    try {
+        const res = await fetch(`/qr/${props.qrCode.id}/ai/suggest-name`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ?? '',
+                Accept: 'application/json',
+            },
+        })
+        if (res.ok) {
+            const data = await res.json() as { name: string }
+            form.title = data.name
+        }
+    } finally {
+        suggestingName.value = false
+    }
+}
+
 // ── Tag picker ─────────────────────────────────────────────────────
 function toggleTag(tagId: number) {
     const idx = form.tag_ids.indexOf(tagId)
@@ -139,13 +160,27 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
                     <label class="text-sm font-medium leading-none" for="title">
                         {{ t('qr.edit.fields.title') }}
                     </label>
-                    <Input
-                        id="title"
-                        v-model="form.title"
-                        :placeholder="t('qr.edit.fields.titlePlaceholder')"
-                        :class="{ 'border-destructive': form.errors.title }"
-                        autocomplete="off"
-                    />
+                    <div class="flex gap-2">
+                        <Input
+                            id="title"
+                            v-model="form.title"
+                            :placeholder="t('qr.edit.fields.titlePlaceholder')"
+                            :class="{ 'border-destructive': form.errors.title }"
+                            class="flex-1"
+                            autocomplete="off"
+                        />
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            :disabled="suggestingName"
+                            :title="t('ai.suggestName')"
+                            @click="suggestName"
+                        >
+                            <span v-if="suggestingName" class="animate-spin">⏳</span>
+                            <span v-else>✨</span>
+                        </Button>
+                    </div>
                     <p v-if="form.errors.title" class="text-xs text-destructive">
                         {{ form.errors.title }}
                     </p>

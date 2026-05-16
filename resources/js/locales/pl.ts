@@ -1078,4 +1078,13 @@ export default {
             },
         },
     },
+
+    ai: {
+        suggestName: 'Zasugeruj nazwę przez AI',
+        suggestCta: 'Zasugeruj CTA przez AI',
+        suggestBio: 'Wygeneruj bio przez AI',
+        suggestPalette: 'Zasugeruj paletę z logo',
+        rateLimitReached: 'Miesięczny limit zapytań AI został wyczerpany. Ulepsz plan.',
+        upgradeToPro: 'Ulepsz do Pro',
+    },
 }
