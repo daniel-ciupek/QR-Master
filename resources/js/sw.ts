@@ -18,12 +18,18 @@ registerRoute(
     }),
 )
 
-// API — NetworkFirst 5 min
+// Only cache public/non-sensitive API endpoints — never cache authenticated user data
+// (avoids leaking data to next user on same device after logout)
+const PUBLIC_API_PATTERNS = ['/api/v1/qr-codes/search']
+
 registerRoute(
-    ({ url }) => url.pathname.startsWith('/api/v1/'),
+    ({ url, request }) =>
+        url.pathname.startsWith('/api/v1/') &&
+        PUBLIC_API_PATTERNS.some(p => url.pathname.startsWith(p)) &&
+        request.method === 'GET',
     new NetworkFirst({
-        cacheName: 'api-cache',
-        plugins: [new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 60 * 5 })],
+        cacheName: 'api-public-cache',
+        plugins: [new ExpirationPlugin({ maxEntries: 20, maxAgeSeconds: 60 * 5 })],
         networkTimeoutSeconds: 10,
     }),
 )

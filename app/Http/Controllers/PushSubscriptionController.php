@@ -14,7 +14,7 @@ final class PushSubscriptionController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'endpoint' => ['required', 'string', 'url', 'max:2048'],
+            'endpoint' => ['required', 'string', 'max:2048', 'regex:/^https:\/\/.+/'],
             'keys.p256dh' => ['required', 'string', 'max:512'],
             'keys.auth' => ['required', 'string', 'max:512'],
         ]);
@@ -22,10 +22,10 @@ final class PushSubscriptionController extends Controller
         /** @var User $user */
         $user = $request->user();
 
+        // user_id in search key prevents endpoint hijacking by other users
         PushSubscription::updateOrCreate(
-            ['endpoint' => $validated['endpoint']],
+            ['endpoint' => $validated['endpoint'], 'user_id' => $user->id],
             [
-                'user_id' => $user->id,
                 'public_key' => $validated['keys']['p256dh'],
                 'auth_token' => $validated['keys']['auth'],
             ]

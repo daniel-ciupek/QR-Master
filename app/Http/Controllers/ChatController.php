@@ -61,7 +61,8 @@ final class ChatController extends Controller
         $qrCount = $user->qrCodes()->count();
         $plan = $user->plan_tier->value;
 
-        $context = $pageContext !== '' ? "Current page context: {$pageContext}." : '';
+        $safeContext = $pageContext !== '' ? $this->sanitize($pageContext) : '';
+        $context = $safeContext !== '' ? "Current page context: {$safeContext}." : '';
 
         return <<<PROMPT
 You are QR-Master Assistant, a helpful AI embedded in the QR-Master SaaS platform.

@@ -13,19 +13,28 @@ final class HandleCustomDomain
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $host = $request->getHost();
-        $appHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+        // Use server SERVER_NAME to avoid X-Forwarded-Host spoofing
+        $serverName = $request->server('SERVER_NAME');
+        $raw = is_string($serverName) ? $serverName : $request->getHost();
+        // Strip port, lowercase
+        $host = strtolower(explode(':', $raw)[0]);
 
-        if ($host === $appHost || str_ends_with($host, ".{$appHost}")) {
+        $parsed = parse_url((string) config('app.url'), PHP_URL_HOST);
+        $appHost = strtolower(is_string($parsed) ? $parsed : '');
+
+        // Exact match for app host — strict, no subdomain wildcard
+        if ($host === $appHost) {
             return $next($request);
         }
 
+        // Reject if host contains the app domain as a suffix (e.g. attacker.qr-master.app.evil.com)
+        // Only allow verified custom domains from DB
         $domain = CustomDomain::where('domain', $host)
             ->where('status', 'verified')
             ->first();
 
         if ($domain === null) {
-            abort(404, "Domain {$host} is not registered.");
+            abort(404);
         }
 
         $request->attributes->set('custom_domain', $domain);
