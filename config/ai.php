@@ -23,6 +23,13 @@ return [
      */
     'vision_enabled' => (bool) env('AI_VISION_ENABLED', false),
 
+    /*
+     | Embedding provider (for vector search). Gemini text-embedding-004 = 768 dims.
+     | Separate from text provider — can mix DeepSeek (text) + Gemini (embeddings).
+     */
+    'embedding_provider' => env('AI_EMBEDDING_PROVIDER', 'gemini'),
+    'embedding_model' => env('AI_EMBEDDING_MODEL', 'text-embedding-004'),
+
     'cache_ttl' => (int) env('AI_CACHE_TTL', 86400),
 
     'rate_limits' => [

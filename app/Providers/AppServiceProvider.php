@@ -7,6 +7,8 @@ namespace App\Providers;
 use App\Contracts\GeoLookupInterface;
 use App\Contracts\UserAgentParserInterface;
 use App\Listeners\StartProTrialOnRegistration;
+use App\Models\QrCode;
+use App\Observers\QrCodeObserver;
 use App\Services\GeoLookupService;
 use App\Services\UserAgentParserService;
 use Illuminate\Auth\Events\Registered;
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        QrCode::observe(QrCodeObserver::class);
         $this->configureSentry();
         $this->configurePulseGate();
         $this->configureRateLimiters();

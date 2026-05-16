@@ -98,7 +98,7 @@ services:
   # PostgreSQL 17
   # ============================================================
   postgres:
-    image: postgres:17-alpine
+    image: pgvector/pgvector:pg17
     ports:
       - "5432:5432"
     environment:

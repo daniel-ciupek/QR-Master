@@ -283,6 +283,27 @@ final class AiService
         });
     }
 
+    /**
+     * Generate a vector embedding for the given text using the configured embedding provider.
+     *
+     * @return list<float>
+     */
+    public function generateEmbedding(string $text): array
+    {
+        $embeddingProvider = Provider::from((string) config('ai.embedding_provider', 'gemini'));
+        $embeddingModel = (string) config('ai.embedding_model', 'text-embedding-004');
+
+        $response = Prism::embeddings()
+            ->using($embeddingProvider, $embeddingModel)
+            ->fromInput($this->sanitize($text))
+            ->asEmbeddings();
+
+        /** @var list<float> $embedding */
+        $embedding = array_values(array_map('floatval', $response->embeddings[0]->embedding ?? []));
+
+        return $embedding;
+    }
+
     private function sanitize(string $input): string
     {
         $clean = strip_tags($input);
