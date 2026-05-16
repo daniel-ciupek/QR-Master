@@ -24,6 +24,7 @@ use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Profile\SecurityController;
 use App\Http\Controllers\Profile\SessionsController;
 use App\Http\Controllers\PublicRedirectController;
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\QrCode\AbTestController;
 use App\Http\Controllers\QrCode\Ai\DetectScanAnomaliesController;
 use App\Http\Controllers\QrCode\Ai\GenerateInsightsController;
@@ -228,6 +229,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile/sessions', [SessionsController::class, 'index'])->name('profile.sessions');
     Route::delete('/profile/sessions/others', [SessionsController::class, 'destroyOthers'])->name('profile.sessions.destroyOthers');
     Route::delete('/profile/sessions/{userSession}', [SessionsController::class, 'destroy'])->name('profile.sessions.destroy');
+
+    // Web Push subscriptions
+    Route::prefix('push')->name('push.')->group(function () {
+        Route::get('/vapid-key', [PushSubscriptionController::class, 'vapidPublicKey'])->name('vapid-key');
+        Route::post('/subscribe', [PushSubscriptionController::class, 'store'])->name('subscribe');
+        Route::post('/unsubscribe', [PushSubscriptionController::class, 'destroy'])->name('unsubscribe');
+    });
 
     // AI Chatbot
     Route::post('/chat', [ChatController::class, 'stream'])

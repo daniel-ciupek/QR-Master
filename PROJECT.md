@@ -298,7 +298,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 - [x] **11.1** **PWA** — manifest.json, service worker (Workbox), ikony, splash screens
 - [x] **11.2** **Offline mode** — drafts kodów zapisywane lokalnie (IndexedDB), sync po online
-- [ ] **11.3** Push notifications (web) — alert przy anomalii skanów, koniec planu, wyczerpanie limitu
+- [x] **11.3** Push notifications (web) — alert przy anomalii skanów, koniec planu, wyczerpanie limitu
 - [ ] **11.4** **Custom domains** — klient B2B dodaje `qr.firma.pl` jako CNAME
   - Auto-issue SSL przez Cloudflare for SaaS lub Let's Encrypt
   - Walidacja DNS w panelu

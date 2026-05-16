@@ -21,7 +21,9 @@ export default defineConfig({
         }),
         tailwindcss(),
         VitePWA({
-            strategies: 'generateSW',
+            strategies: 'injectManifest',
+            srcDir: 'resources/js',
+            filename: 'sw.ts',
             registerType: 'autoUpdate',
             injectRegister: 'script',
             manifest: {
@@ -45,28 +47,8 @@ export default defineConfig({
                     { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
                 ],
             },
-            workbox: {
+            injectManifest: {
                 globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-                navigateFallback: null,
-                runtimeCaching: [
-                    {
-                        urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
-                        handler: 'CacheFirst',
-                        options: {
-                            cacheName: 'google-fonts-cache',
-                            expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
-                        },
-                    },
-                    {
-                        urlPattern: /\/api\/v1\/.*/i,
-                        handler: 'NetworkFirst',
-                        options: {
-                            cacheName: 'api-cache',
-                            expiration: { maxEntries: 50, maxAgeSeconds: 60 * 5 },
-                            networkTimeoutSeconds: 10,
-                        },
-                    },
-                ],
             },
             devOptions: {
                 enabled: false,
