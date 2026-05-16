@@ -67,8 +67,10 @@ Route::get('/api/openapi.json', function () {
     $yaml = (string) file_get_contents($yamlPath);
     $data = Yaml::parse($yaml);
 
-    return response()->json($data)->header('Access-Control-Allow-Origin', '*');
-})->name('api.openapi.json');
+    return response()->json($data)
+        ->header('Access-Control-Allow-Origin', '*')
+        ->header('Cache-Control', 'public, max-age=3600');
+})->name('api.openapi.json')->middleware('throttle:60,1');
 
 // Stripe Webhooks — public, CSRF excluded (verified by Stripe signature)
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
@@ -226,14 +228,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile/sessions/{userSession}', [SessionsController::class, 'destroy'])->name('profile.sessions.destroy');
 
     // WebAuthn passkey registration (wymaga auth)
-    Route::prefix('webauthn')->name('webauthn.')->group(function () {
+    Route::prefix('webauthn')->name('webauthn.')->middleware('throttle:webauthn-register')->group(function () {
         Route::post('register/options', [WebAuthnRegisterController::class, 'options'])->name('register.options');
         Route::post('register', [WebAuthnRegisterController::class, 'register'])->name('register');
     });
 });
 
-// WebAuthn login (bez auth — publiczny endpoint)
-Route::prefix('webauthn')->name('webauthn.')->group(function () {
+// WebAuthn login (bez auth — publiczny endpoint, rate limited)
+Route::prefix('webauthn')->name('webauthn.')->middleware('throttle:webauthn-login')->group(function () {
     Route::post('login/options', [WebAuthnLoginController::class, 'options'])->name('login.options');
     Route::post('login', [WebAuthnLoginController::class, 'login'])->name('login');
 });

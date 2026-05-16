@@ -84,5 +84,17 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perHour($user->plan_tier->apiRequestsPerHour())
                 ->by('api:'.$user->id);
         });
+
+        // WebAuthn login — 10 attempts per minute per IP (brute-force protection)
+        RateLimiter::for('webauthn-login', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
+        });
+
+        // WebAuthn register — 5 attempts per minute per authenticated user
+        RateLimiter::for('webauthn-register', function (Request $request) {
+            $user = $request->user();
+
+            return Limit::perMinute(5)->by($user ? 'webauthn:'.$user->id : $request->ip());
+        });
     }
 }

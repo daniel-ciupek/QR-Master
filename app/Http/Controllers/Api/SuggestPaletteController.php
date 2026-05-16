@@ -14,8 +14,8 @@ final class SuggestPaletteController extends Controller
     public function __invoke(Request $request, SuggestPaletteAction $action): JsonResponse
     {
         $validated = $request->validate([
-            'logo_base64' => ['nullable', 'string', 'max:2097152'],
-            'mime_type' => ['nullable', 'string', 'in:image/png,image/jpeg,image/gif,image/webp,image/svg+xml'],
+            'logo_base64' => ['nullable', 'string', 'base64_encoded', 'max:2097152'],
+            'mime_type' => ['nullable', 'string', 'in:image/png,image/jpeg,image/gif,image/webp'],
         ]);
 
         return response()->json(

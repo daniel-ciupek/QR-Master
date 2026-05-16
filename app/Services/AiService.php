@@ -30,7 +30,16 @@ final class AiService
 
     public function __construct()
     {
-        $this->provider = Provider::from((string) config('ai.provider', 'deepseek'));
+        $providerString = (string) config('ai.provider', 'deepseek');
+
+        try {
+            $this->provider = Provider::from($providerString);
+        } catch (\ValueError) {
+            throw new \InvalidArgumentException(
+                "Invalid AI_PROVIDER value: \"{$providerString}\". Allowed: deepseek, anthropic, openai, gemini, ollama, mistral, groq."
+            );
+        }
+
         $this->fastModel = (string) config('ai.fast_model', 'deepseek-chat');
         $this->smartModel = (string) config('ai.smart_model', 'deepseek-chat');
         $this->visionEnabled = (bool) config('ai.vision_enabled', false);

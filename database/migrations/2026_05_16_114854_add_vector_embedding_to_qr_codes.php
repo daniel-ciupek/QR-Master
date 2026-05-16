@@ -17,8 +17,12 @@ return new class extends Migration
             DB::statement('CREATE EXTENSION IF NOT EXISTS vector');
             DB::statement('ALTER TABLE qr_codes ADD COLUMN IF NOT EXISTS embedding vector(768)');
             DB::statement('CREATE INDEX IF NOT EXISTS qr_codes_embedding_idx ON qr_codes USING ivfflat (embedding vector_cosine_ops) WITH (lists = 50)');
-        } catch (Throwable) {
-            // pgvector extension not available in this environment — skip silently
+        } catch (Exception $e) {
+            if (! str_contains($e->getMessage(), 'does not exist')
+                && ! str_contains($e->getMessage(), 'already exists')
+            ) {
+                throw $e;
+            }
         }
     }
 
@@ -31,8 +35,10 @@ return new class extends Migration
         try {
             DB::statement('DROP INDEX IF EXISTS qr_codes_embedding_idx');
             DB::statement('ALTER TABLE qr_codes DROP COLUMN IF EXISTS embedding');
-        } catch (Throwable) {
-            // column may not exist if pgvector was unavailable
+        } catch (Exception $e) {
+            if (! str_contains($e->getMessage(), 'does not exist')) {
+                throw $e;
+            }
         }
     }
 };
