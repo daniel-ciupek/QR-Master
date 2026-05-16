@@ -1084,6 +1084,21 @@ export default {
         },
     },
 
+    notifications: {
+        title: 'Powiadomienia',
+        empty: 'Brak powiadomień.',
+        loading: 'Ładowanie…',
+        markRead: 'Oznacz jako przeczytane',
+        markAllRead: 'Oznacz wszystkie',
+        delete: 'Usuń',
+        justNow: 'Przed chwilą',
+        minutesAgo: '{n} min temu',
+        hoursAgo: '{n}h temu',
+        scanAnomaly: 'Wykryto anomalię w „{title}"',
+        planLimit: 'Osiągnięto limit planu: {type}',
+        system: 'Powiadomienie systemowe',
+    },
+
     ai: {
         suggestName: 'Zasugeruj nazwę przez AI',
         suggestCta: 'Zasugeruj CTA przez AI',

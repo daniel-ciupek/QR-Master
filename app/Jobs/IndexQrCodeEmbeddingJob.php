@@ -48,6 +48,10 @@ final class IndexQrCodeEmbeddingJob implements ShouldQueue
             return;
         }
 
+        if (DB::getDriverName() !== 'pgsql') {
+            return;
+        }
+
         $embedding = $ai->generateEmbedding($text);
 
         if ($embedding === []) {

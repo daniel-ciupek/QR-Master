@@ -4,6 +4,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppSidebar from '@/components/AppSidebar.vue'
 import CommandPalette from '@/components/CommandPalette.vue'
+import NotificationBell from '@/components/NotificationBell.vue'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -51,6 +52,9 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                 />
 
                 <div class="flex-1" />
+
+                <!-- Notification bell -->
+                <NotificationBell />
 
                 <!-- Dark mode toggle -->
                 <DropdownMenu>

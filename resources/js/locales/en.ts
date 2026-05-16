@@ -1084,6 +1084,21 @@ export default {
         },
     },
 
+    notifications: {
+        title: 'Notifications',
+        empty: 'No notifications yet.',
+        loading: 'Loading…',
+        markRead: 'Mark as read',
+        markAllRead: 'Mark all as read',
+        delete: 'Delete',
+        justNow: 'Just now',
+        minutesAgo: '{n} min ago',
+        hoursAgo: '{n}h ago',
+        scanAnomaly: 'Anomaly detected on "{title}"',
+        planLimit: 'Plan limit reached: {type}',
+        system: 'System notification',
+    },
+
     ai: {
         suggestName: 'Suggest name with AI',
         suggestCta: 'Suggest CTA with AI',
