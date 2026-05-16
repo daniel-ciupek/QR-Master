@@ -303,7 +303,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
   - Auto-issue SSL przez Cloudflare for SaaS lub Let's Encrypt
   - Walidacja DNS w panelu
   - Multiple domains per account
-- [ ] **11.5** **Branded short links** — klient wybiera path: `qr.firma.pl/promo` zamiast `qr.firma.pl/q/Ab3xK9`
+- [x] **11.5** **Branded short links** — klient wybiera path: `qr.firma.pl/promo` zamiast `qr.firma.pl/q/Ab3xK9`
 - [x] **11.6** **Real-time collaboration** (Laravel Reverb) — wielu userów edytuje kody w team workspace, presence indicators
 - [x] **11.7** **Live notifications center** — bell icon z dropdownem real-time (Reverb)
 - [ ] **11.8** Locale extensions — DE, ES, FR, IT (rozszerzenie i18n)

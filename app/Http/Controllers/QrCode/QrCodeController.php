@@ -272,6 +272,7 @@ final class QrCodeController extends Controller
                 'title' => $qrCode->title,
                 'type' => $qrCode->type->value,
                 'short_hash' => $qrCode->short_hash,
+                'custom_slug' => $qrCode->custom_slug,
                 'destination_url' => $qrCode->destination_url,
                 'fallback_url' => $qrCode->fallback_url ?? '',
                 'is_active' => $qrCode->is_active,
@@ -323,6 +324,14 @@ final class QrCodeController extends Controller
 
         $action->handle($qrCode, $data);
         $syncTags->handle($qrCode, $user, $request->array('tag_ids'));
+
+        if ($request->has('custom_slug')) {
+            $qrCode->update([
+                'custom_slug' => $request->filled('custom_slug')
+                    ? mb_strtolower($request->string('custom_slug')->trim()->toString())
+                    : null,
+            ]);
+        }
 
         return redirect()->route('qr.index')->with('success', 'Zmiany zostały zapisane.');
     }

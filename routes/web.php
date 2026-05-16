@@ -80,6 +80,11 @@ Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']
     ->name('cashier.webhook')
     ->withoutMiddleware([PreventRequestForgery::class]);
 
+// Branded short link redirect — custom slug chosen by user
+Route::get('/s/{slug}', PublicRedirectController::class)
+    ->middleware(['throttle:public-redirect', CheckBotSuspicion::class])
+    ->name('qr.slug-redirect');
+
 // Public QR redirect — rate limited, bot-suspicion checked
 Route::get('/q/{hash}', PublicRedirectController::class)
     ->middleware(['throttle:public-redirect', CheckBotSuspicion::class])

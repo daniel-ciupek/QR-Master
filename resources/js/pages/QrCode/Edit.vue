@@ -23,6 +23,7 @@ interface QrCodeProp {
     title: string
     type: string
     short_hash: string
+    custom_slug: string | null
     destination_url: string | null
     fallback_url: string
     is_active: boolean
@@ -52,6 +53,7 @@ const form = useForm({
     geo_allowed_countries: [...props.qrCode.geo_allowed_countries] as string[],
     scan_limit: props.qrCode.scan_limit as number | null,
     tag_ids: [...props.qrCode.tag_ids] as number[],
+    custom_slug: props.qrCode.custom_slug ?? '',
 })
 
 function submit() {
@@ -446,6 +448,32 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
                         {{ form.errors.scan_limit }}
                     </p>
                     <p v-else class="text-xs text-muted-foreground">{{ t('qr.edit.fields.scanLimit.hint') }}</p>
+                </div>
+
+                <!-- Branded short link / custom slug -->
+                <div class="space-y-1.5">
+                    <label class="text-sm font-medium leading-none" for="custom_slug">
+                        {{ t('qr.edit.fields.customSlug.label') }}
+                    </label>
+                    <div class="flex items-center gap-1">
+                        <span class="text-sm text-muted-foreground">/s/</span>
+                        <Input
+                            id="custom_slug"
+                            v-model="form.custom_slug"
+                            type="text"
+                            :placeholder="t('qr.edit.fields.customSlug.placeholder')"
+                            class="w-48 lowercase"
+                            :class="{ 'border-destructive': form.errors.custom_slug }"
+                            pattern="[a-z0-9\-_]+"
+                            maxlength="100"
+                        />
+                    </div>
+                    <p v-if="form.errors.custom_slug" class="text-xs text-destructive">
+                        {{ form.errors.custom_slug }}
+                    </p>
+                    <p v-else class="text-xs text-muted-foreground">
+                        {{ t('qr.edit.fields.customSlug.hint') }}
+                    </p>
                 </div>
 
                 <!-- Submit -->

@@ -33,7 +33,12 @@ final class PublicRedirectController extends Controller
 {
     public function __invoke(Request $request, string $hash): RedirectResponse|Response
     {
-        $qrCode = QrCode::active()->where('short_hash', $hash)->first();
+        $qrCode = QrCode::active()
+            ->where(function ($q) use ($hash) {
+                $q->where('short_hash', $hash)
+                    ->orWhere('custom_slug', $hash);
+            })
+            ->first();
 
         if ($qrCode === null) {
             abort(404);

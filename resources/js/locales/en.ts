@@ -336,6 +336,11 @@ export default {
                     hint: 'Leave empty to allow unlimited scans.',
                     used: 'Used: {count}',
                 },
+                customSlug: {
+                    label: 'Branded short link',
+                    placeholder: 'my-promo',
+                    hint: 'Only letters, numbers, hyphens and underscores. Accessible at /s/your-slug.',
+                },
                 geo: {
                     label: 'Geofencing — allowed countries',
                     hint: 'Enter ISO-2 country codes (e.g. PL, DE, US). Empty = no restriction.',
