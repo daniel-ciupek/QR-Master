@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 /**
  * @property int $id
  * @property int $user_id
+ * @property int|null $team_id
  * @property string $name
  * @property string $color
  * @property Carbon $created_at
@@ -25,6 +26,12 @@ class Tag extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** @return BelongsTo<Team, $this> */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
     }
 
     /** @return BelongsToMany<QrCode, $this> */

@@ -43,6 +43,8 @@ use App\Http\Controllers\QrCode\RedirectRuleController;
 use App\Http\Controllers\QrPasswordController;
 use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
+use App\Http\Controllers\Team\TeamController;
+use App\Http\Controllers\Team\TeamSwitchController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
 use App\Http\Controllers\WebAuthn\WebAuthnRegisterController;
 use App\Http\Controllers\Webhook\WebhookController;
@@ -263,6 +265,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
         Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
     });
+
+    // Workspaces / Teams
+    Route::prefix('workspaces')->name('workspaces.')->group(function () {
+        Route::get('/', [TeamController::class, 'index'])->name('index');
+        Route::get('/create', [TeamController::class, 'create'])->name('create');
+        Route::post('/', [TeamController::class, 'store'])->name('store');
+        Route::get('/{team}', [TeamController::class, 'show'])->name('show');
+        Route::patch('/{team}', [TeamController::class, 'update'])->name('update');
+        Route::delete('/{team}', [TeamController::class, 'destroy'])->name('destroy');
+    });
+
+    // Switch workspace context (null = personal)
+    Route::post('/workspace/switch/{team?}', TeamSwitchController::class)->name('workspace.switch');
 
     // WebAuthn passkey registration (wymaga auth)
     Route::prefix('webauthn')->name('webauthn.')->middleware('throttle:webauthn-register')->group(function () {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\PlanTier;
+use App\Enums\TeamRole;
 use App\Notifications\Auth\ResetPasswordNotification;
 use App\Notifications\Auth\VerifyEmailNotification;
 use Carbon\Carbon;
@@ -13,6 +14,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,6 +28,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
+ * @property int|null $current_team_id
  * @property string $name
  * @property string $email
  * @property Carbon|null $email_verified_at
@@ -71,5 +75,43 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
     public function qrCodes(): HasMany
     {
         return $this->hasMany(QrCode::class);
+    }
+
+    /** @return BelongsToMany<Team, $this> */
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class)
+            ->withPivot(['role', 'joined_at'])
+            ->withCasts(['role' => TeamRole::class])
+            ->orderByPivot('joined_at');
+    }
+
+    /** @return HasMany<Team, $this> */
+    public function ownedTeams(): HasMany
+    {
+        return $this->hasMany(Team::class, 'owner_id');
+    }
+
+    /** @return BelongsTo<Team, $this> */
+    public function currentTeam(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'current_team_id');
+    }
+
+    public function teamRole(Team $team): ?TeamRole
+    {
+        $member = $this->teams->find($team->id);
+
+        if ($member === null) {
+            return null;
+        }
+
+        /** @phpstan-ignore-next-line property.notFound */
+        return $member->pivot->role;
+    }
+
+    public function belongsToTeam(Team $team): bool
+    {
+        return $this->teams()->where('team_id', $team->id)->exists();
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Middleware\EnsurePlanFeature;
 use App\Http\Middleware\HandleCustomDomain;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\SetCurrentTeam;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\TrackAffiliateRef;
 use App\Http\Middleware\TrackUserSession;
@@ -36,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
             TrackUserSession::class,
             EnsureOnboardingComplete::class,
             TrackAffiliateRef::class,
+            SetCurrentTeam::class,
         ]);
 
         $middleware->alias([

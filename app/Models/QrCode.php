@@ -24,6 +24,7 @@ use Spatie\Sluggable\SlugOptions;
 /**
  * @property int $id
  * @property int $user_id
+ * @property int|null $team_id
  * @property QrCodeType $type
  * @property string $title
  * @property string $slug
@@ -113,6 +114,12 @@ class QrCode extends Model implements HasMedia
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Team, $this> */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+
     /** @return HasMany<ScanLog, $this> */
     public function scanLogs(): HasMany
     {
@@ -159,10 +166,17 @@ class QrCode extends Model implements HasMedia
             });
     }
 
+    /** Personal QRs — belongs to user and not in any team. */
     /** @param Builder<QrCode> $query */
     public function scopeForUser(Builder $query, int $userId): void
     {
-        $query->where('user_id', $userId);
+        $query->where('user_id', $userId)->whereNull('team_id');
+    }
+
+    /** @param Builder<QrCode> $query */
+    public function scopeForTeam(Builder $query, int $teamId): void
+    {
+        $query->where('team_id', $teamId);
     }
 
     // ── Helpers ────────────────────────────────────────────────────────
