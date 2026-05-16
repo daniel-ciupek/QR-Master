@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ColorPicker from '@/components/qr/ColorPicker.vue'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { FrameType } from '@/types/qr-visual'
 import { FRAME_TYPES } from '@/types/qr-visual'
@@ -9,6 +11,7 @@ defineProps<{
     frameType: FrameType
     frameText: string
     frameColor: string
+    context?: string
 }>()
 
 const emit = defineEmits<{
@@ -18,6 +21,31 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+
+const suggestingCta = ref(false)
+const ctaSuggestions = ref<string[]>([])
+
+async function suggestCta(context: string) {
+    suggestingCta.value = true
+    ctaSuggestions.value = []
+    try {
+        const res = await fetch('/api/ai/suggest-cta', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ?? '',
+                Accept: 'application/json',
+            },
+            body: JSON.stringify({ context }),
+        })
+        if (res.ok) {
+            const data = await res.json() as { suggestions: string[] }
+            ctaSuggestions.value = data.suggestions ?? []
+        }
+    } finally {
+        suggestingCta.value = false
+    }
+}
 
 const FRAME_SVG: Record<FrameType, string> = {
     'none': '<rect x="2" y="2" width="20" height="20" rx="1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/>',
@@ -72,13 +100,40 @@ const FRAME_SVG: Record<FrameType, string> = {
                 <label class="text-sm font-medium leading-none" for="frame-text">
                     {{ t('qr.frame.text') }}
                 </label>
-                <Input
-                    id="frame-text"
-                    :model-value="frameText"
-                    :placeholder="t('qr.frame.textPlaceholder')"
-                    maxlength="40"
-                    @update:model-value="emit('update:frameText', String($event))"
-                />
+                <div class="flex gap-2">
+                    <Input
+                        id="frame-text"
+                        :model-value="frameText"
+                        :placeholder="t('qr.frame.textPlaceholder')"
+                        maxlength="40"
+                        class="flex-1"
+                        @update:model-value="emit('update:frameText', String($event))"
+                    />
+                    <Button
+                        v-if="context"
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        :disabled="suggestingCta"
+                        :title="t('ai.suggestCta')"
+                        @click="suggestCta(context)"
+                    >
+                        <span v-if="suggestingCta" class="animate-spin">⏳</span>
+                        <span v-else>✨</span>
+                    </Button>
+                </div>
+                <!-- CTA suggestions chips -->
+                <div v-if="ctaSuggestions.length" class="flex flex-wrap gap-1.5 pt-1">
+                    <button
+                        v-for="s in ctaSuggestions"
+                        :key="s"
+                        type="button"
+                        class="rounded-full border border-primary/30 bg-primary/5 px-2.5 py-0.5 text-xs text-primary transition-colors hover:bg-primary/10"
+                        @click="emit('update:frameText', s); ctaSuggestions = []"
+                    >
+                        {{ s }}
+                    </button>
+                </div>
             </div>
             <ColorPicker
                 :model-value="frameColor"

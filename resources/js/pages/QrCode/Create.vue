@@ -945,6 +945,7 @@ const exportOpen = ref(false)
                     v-model:frame-type="frameType"
                     v-model:frame-text="frameText"
                     v-model:frame-color="frameColor"
+                    :context="url || text || activeTab"
                 />
 
                 <!-- Logo upload (client-side only on Create) -->
