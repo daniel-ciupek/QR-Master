@@ -11,7 +11,6 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
@@ -108,17 +107,12 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                            :class="{ 'font-semibold': locale === 'pl' }"
-                            @click="setLocale('pl')"
+                            v-for="lang in ['pl', 'en', 'de', 'es', 'fr', 'it'] as const"
+                            :key="lang"
+                            :class="{ 'font-semibold': locale === lang }"
+                            @click="setLocale(lang)"
                         >
-                            {{ t('lang.pl') }}
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                            :class="{ 'font-semibold': locale === 'en' }"
-                            @click="setLocale('en')"
-                        >
-                            {{ t('lang.en') }}
+                            {{ t(`lang.${lang}`) }}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

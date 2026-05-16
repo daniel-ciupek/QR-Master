@@ -15,7 +15,7 @@ export default {
     },
 
     theme: { light: 'Light', dark: 'Dark', system: 'System' },
-    lang: { pl: 'Polski', en: 'English' },
+    lang: { pl: 'Polski', en: 'English', de: 'Deutsch', es: 'Español', fr: 'Français', it: 'Italiano' },
 
     ui: {
         search: 'Search…',

@@ -1,7 +1,7 @@
 import { router } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n'
 
-type SupportedLocale = 'pl' | 'en'
+export type SupportedLocale = 'pl' | 'en' | 'de' | 'es' | 'fr' | 'it'
 
 export function useLocale() {
     const { locale } = useI18n()

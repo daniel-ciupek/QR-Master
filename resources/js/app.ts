@@ -5,7 +5,11 @@ import { createInertiaApp } from '@inertiajs/vue3'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createI18n } from 'vue-i18n'
 import type { DefineComponent } from 'vue'
+import de from './locales/de'
 import en from './locales/en'
+import es from './locales/es'
+import fr from './locales/fr'
+import it from './locales/it'
 import pl from './locales/pl'
 
 window.Pusher = Pusher
@@ -20,15 +24,15 @@ window.Echo = new Echo({
     enabledTransports: ['ws', 'wss'],
 })
 
-type SupportedLocale = 'pl' | 'en'
+type SupportedLocale = 'pl' | 'en' | 'de' | 'es' | 'fr' | 'it'
 
 const savedLocale = (localStorage.getItem('qrmaster-locale') as SupportedLocale | null) ?? 'pl'
 
 const i18n = createI18n({
     legacy: false,
     locale: savedLocale,
-    fallbackLocale: 'pl',
-    messages: { pl, en },
+    fallbackLocale: 'en',
+    messages: { pl, en, de, es, fr, it },
 })
 
 createInertiaApp({

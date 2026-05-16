@@ -116,7 +116,7 @@ Route::get('/b/{slug}/link/{item}', BioLinkClickController::class)
     ->name('bio-link.click');
 
 Route::post('/locale', function (Request $request) {
-    $locale = in_array($request->input('locale'), ['pl', 'en']) ? $request->input('locale') : 'pl';
+    $locale = in_array($request->input('locale'), ['pl', 'en', 'de', 'es', 'fr', 'it']) ? $request->input('locale') : 'pl';
     session(['locale' => $locale]);
 
     return back();
