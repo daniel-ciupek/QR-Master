@@ -215,6 +215,16 @@ final class QrCodeController extends Controller
 
         $qrCode = $action->handle($qrCode, $data);
 
+        $encryptedFields = array_filter([
+            'vcard_phone' => $validated['vcard_phone'] ?? null,
+            'vcard_email' => $validated['vcard_email'] ?? null,
+            'wifi_password' => $validated['wifi_password'] ?? null,
+        ], fn ($v) => $v !== null);
+
+        if ($encryptedFields !== []) {
+            $qrCode->fill($encryptedFields)->save();
+        }
+
         if (array_key_exists('tag_ids', $validated)) {
             $syncTags->handle($qrCode, $user, array_map('intval', $validated['tag_ids'] ?? []));
         }
@@ -366,6 +376,7 @@ final class QrCodeController extends Controller
             ], fn ($v) => $v !== null && $v !== ''),
             QrCodeType::Review => array_filter([
                 'review_platform' => $validated['review_platform'] ?? null,
+                'review_url' => $validated['review_url'] ?? null,
             ], fn ($v) => $v !== null && $v !== ''),
             QrCodeType::Crypto => array_filter([
                 'crypto_coin' => $validated['crypto_coin'] ?? null,

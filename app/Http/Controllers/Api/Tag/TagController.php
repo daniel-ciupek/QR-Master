@@ -26,6 +26,8 @@ final class TagController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        abort_unless((bool) $request->user()?->tokenCan('qrcodes:read'), 403, 'Missing ability: qrcodes:read');
+
         /** @var User $user */
         $user = $request->user();
 
@@ -49,6 +51,8 @@ final class TagController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        abort_unless((bool) $request->user()?->tokenCan('qrcodes:write'), 403, 'Missing ability: qrcodes:write');
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:50'],
             'color' => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
