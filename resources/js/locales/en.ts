@@ -1084,6 +1084,14 @@ export default {
         },
     },
 
+    offline: {
+        noConnection: 'No internet connection.',
+        draftsWillSync: 'Your work is saved locally and will sync when you reconnect.',
+        pendingDrafts: '{n} draft saved offline | {n} drafts saved offline',
+        syncNow: 'Sync now',
+        untitledDraft: 'Untitled draft',
+    },
+
     chat: {
         title: 'QR-Master Assistant',
         welcome: 'Hi! Ask me anything about your QR codes or the platform.',

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3'
 import type { ErrorCorrectionLevel } from 'qr-code-styling'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { CornerDotStyle, CornerSquareStyle, DotStyle, FrameType } from '@/types/qr-visual'
 import { useI18n } from 'vue-i18n'
 import ColorPicker from '@/components/qr/ColorPicker.vue'
@@ -22,6 +22,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useContrastChecker } from '@/composables/useContrastChecker'
+import { useOfflineDrafts } from '@/composables/useOfflineDrafts'
+import OfflineBanner from '@/components/OfflineBanner.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
@@ -110,6 +112,34 @@ const vcardAddress = ref('')
 // Form meta
 const qrTitle = ref('')
 const isSaving = ref(false)
+
+const { isOnline, drafts, saveDraft, deleteDraft } = useOfflineDrafts()
+
+let currentDraftId: string | undefined
+let autoSaveTimer: ReturnType<typeof setTimeout> | null = null
+
+function scheduleAutoSave() {
+    if (autoSaveTimer) clearTimeout(autoSaveTimer)
+    autoSaveTimer = setTimeout(async () => {
+        if (!qrTitle.value.trim()) return
+        currentDraftId = await saveDraft({
+            id: currentDraftId,
+            title: qrTitle.value,
+            type: activeTab.value,
+            formData: { url: url.value, text: text.value },
+        })
+    }, 2000)
+}
+
+function loadFromDraft(draft: import('@/composables/useOfflineDrafts').QrDraft) {
+    qrTitle.value = draft.title
+    activeTab.value = draft.type as typeof activeTab.value
+    if (draft.formData.url) url.value = draft.formData.url as string
+    if (draft.formData.text) text.value = draft.formData.text as string
+    currentDraftId = draft.id
+}
+
+watch([qrTitle, url, text, activeTab], scheduleAutoSave)
 
 // Build vCard string client-side for live preview
 function buildVCardPreview(): string {
@@ -383,6 +413,14 @@ const exportOpen = ref(false)
     <Head :title="t('qr.create.headTitle')" />
 
     <div class="space-y-6">
+        <OfflineBanner
+            :is-online="isOnline"
+            :drafts="drafts"
+            @load-draft="loadFromDraft"
+            @delete-draft="deleteDraft"
+            @sync="() => {}"
+        />
+
         <div>
             <h1 class="text-2xl font-bold">{{ t('qr.create.title') }}</h1>
             <p class="text-sm text-muted-foreground mt-1">{{ t('qr.create.subtitle') }}</p>
