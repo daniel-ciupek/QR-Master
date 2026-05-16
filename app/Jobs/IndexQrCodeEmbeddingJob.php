@@ -20,7 +20,7 @@ final class IndexQrCodeEmbeddingJob implements ShouldQueue
 
     public function __construct(public readonly int $qrCodeId)
     {
-        $this->onQueue('default');
+        $this->onQueue('embeddings');
     }
 
     public function handle(AiService $ai): void

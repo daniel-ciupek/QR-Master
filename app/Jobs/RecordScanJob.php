@@ -25,9 +25,7 @@ final class RecordScanJob implements ShouldQueue
 {
     use Queueable;
 
-    public int $tries = 3;
-
-    public int $backoff = 5;
+    public int $tries = 1;
 
     public bool $failOnTimeout = true;
 

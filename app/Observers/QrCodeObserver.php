@@ -20,4 +20,9 @@ final class QrCodeObserver
             IndexQrCodeEmbeddingJob::dispatch($qrCode->id);
         }
     }
+
+    public function restored(QrCode $qrCode): void
+    {
+        IndexQrCodeEmbeddingJob::dispatch($qrCode->id);
+    }
 }

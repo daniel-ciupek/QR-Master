@@ -35,12 +35,16 @@ final class EnsureAiRateLimit
         $key = $this->redisKey($user->id);
 
         if ($limit !== null) {
-            $current = (int) Redis::get($key);
+            // Atomic incr-then-check eliminates race condition between concurrent requests
+            $used = (int) Redis::incr($key);
+            Redis::expireat($key, $this->endOfMonth());
 
-            if ($current >= $limit) {
+            if ($used > $limit) {
+                Redis::decr($key);
+
                 return response()->json([
                     'message' => "Monthly AI request limit ({$limit}) reached. Resets on the 1st of next month.",
-                    'used' => $current,
+                    'used' => $limit,
                     'limit' => $limit,
                 ], 429);
             }
@@ -48,10 +52,7 @@ final class EnsureAiRateLimit
 
         $response = $next($request);
 
-        if ($response->getStatusCode() < 500 && $limit !== null) {
-            Redis::incr($key);
-            Redis::expireat($key, $this->endOfMonth());
-
+        if ($limit !== null) {
             $used = (int) Redis::get($key);
             $response->headers->set('X-AI-RateLimit-Limit', (string) $limit);
             $response->headers->set('X-AI-RateLimit-Used', (string) $used);
