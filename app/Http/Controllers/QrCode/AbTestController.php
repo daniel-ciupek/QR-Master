@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\QrCode;
 
 use App\Actions\AbTest\CreateAbTestAction;
-use App\Actions\AbTest\UpsertVariantAction;
+use App\Actions\AbTest\CreateVariantAction;
+use App\Actions\AbTest\UpdateVariantAction;
 use App\Http\Controllers\Controller;
 use App\Models\AbVariant;
 use App\Models\QrCode;
@@ -78,7 +79,7 @@ final class AbTestController extends Controller
     public function storeVariant(
         Request $request,
         QrCode $qrCode,
-        UpsertVariantAction $action,
+        CreateVariantAction $action,
     ): RedirectResponse {
         Gate::authorize('update', $qrCode);
 
@@ -93,7 +94,7 @@ final class AbTestController extends Controller
             'weight' => ['required', 'integer', 'min:1', 'max:100'],
         ]);
 
-        $action->create($abTest, $v['name'], $v['destination_url'], (int) $v['weight']);
+        $action->handle($abTest, $v['name'], $v['destination_url'], (int) $v['weight']);
 
         return back()->with('success', 'Wariant dodany.');
     }
@@ -102,7 +103,7 @@ final class AbTestController extends Controller
         Request $request,
         QrCode $qrCode,
         AbVariant $variant,
-        UpsertVariantAction $action,
+        UpdateVariantAction $action,
     ): RedirectResponse {
         Gate::authorize('update', $qrCode);
         abort_if($variant->abTest?->qr_code_id !== $qrCode->id, 403);
@@ -113,7 +114,7 @@ final class AbTestController extends Controller
             'weight' => ['required', 'integer', 'min:1', 'max:100'],
         ]);
 
-        $action->update($variant, $v['name'], $v['destination_url'], (int) $v['weight']);
+        $action->handle($variant, $v['name'], $v['destination_url'], (int) $v['weight']);
 
         return back()->with('success', 'Wariant zaktualizowany.');
     }
