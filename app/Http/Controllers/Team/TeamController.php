@@ -35,11 +35,11 @@ class TeamController
                 'slug' => $team->slug,
                 /** @phpstan-ignore-next-line property.notFound */
                 'role' => $team->pivot->role,
-                'members_count' => $team->members_count,
-                'is_current' => $user->current_team_id === $team->id,
-                'is_owner' => $team->owner_id === $user->id,
+                'membersCount' => $team->members_count,
+                'isCurrent' => $user->current_team_id === $team->id,
+                'isOwner' => $team->owner_id === $user->id,
             ]),
-            'current_team_id' => $user->current_team_id,
+            'currentTeamId' => $user->current_team_id,
         ]);
     }
 

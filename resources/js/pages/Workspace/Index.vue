@@ -16,15 +16,14 @@ interface TeamItem {
     name: string
     slug: string
     role: string
-    members_count: number
-    is_current: boolean
-    is_owner: boolean
+    membersCount: number
+    isCurrent: boolean
+    isOwner: boolean
 }
 
-/* eslint-disable-next-line vue/prop-name-casing */
 defineProps<{
     teams: TeamItem[]
-    current_team_id: number | null
+    currentTeamId: number | null
 }>()
 
 function goToCreate(): void {
@@ -76,7 +75,7 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
         </div>
 
         <!-- Personal workspace card -->
-        <Card :class="current_team_id === null ? 'ring-2 ring-primary' : ''">
+        <Card :class="currentTeamId === null ? 'ring-2 ring-primary' : ''">
             <CardHeader class="flex flex-row items-center gap-4 pb-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
                     <Building2 class="h-5 w-5 text-muted-foreground" />
@@ -86,7 +85,7 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
                     <CardDescription>{{ t('workspace.personal_description') }}</CardDescription>
                 </div>
                 <div class="flex items-center gap-2">
-                    <Badge v-if="current_team_id === null" variant="default">
+                    <Badge v-if="currentTeamId === null" variant="default">
                         {{ t('workspace.active') }}
                     </Badge>
                     <Button
@@ -106,7 +105,7 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
         <Card
             v-for="team in teams"
             :key="team.id"
-            :class="team.is_current ? 'ring-2 ring-primary' : ''"
+            :class="team.isCurrent ? 'ring-2 ring-primary' : ''"
         >
             <CardHeader class="flex flex-row items-center gap-4 pb-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
@@ -115,18 +114,18 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
                 <div class="min-w-0 flex-1">
                     <div class="flex items-center gap-2">
                         <CardTitle class="truncate text-base">{{ team.name }}</CardTitle>
-                        <Crown v-if="team.is_owner" class="h-3.5 w-3.5 shrink-0 text-yellow-500" />
+                        <Crown v-if="team.isOwner" class="h-3.5 w-3.5 shrink-0 text-yellow-500" />
                     </div>
                     <CardDescription class="mt-0.5 flex items-center gap-2">
                         <Badge :variant="roleBadgeVariant(team.role)" class="h-5 text-xs">
                             {{ roleLabel(team.role) }}
                         </Badge>
                         <span>·</span>
-                        <span>{{ t('workspace.members_count', { count: team.members_count }) }}</span>
+                        <span>{{ t('workspace.members_count', { count: team.membersCount }) }}</span>
                     </CardDescription>
                 </div>
                 <div class="flex items-center gap-2">
-                    <Badge v-if="team.is_current" variant="default">
+                    <Badge v-if="team.isCurrent" variant="default">
                         {{ t('workspace.active') }}
                     </Badge>
                     <Button
