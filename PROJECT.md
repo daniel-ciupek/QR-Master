@@ -271,7 +271,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 - [x] **10.1** Konfiguracja Laravel 13 AI driver (Anthropic Claude / OpenAI / lokalny Ollama)
 - [x] **10.2** **AI Color Palette Suggestion** — analiza loga (vision model) → 3-5 sugerowanych palet
-- [ ] **10.3** **AI Bio-Link Content Generator** — user wpisuje branżę/zawód → AI sugeruje bio + emoji + kolejność linków
+- [x] **10.3** **AI Bio-Link Content Generator** — user wpisuje branżę/zawód → AI sugeruje bio + emoji + kolejność linków
 - [x] **10.4** **AI Campaign Hooks** — sugestie tekstu pod ramką QR („Skanuj po promocję!")
 - [ ] **10.5** **Anomaly Detection** w skanach — model wykrywa nietypowe wzorce (możliwy bot/fraud)
 - [ ] **10.6** **Vector Search** w analityce (Laravel 13 native) — natural language query: „pokaż kody z największym wzrostem skanów w ostatnim tygodniu"

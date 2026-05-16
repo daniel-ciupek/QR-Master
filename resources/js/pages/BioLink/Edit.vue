@@ -11,6 +11,34 @@ defineOptions({ layout: AppLayout })
 
 const { t } = useI18n()
 
+const aiProfession = ref('')
+const suggestingBio = ref(false)
+const bioLinkSuggestions = ref<string[]>([])
+
+async function suggestBio() {
+    if (!aiProfession.value.trim() || suggestingBio.value) return
+    suggestingBio.value = true
+    bioLinkSuggestions.value = []
+    try {
+        const res = await fetch('/api/ai/suggest-bio-link', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ?? '',
+                Accept: 'application/json',
+            },
+            body: JSON.stringify({ profession: aiProfession.value.trim() }),
+        })
+        if (res.ok) {
+            const data = await res.json() as { bio: string; emoji: string; link_suggestions: string[] }
+            profileForm.bio = data.bio
+            bioLinkSuggestions.value = data.link_suggestions ?? []
+        }
+    } finally {
+        suggestingBio.value = false
+    }
+}
+
 interface BioLinkItem {
     id: number
     title: string
@@ -238,6 +266,44 @@ const TEMPLATE_LABELS: Record<string, string> = {
                         class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                     />
                     <p class="text-right text-xs text-muted-foreground">{{ profileForm.bio.length }}/500</p>
+
+                    <!-- AI bio generator -->
+                    <div class="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-3 space-y-2">
+                        <p class="text-xs font-medium text-primary flex items-center gap-1">
+                            ✨ {{ t('ai.suggestBio') }}
+                        </p>
+                        <div class="flex gap-2">
+                            <Input
+                                v-model="aiProfession"
+                                :placeholder="t('bioLink.ai.professionPlaceholder')"
+                                class="flex-1 text-sm h-8"
+                                @keydown.enter.prevent="suggestBio"
+                            />
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                :disabled="suggestingBio || !aiProfession.trim()"
+                                @click="suggestBio"
+                            >
+                                <span v-if="suggestingBio" class="animate-spin">⏳</span>
+                                <span v-else>{{ t('bioLink.ai.generate') }}</span>
+                            </Button>
+                        </div>
+                        <!-- Link title suggestions -->
+                        <div v-if="bioLinkSuggestions.length" class="space-y-1">
+                            <p class="text-xs text-muted-foreground">{{ t('bioLink.ai.linkSuggestions') }}</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span
+                                    v-for="s in bioLinkSuggestions"
+                                    :key="s"
+                                    class="rounded-full bg-background border border-border px-2.5 py-0.5 text-xs"
+                                >
+                                    {{ s }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <Button :disabled="profileForm.processing" @click="saveProfile">

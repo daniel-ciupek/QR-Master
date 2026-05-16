@@ -772,6 +772,11 @@ export default {
             bio: 'Bio',
             bioPlaceholder: 'Short description…',
         },
+        ai: {
+            professionPlaceholder: 'e.g. freelance photographer, restaurant owner…',
+            generate: 'Generate',
+            linkSuggestions: 'Suggested link titles:',
+        },
         items: {
             empty: 'No links yet. Add your first link below.',
             clicks: 'clicks',
