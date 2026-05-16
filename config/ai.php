@@ -28,7 +28,8 @@ return [
      | Separate from text provider — can mix DeepSeek (text) + Gemini (embeddings).
      */
     'embedding_provider' => env('AI_EMBEDDING_PROVIDER', 'gemini'),
-    'embedding_model' => env('AI_EMBEDDING_MODEL', 'text-embedding-004'),
+    'embedding_model' => env('AI_EMBEDDING_MODEL', 'gemini-embedding-001'),
+    'embedding_dimensions' => (int) env('AI_EMBEDDING_DIMENSIONS', 768),
 
     'cache_ttl' => (int) env('AI_CACHE_TTL', 86400),
 

@@ -302,9 +302,12 @@ final class AiService
         $embeddingProvider = Provider::from((string) config('ai.embedding_provider', 'gemini'));
         $embeddingModel = (string) config('ai.embedding_model', 'text-embedding-004');
 
+        $embeddingDims = (int) config('ai.embedding_dimensions', 768);
+
         $response = Prism::embeddings()
             ->using($embeddingProvider, $embeddingModel)
             ->fromInput($this->sanitize($text))
+            ->withProviderOptions(['outputDimensionality' => $embeddingDims])
             ->asEmbeddings();
 
         /** @var list<float> $embedding */
