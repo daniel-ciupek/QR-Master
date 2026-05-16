@@ -61,6 +61,10 @@ Thumbs.db
 *.pem
 *.key
 *.crt
+*.p12
+*.pfx
+*.sql
+*.dump
 secrets.*
 
 **/caddy
