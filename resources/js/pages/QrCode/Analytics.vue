@@ -231,6 +231,35 @@ const publicUrl = computed(() => `/q/${props.qrCode.short_hash}`)
 const aiInsight = ref<string | null>(null)
 const loadingInsight = ref(false)
 
+interface AnomalyResult {
+    is_anomalous: boolean
+    confidence: 'low' | 'medium' | 'high'
+    reasons: string[]
+    recommendation: string
+}
+
+const anomalyResult = ref<AnomalyResult | null>(null)
+const loadingAnomaly = ref(false)
+
+async function detectAnomalies() {
+    loadingAnomaly.value = true
+    anomalyResult.value = null
+    try {
+        const res = await fetch(`/qr/${props.qrCode.id}/ai/detect-anomalies`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ?? '',
+                Accept: 'application/json',
+            },
+        })
+        if (res.ok) {
+            anomalyResult.value = await res.json() as AnomalyResult
+        }
+    } finally {
+        loadingAnomaly.value = false
+    }
+}
+
 async function generateInsight() {
     loadingInsight.value = true
     aiInsight.value = null
@@ -459,6 +488,52 @@ onUnmounted(() => {
             <CardContent>
                 <p v-if="aiInsight" class="text-sm leading-relaxed">{{ aiInsight }}</p>
                 <p v-else class="text-sm text-muted-foreground">{{ t('ai.insightHint') }}</p>
+            </CardContent>
+        </Card>
+
+        <!-- AI Anomaly Detection -->
+        <Card :class="anomalyResult?.is_anomalous ? 'border-destructive/40 bg-destructive/5' : 'border-border'">
+            <CardHeader>
+                <CardTitle class="flex items-center justify-between gap-2">
+                    <span class="flex items-center gap-1.5">
+                        🛡️ {{ t('ai.anomalyDetection') }}
+                        <span
+                            v-if="anomalyResult"
+                            :class="anomalyResult.is_anomalous ? 'bg-destructive text-destructive-foreground' : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'"
+                            class="rounded-full px-2 py-0.5 text-xs font-medium"
+                        >
+                            {{ anomalyResult.is_anomalous ? t('ai.anomalyDetected') : t('ai.noAnomaly') }}
+                        </span>
+                    </span>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        :disabled="loadingAnomaly"
+                        @click="detectAnomalies"
+                    >
+                        <span v-if="loadingAnomaly" class="animate-spin mr-1">⏳</span>
+                        {{ loadingAnomaly ? t('ai.analyzing') : t('ai.runAnalysis') }}
+                    </Button>
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <template v-if="anomalyResult">
+                    <p class="text-sm text-muted-foreground mb-2">
+                        {{ t('ai.confidence') }}: <strong>{{ anomalyResult.confidence }}</strong>
+                    </p>
+                    <ul v-if="anomalyResult.reasons.length" class="mb-2 space-y-1">
+                        <li
+                            v-for="r in anomalyResult.reasons"
+                            :key="r"
+                            class="flex items-start gap-1.5 text-sm"
+                        >
+                            <span class="mt-0.5 text-destructive">⚠</span>
+                            {{ r }}
+                        </li>
+                    </ul>
+                    <p class="text-sm font-medium">{{ t('ai.recommendation') }}: {{ anomalyResult.recommendation }}</p>
+                </template>
+                <p v-else class="text-sm text-muted-foreground">{{ t('ai.anomalyHint') }}</p>
             </CardContent>
         </Card>
 

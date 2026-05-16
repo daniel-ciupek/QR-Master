@@ -1095,5 +1095,13 @@ export default {
         generateInsight: 'Generate insight',
         generating: 'Generating…',
         insightHint: 'Click "Generate insight" to get an AI-powered analysis of this QR code\'s performance.',
+        anomalyDetection: 'Anomaly Detection',
+        anomalyDetected: 'Anomaly detected',
+        noAnomaly: 'Normal',
+        runAnalysis: 'Run analysis',
+        analyzing: 'Analyzing…',
+        anomalyHint: 'Run analysis to detect unusual scan patterns (bots, fraud, traffic spikes).',
+        confidence: 'Confidence',
+        recommendation: 'Recommendation',
     },
 }

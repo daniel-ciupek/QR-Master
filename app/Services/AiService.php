@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Prism\Prism\Enums\Provider;
 use Prism\Prism\Facades\Prism;
 use Prism\Prism\Schema\ArraySchema;
+use Prism\Prism\Schema\BooleanSchema;
 use Prism\Prism\Schema\ObjectSchema;
 use Prism\Prism\Schema\StringSchema;
 use Prism\Prism\ValueObjects\Media\Image;
@@ -225,6 +226,60 @@ final class AiService
                 ->generate();
 
             return ['insight' => trim($response->text)];
+        });
+    }
+
+    /**
+     * Detect anomalous scan patterns (bot/fraud signals).
+     *
+     * @param  array<string, mixed>  $scanStats
+     * @return array{is_anomalous: bool, confidence: string, reasons: list<string>, recommendation: string}
+     */
+    public function detectScanAnomalies(array $scanStats, string $qrTitle): array
+    {
+        $statsJson = (string) json_encode($scanStats);
+        $cacheKey = 'ai:anomaly:'.md5($qrTitle.$statsJson);
+
+        return Cache::remember($cacheKey, 1800, function () use ($scanStats, $qrTitle): array {
+            $response = Prism::structured()
+                ->using($this->provider, $this->smartModel)
+                ->withSystemPrompt($this->systemPrompt())
+                ->withPrompt(
+                    "Analyze scan patterns for QR code \"{$qrTitle}\" and detect anomalies (bot activity, fraud, unusual spikes). "
+                    .'Stats: scans_last_hour='.($scanStats['scans_last_hour'] ?? 0)
+                    .', scans_last_24h='.($scanStats['scans_last_24h'] ?? 0)
+                    .', unique_ip_hashes='.($scanStats['unique_ip_hashes'] ?? 0)
+                    .', top_device_ratio='.($scanStats['top_device_ratio'] ?? 0)
+                    .', top_country_ratio='.($scanStats['top_country_ratio'] ?? 0)
+                    .', avg_scans_per_minute='.($scanStats['avg_scans_per_minute'] ?? 0)
+                    .'. Respond with is_anomalous (bool), confidence (low/medium/high), reasons (list of specific signals), recommendation (one action).'
+                )
+                ->withSchema(new ObjectSchema(
+                    name: 'anomaly_result',
+                    description: 'Anomaly detection result',
+                    properties: [
+                        new BooleanSchema('is_anomalous', 'Whether anomalous activity was detected'),
+                        new StringSchema('confidence', 'Confidence level: low, medium, or high'),
+                        new ArraySchema('reasons', 'Specific anomaly signals detected', new StringSchema('reason', 'A specific signal')),
+                        new StringSchema('recommendation', 'One recommended action'),
+                    ],
+                    requiredFields: ['is_anomalous', 'confidence', 'reasons', 'recommendation'],
+                ))
+                ->withMaxTokens(300)
+                ->generate();
+
+            /** @var array<string, mixed> $structured */
+            $structured = $response->structured;
+
+            /** @var list<string> $reasons */
+            $reasons = $structured['reasons'] ?? [];
+
+            return [
+                'is_anomalous' => (bool) ($structured['is_anomalous'] ?? false),
+                'confidence' => (string) ($structured['confidence'] ?? 'low'),
+                'reasons' => $reasons,
+                'recommendation' => (string) ($structured['recommendation'] ?? 'No action needed.'),
+            ];
         });
     }
 

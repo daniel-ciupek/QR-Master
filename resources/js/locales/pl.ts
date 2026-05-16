@@ -1095,5 +1095,13 @@ export default {
         generateInsight: 'Generuj analizę',
         generating: 'Generowanie…',
         insightHint: 'Kliknij „Generuj analizę", aby uzyskać analizę wydajności tego kodu QR przez AI.',
+        anomalyDetection: 'Wykrywanie Anomalii',
+        anomalyDetected: 'Wykryto anomalię',
+        noAnomaly: 'Normalny',
+        runAnalysis: 'Uruchom analizę',
+        analyzing: 'Analizowanie…',
+        anomalyHint: 'Uruchom analizę, aby wykryć nietypowe wzorce skanów (boty, fraud, skoki ruchu).',
+        confidence: 'Pewność',
+        recommendation: 'Zalecenie',
     },
 }
