@@ -20,6 +20,7 @@ final class EnsurePlanFeature
         'custom-branding' => 'canUseCustomBranding',
         'webhooks' => 'canUseWebhooks',
         'bulk-import' => 'canUseBulkImport',
+        'custom-domains' => 'canUseCustomDomains',
     ];
 
     public function handle(Request $request, Closure $next, string $feature): Response

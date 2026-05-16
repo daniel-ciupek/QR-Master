@@ -1089,6 +1089,24 @@ export default {
         },
     },
 
+    domains: {
+        title: 'Własne domeny',
+        subtitle: 'Użyj własnej domeny do przekierowań QR (np. qr.firma.pl).',
+        addDomain: 'Dodaj domenę',
+        domainPlaceholder: 'qr.firma.pl',
+        add: 'Dodaj',
+        dnsInstructions: 'Konfiguracja DNS',
+        dnsStep1: '1. Dodaj rekord CNAME wskazujący na nasz serwer:',
+        dnsStep2: '2. Dodaj rekord TXT do weryfikacji:',
+        verify: 'Weryfikuj DNS',
+        copy: 'Kopiuj',
+        copied: 'Skopiowano!',
+        confirmDelete: 'Usunąć tę domenę?',
+        empty: 'Brak własnych domen.',
+        verifiedOn: 'Zweryfikowano {date}',
+        status: { pending: 'Oczekuje', verified: 'Zweryfikowana', failed: 'Błąd' },
+    },
+
     collab: {
         editing: 'Edytuje też:',
     },

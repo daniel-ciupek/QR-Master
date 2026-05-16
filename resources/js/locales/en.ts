@@ -1089,6 +1089,24 @@ export default {
         },
     },
 
+    domains: {
+        title: 'Custom Domains',
+        subtitle: 'Use your own domain for QR code redirects (e.g. qr.company.com).',
+        addDomain: 'Add domain',
+        domainPlaceholder: 'qr.example.com',
+        add: 'Add',
+        dnsInstructions: 'DNS Configuration',
+        dnsStep1: '1. Add a CNAME record pointing to our server:',
+        dnsStep2: '2. Add a TXT record for verification:',
+        verify: 'Verify DNS',
+        copy: 'Copy',
+        copied: 'Copied!',
+        confirmDelete: 'Remove this domain?',
+        empty: 'No custom domains yet.',
+        verifiedOn: 'Verified on {date}',
+        status: { pending: 'Pending', verified: 'Verified', failed: 'Failed' },
+    },
+
     collab: {
         editing: 'Also editing:',
     },

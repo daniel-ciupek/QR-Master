@@ -88,6 +88,11 @@ enum PlanTier: string
         return $this === self::Business || $this === self::Enterprise;
     }
 
+    public function canUseCustomDomains(): bool
+    {
+        return $this === self::Business || $this === self::Enterprise;
+    }
+
     public function apiRequestsPerHour(): int
     {
         return match ($this) {
