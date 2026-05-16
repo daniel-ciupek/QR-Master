@@ -753,6 +753,9 @@ export default {
         cancel: 'Cancel',
         edit: 'Edit',
         delete: 'Delete',
+        back: '← Back',
+        previous: 'Previous',
+        next: 'Next',
     },
 
     bioLink: {

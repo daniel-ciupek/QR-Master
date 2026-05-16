@@ -109,7 +109,7 @@ const statusVariant = (active: boolean) => (active ? 'default' : 'secondary') as
                                     type="checkbox"
                                     value="qr.scanned"
                                     class="accent-primary"
-                                />
+                                >
                                 <code class="bg-muted rounded px-1 text-xs">qr.scanned</code>
                                 — {{ t('webhooks.eventQrScanned').split(' — ')[1] }}
                             </label>

@@ -294,8 +294,8 @@ function reset() {
                         step === s
                             ? 'bg-primary text-primary-foreground'
                             : steps.indexOf(step) > i
-                              ? 'text-muted-foreground line-through'
-                              : 'text-muted-foreground',
+                                ? 'text-muted-foreground line-through'
+                                : 'text-muted-foreground',
                     ]"
                 >
                     <span>{{ i + 1 }}.</span>
@@ -354,7 +354,7 @@ function reset() {
                         accept=".csv,text/csv"
                         class="hidden"
                         @change="onFileInput"
-                    />
+                    >
                 </div>
 
                 <Button :disabled="!selectedFile || isUploading" class="w-full" @click="uploadFile">

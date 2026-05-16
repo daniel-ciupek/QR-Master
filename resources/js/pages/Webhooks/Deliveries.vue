@@ -56,8 +56,12 @@ const formatDate = (iso: string | null) =>
     <div class="mx-auto max-w-4xl space-y-6 px-4 py-8">
         <!-- Header -->
         <div class="flex items-center gap-4">
-            <Button variant="ghost" size="sm" as-child>
-                <Link href="/webhooks">← Back</Link>
+            <Button
+                variant="ghost"
+                size="sm"
+                as-child
+            >
+                <Link href="/webhooks">{{ t('common.back') }}</Link>
             </Button>
             <div>
                 <h1 class="text-xl font-bold">{{ t('webhooks.deliveriesTitle') }}</h1>
@@ -95,14 +99,24 @@ const formatDate = (iso: string | null) =>
 
         <!-- Pagination -->
         <div v-if="deliveries.last_page > 1" class="flex justify-center gap-2">
-            <Button v-if="deliveries.prev_page_url" variant="outline" size="sm" as-child>
-                <Link :href="deliveries.prev_page_url">Previous</Link>
+            <Button
+                v-if="deliveries.prev_page_url"
+                variant="outline"
+                size="sm"
+                as-child
+            >
+                <Link :href="deliveries.prev_page_url">{{ t('common.previous') }}</Link>
             </Button>
             <span class="text-muted-foreground self-center text-sm">
                 {{ deliveries.current_page }} / {{ deliveries.last_page }}
             </span>
-            <Button v-if="deliveries.next_page_url" variant="outline" size="sm" as-child>
-                <Link :href="deliveries.next_page_url">Next</Link>
+            <Button
+                v-if="deliveries.next_page_url"
+                variant="outline"
+                size="sm"
+                as-child
+            >
+                <Link :href="deliveries.next_page_url">{{ t('common.next') }}</Link>
             </Button>
         </div>
     </div>
