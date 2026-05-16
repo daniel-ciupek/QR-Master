@@ -119,6 +119,10 @@ final class StripeWebhookController extends WebhookController
             return;
         }
 
+        if (is_string($invoiceId) && AffiliateCommission::where('stripe_invoice_id', $invoiceId)->exists()) {
+            return;
+        }
+
         AffiliateCommission::create([
             'user_id' => $user->referred_by_user_id,
             'referred_user_id' => $user->id,

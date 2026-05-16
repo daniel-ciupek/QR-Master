@@ -18,6 +18,8 @@ final class EnsurePlanFeature
         'smart-redirect' => 'canUseSmartRedirect',
         'api' => 'canUseApi',
         'custom-branding' => 'canUseCustomBranding',
+        'webhooks' => 'canUseWebhooks',
+        'bulk-import' => 'canUseBulkImport',
     ];
 
     public function handle(Request $request, Closure $next, string $feature): Response

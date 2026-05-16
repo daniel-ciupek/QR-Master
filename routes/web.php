@@ -136,10 +136,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/{qrCode}/rules/{rule}', [RedirectRuleController::class, 'update'])->name('rules.update')->middleware('plan.feature:smart-redirect');
         Route::delete('/{qrCode}/rules/{rule}', [RedirectRuleController::class, 'destroy'])->name('rules.destroy')->middleware('plan.feature:smart-redirect');
         // CSV Import — must come before /{qrCode} wildcard
-        Route::get('/import', [QrCodeImportController::class, 'show'])->name('import');
-        Route::post('/import/upload', [QrCodeImportController::class, 'upload'])->name('import.upload');
-        Route::post('/import/process', [QrCodeImportController::class, 'process'])->name('import.process');
-        Route::get('/import/{batchId}/status', [QrCodeImportController::class, 'status'])->name('import.status');
+        Route::get('/import', [QrCodeImportController::class, 'show'])->name('import')->middleware('plan.feature:bulk-import');
+        Route::post('/import/upload', [QrCodeImportController::class, 'upload'])->name('import.upload')->middleware('plan.feature:bulk-import');
+        Route::post('/import/process', [QrCodeImportController::class, 'process'])->name('import.process')->middleware('plan.feature:bulk-import');
+        Route::get('/import/{batchId}/status', [QrCodeImportController::class, 'status'])->name('import.status')->middleware('plan.feature:bulk-import');
         // Bulk actions — must come before /{qrCode} wildcard
         Route::post('/bulk/delete', [QrCodeController::class, 'bulkDestroy'])->name('bulk.destroy');
         Route::post('/bulk/pause', [QrCodeController::class, 'bulkPause'])->name('bulk.pause');
@@ -179,7 +179,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Webhooks outbound
-    Route::prefix('webhooks')->name('webhooks.')->group(function () {
+    Route::prefix('webhooks')->name('webhooks.')->middleware('plan.feature:webhooks')->group(function () {
         Route::get('/', [WebhookController::class, 'index'])->name('index');
         Route::post('/', [WebhookController::class, 'store'])->name('store');
         Route::delete('/{webhook}', [WebhookController::class, 'destroy'])->name('destroy');

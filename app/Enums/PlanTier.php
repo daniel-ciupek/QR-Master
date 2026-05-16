@@ -78,6 +78,16 @@ enum PlanTier: string
         return $this !== self::Free;
     }
 
+    public function canUseWebhooks(): bool
+    {
+        return $this === self::Business || $this === self::Enterprise;
+    }
+
+    public function canUseBulkImport(): bool
+    {
+        return $this === self::Business || $this === self::Enterprise;
+    }
+
     public function apiRequestsPerHour(): int
     {
         return match ($this) {
