@@ -3,6 +3,7 @@ import { Globe, Monitor, Moon, Search, Sun } from 'lucide-vue-next'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppSidebar from '@/components/AppSidebar.vue'
+import ChatWidget from '@/components/ChatWidget.vue'
 import CommandPalette from '@/components/CommandPalette.vue'
 import NotificationBell from '@/components/NotificationBell.vue'
 import { Button } from '@/components/ui/button'
@@ -145,5 +146,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
     </SidebarProvider>
 
     <CommandPalette v-model:open="commandOpen" />
+    <ChatWidget />
     <Toaster />
 </template>

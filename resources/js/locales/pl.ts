@@ -1084,6 +1084,13 @@ export default {
         },
     },
 
+    chat: {
+        title: 'Asystent QR-Master',
+        welcome: 'Cześć! Zapytaj mnie o cokolwiek dotyczącego kodów QR lub platformy.',
+        placeholder: 'Zadaj pytanie… (Enter żeby wysłać)',
+        error: 'Coś poszło nie tak. Spróbuj ponownie.',
+    },
+
     notifications: {
         title: 'Powiadomienia',
         empty: 'Brak powiadomień.',

@@ -1084,6 +1084,13 @@ export default {
         },
     },
 
+    chat: {
+        title: 'QR-Master Assistant',
+        welcome: 'Hi! Ask me anything about your QR codes or the platform.',
+        placeholder: 'Ask a question… (Enter to send)',
+        error: 'Something went wrong. Please try again.',
+    },
+
     notifications: {
         title: 'Notifications',
         empty: 'No notifications yet.',

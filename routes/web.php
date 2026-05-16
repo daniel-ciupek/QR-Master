@@ -16,6 +16,7 @@ use App\Http\Controllers\BioLink\BioLinkController;
 use App\Http\Controllers\BioLink\BioLinkItemController;
 use App\Http\Controllers\BioLink\BioLinkPublicController;
 use App\Http\Controllers\BotChallengeController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\Profile\PasskeysController;
@@ -227,6 +228,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile/sessions', [SessionsController::class, 'index'])->name('profile.sessions');
     Route::delete('/profile/sessions/others', [SessionsController::class, 'destroyOthers'])->name('profile.sessions.destroyOthers');
     Route::delete('/profile/sessions/{userSession}', [SessionsController::class, 'destroy'])->name('profile.sessions.destroy');
+
+    // AI Chatbot
+    Route::post('/chat', [ChatController::class, 'stream'])
+        ->name('chat.stream')
+        ->middleware('ai.rate-limit');
 
     // Notifications
     Route::prefix('notifications')->name('notifications.')->group(function () {
