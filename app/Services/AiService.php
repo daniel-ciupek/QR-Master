@@ -191,6 +191,43 @@ final class AiService
         });
     }
 
+    /**
+     * Generate a natural language performance insight for a QR code.
+     *
+     * @param  array<string, mixed>  $stats
+     * @return array{insight: string}
+     */
+    public function generatePerformanceInsights(array $stats, string $qrTitle): array
+    {
+        $statsJson = (string) json_encode($stats);
+        $cacheKey = 'ai:insights:'.md5($qrTitle.$statsJson);
+
+        return Cache::remember($cacheKey, 3600, function () use ($stats, $qrTitle): array {
+            /** @var list<array{type: string, count: int}> $devices */
+            $devices = $stats['device_breakdown'] ?? [];
+            /** @var list<array{country: string, count: int}> $countries */
+            $countries = $stats['top_countries'] ?? [];
+            $deviceName = $devices !== [] ? $devices[0]['type'] : 'unknown';
+            $countryName = $countries !== [] ? $countries[0]['country'] : 'unknown';
+
+            $prompt = "Generate a concise 2-3 sentence performance insight for a QR code called \"{$qrTitle}\". "
+                ."Stats: total={$stats['total_scans']}, last_7_days={$stats['scans_last_7_days']}, "
+                ."last_30_days={$stats['scans_last_30_days']}, unique_countries={$stats['unique_countries']}, "
+                ."top_device={$deviceName}, top_country={$countryName}. "
+                .'Be specific with numbers. Mention trends and one actionable suggestion. '
+                .'Write in English. Keep it under 80 words.';
+
+            $response = Prism::text()
+                ->using($this->provider, $this->smartModel)
+                ->withSystemPrompt($this->systemPrompt())
+                ->withPrompt($prompt)
+                ->withMaxTokens(200)
+                ->generate();
+
+            return ['insight' => trim($response->text)];
+        });
+    }
+
     private function sanitize(string $input): string
     {
         $clean = strip_tags($input);

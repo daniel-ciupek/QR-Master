@@ -23,6 +23,7 @@ use App\Http\Controllers\Profile\SecurityController;
 use App\Http\Controllers\Profile\SessionsController;
 use App\Http\Controllers\PublicRedirectController;
 use App\Http\Controllers\QrCode\AbTestController;
+use App\Http\Controllers\QrCode\Ai\GenerateInsightsController;
 use App\Http\Controllers\QrCode\Ai\SuggestBioLinkController;
 use App\Http\Controllers\QrCode\Ai\SuggestCtaController;
 use App\Http\Controllers\QrCode\Ai\SuggestQrNameController;
@@ -161,6 +162,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/qr/{qrCode}/ai/suggest-name', SuggestQrNameController::class)->name('qr.ai.suggest-name')->middleware('ai.rate-limit');
     Route::post('/api/ai/suggest-cta', SuggestCtaController::class)->name('ai.suggest-cta')->middleware('ai.rate-limit');
     Route::post('/api/ai/suggest-bio-link', SuggestBioLinkController::class)->name('ai.suggest-bio-link')->middleware('ai.rate-limit');
+    Route::post('/qr/{qrCode}/ai/insights', GenerateInsightsController::class)->name('qr.ai.insights')->middleware('ai.rate-limit');
 
     // Bio-Link editor (auth required)
     Route::prefix('bio-links')->name('bio-link.')->group(function () {

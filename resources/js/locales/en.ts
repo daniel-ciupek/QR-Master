@@ -1091,5 +1091,9 @@ export default {
         suggestPalette: 'Suggest palette from logo',
         rateLimitReached: 'Monthly AI request limit reached. Upgrade your plan.',
         upgradeToPro: 'Upgrade to Pro',
+        performanceInsights: 'AI Performance Insights',
+        generateInsight: 'Generate insight',
+        generating: 'Generating…',
+        insightHint: 'Click "Generate insight" to get an AI-powered analysis of this QR code\'s performance.',
     },
 }

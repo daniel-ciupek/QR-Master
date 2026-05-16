@@ -228,6 +228,29 @@ const formatDateTime = (iso: string) =>
 
 const publicUrl = computed(() => `/q/${props.qrCode.short_hash}`)
 
+const aiInsight = ref<string | null>(null)
+const loadingInsight = ref(false)
+
+async function generateInsight() {
+    loadingInsight.value = true
+    aiInsight.value = null
+    try {
+        const res = await fetch(`/qr/${props.qrCode.id}/ai/insights`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ?? '',
+                Accept: 'application/json',
+            },
+        })
+        if (res.ok) {
+            const data = await res.json() as { insight: string }
+            aiInsight.value = data.insight
+        }
+    } finally {
+        loadingInsight.value = false
+    }
+}
+
 // Real-time counter via Reverb
 const liveTotal = ref(props.stats.total)
 
@@ -412,6 +435,30 @@ onUnmounted(() => {
                     :options="heatmapOptions"
                     :series="heatmapSeries"
                 />
+            </CardContent>
+        </Card>
+
+        <!-- AI Performance Insights -->
+        <Card class="border-primary/20 bg-primary/5">
+            <CardHeader>
+                <CardTitle class="flex items-center justify-between gap-2">
+                    <span class="flex items-center gap-1.5">
+                        ✨ {{ t('ai.performanceInsights') }}
+                    </span>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        :disabled="loadingInsight"
+                        @click="generateInsight"
+                    >
+                        <span v-if="loadingInsight" class="animate-spin mr-1">⏳</span>
+                        {{ loadingInsight ? t('ai.generating') : t('ai.generateInsight') }}
+                    </Button>
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p v-if="aiInsight" class="text-sm leading-relaxed">{{ aiInsight }}</p>
+                <p v-else class="text-sm text-muted-foreground">{{ t('ai.insightHint') }}</p>
             </CardContent>
         </Card>
 

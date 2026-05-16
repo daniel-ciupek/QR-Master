@@ -1091,5 +1091,9 @@ export default {
         suggestPalette: 'Zasugeruj paletę z logo',
         rateLimitReached: 'Miesięczny limit zapytań AI został wyczerpany. Ulepsz plan.',
         upgradeToPro: 'Ulepsz do Pro',
+        performanceInsights: 'AI Analiza Wydajności',
+        generateInsight: 'Generuj analizę',
+        generating: 'Generowanie…',
+        insightHint: 'Kliknij „Generuj analizę", aby uzyskać analizę wydajności tego kodu QR przez AI.',
     },
 }
