@@ -65,45 +65,27 @@ async function send(): Promise<void> {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'text/event-stream',
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN': csrfToken,
                 'X-Requested-With': 'XMLHttpRequest',
             },
             body: JSON.stringify({
                 message: text,
                 history,
-                context: props.pageContext ?? '',
+                ...(props.pageContext ? { context: String(props.pageContext) } : {}),
             }),
         })
 
-        if (!response.body) throw new Error('No response body')
+        const data = await response.json() as { text?: string; message?: string }
 
-        const reader = response.body.getReader()
-        const decoder = new TextDecoder()
-        let buffer = ''
-
-        while (true) {
-            const { done, value } = await reader.read()
-            if (done) break
-
-            buffer += decoder.decode(value, { stream: true })
-            const lines = buffer.split('\n')
-            buffer = lines.pop() ?? ''
-
-            for (const line of lines) {
-                if (!line.startsWith('data:')) continue
-                const raw = line.slice(5).trim()
-                if (!raw || raw === '[DONE]') continue
-
-                try {
-                    const event = JSON.parse(raw)
-                    if (event.type === 'text_delta' && typeof event.text === 'string') {
-                        assistantMsg.content += event.text
-                        await scrollToBottom()
-                    }
-                } catch {
-                    // skip malformed events
-                }
+        if (!response.ok) {
+            assistantMsg.content = data.message ?? t('chat.error')
+        } else if (data.text) {
+            const words = data.text.split(' ')
+            for (const word of words) {
+                assistantMsg.content += (assistantMsg.content ? ' ' : '') + word
+                await scrollToBottom()
+                await new Promise(resolve => setTimeout(resolve, 25))
             }
         }
     } catch {

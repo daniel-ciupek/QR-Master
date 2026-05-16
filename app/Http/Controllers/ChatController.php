@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Prism\Prism\Facades\Prism;
 use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class ChatController extends Controller
 {
@@ -18,14 +18,14 @@ final class ChatController extends Controller
 
     private const MAX_HISTORY = 10;
 
-    public function stream(Request $request): StreamedResponse
+    public function stream(Request $request): JsonResponse
     {
         $validated = Validator::make($request->all(), [
             'message' => ['required', 'string', 'max:'.self::MAX_MESSAGE_LENGTH],
             'history' => ['sometimes', 'array', 'max:'.self::MAX_HISTORY],
             'history.*.role' => ['required', 'in:user,assistant'],
             'history.*.content' => ['required', 'string', 'max:2000'],
-            'context' => ['sometimes', 'string', 'max:200'],
+            'context' => ['sometimes', 'nullable', 'string', 'max:200'],
         ])->validate();
 
         /** @var User $user */
@@ -34,12 +34,14 @@ final class ChatController extends Controller
         $messages = $this->buildHistory($validated['history'] ?? []);
         $messages[] = new UserMessage($this->sanitize($validated['message']));
 
-        return Prism::text()
+        $result = Prism::text()
             ->using(config('ai.provider', 'deepseek'), config('ai.fast_model', 'deepseek-chat'))
             ->withSystemPrompt($this->systemPrompt($user, $validated['context'] ?? ''))
             ->withMessages($messages)
             ->withMaxTokens(800)
-            ->asEventStreamResponse();
+            ->asText();
+
+        return response()->json(['text' => $result->text]);
     }
 
     /**
