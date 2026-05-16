@@ -44,6 +44,7 @@ use App\Http\Controllers\QrPasswordController;
 use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\Team\TeamController;
+use App\Http\Controllers\Team\TeamMemberController;
 use App\Http\Controllers\Team\TeamSwitchController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
 use App\Http\Controllers\WebAuthn\WebAuthnRegisterController;
@@ -274,6 +275,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{team}', [TeamController::class, 'show'])->name('show');
         Route::patch('/{team}', [TeamController::class, 'update'])->name('update');
         Route::delete('/{team}', [TeamController::class, 'destroy'])->name('destroy');
+        // Member management (12.2)
+        Route::patch('/{team}/members/{user}/role', [TeamMemberController::class, 'updateRole'])->name('members.role');
+        Route::delete('/{team}/members/{user}', [TeamMemberController::class, 'destroy'])->name('members.destroy');
+        Route::delete('/{team}/leave', [TeamMemberController::class, 'leave'])->name('members.leave');
     });
 
     // Switch workspace context (null = personal)

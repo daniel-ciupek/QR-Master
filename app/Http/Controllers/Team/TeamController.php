@@ -68,6 +68,8 @@ class TeamController
 
         $team->load(['members', 'owner']);
 
+        $myRole = $user->teamRole($team);
+
         return Inertia::render('Workspace/Show', [
             'team' => [
                 'id' => $team->id,
@@ -83,10 +85,11 @@ class TeamController
                     /** @phpstan-ignore-next-line property.notFound */
                     'role' => $member->pivot->role,
                     /** @phpstan-ignore-next-line property.notFound */
-                    'joined_at' => $member->pivot->joined_at,
+                    'joinedAt' => $member->pivot->joined_at,
                 ]),
-                'is_owner' => $team->owner_id === $user->id,
-                'my_role' => $user->teamRole($team),
+                'isOwner' => $team->owner_id === $user->id,
+                'myRole' => $myRole?->value,
+                'myId' => $user->id,
             ],
         ]);
     }
