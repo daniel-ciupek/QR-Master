@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3'
-import { Crown, Shield, Eye, Pencil, Trash2, Users } from 'lucide-vue-next'
+import { Head, router, useForm } from '@inertiajs/vue3'
+import { Crown, Eye, Pencil, Shield, Trash2, Users } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Badge } from '@/components/ui/badge'
@@ -34,7 +34,7 @@ interface TeamDetail {
     id: number
     name: string
     slug: string
-    owner: { id: number; name: string }
+    owner: { id: number; name: string } | null
     members: Member[]
     is_owner: boolean
     my_role: string
@@ -48,13 +48,18 @@ const nameForm = useForm({
     name: props.team.name,
 })
 
-function saveName() {
+function saveName(): void {
     nameForm.patch(route('workspaces.update', { team: props.team.id }), {
         onSuccess: () => { editingName.value = false },
     })
 }
 
-function roleIcon(role: string) {
+function deleteWorkspace(): void {
+    if (!confirm(t('workspace.confirm_delete'))) return
+    router.delete(route('workspaces.destroy', { team: props.team.id }))
+}
+
+function roleIcon(role: string): typeof Crown {
     if (role === 'owner') return Crown
     if (role === 'admin') return Shield
     if (role === 'viewer') return Eye
@@ -71,11 +76,11 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
 <template>
     <Head :title="team.name" />
 
-    <div class="space-y-6 max-w-2xl">
+    <div class="max-w-2xl space-y-6">
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-semibold tracking-tight">{{ team.name }}</h1>
-                <p class="text-sm text-muted-foreground mt-1">{{ t('workspace.settings') }}</p>
+                <p class="mt-1 text-sm text-muted-foreground">{{ t('workspace.settings') }}</p>
             </div>
         </div>
 
@@ -87,7 +92,7 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
             </CardHeader>
             <CardContent class="space-y-4">
                 <div class="space-y-2">
-                    <Label>{{ t('workspace.name') }}</Label>
+                    <Label for="workspace-name">{{ t('workspace.name') }}</Label>
                     <div v-if="!editingName" class="flex items-center gap-2">
                         <span class="text-sm">{{ team.name }}</span>
                         <Button
@@ -101,12 +106,17 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
                     </div>
                     <form v-else class="flex items-center gap-2" @submit.prevent="saveName">
                         <Input
+                            id="workspace-name"
                             v-model="nameForm.name"
                             autofocus
                             class="max-w-xs"
                             maxlength="60"
                         />
-                        <Button type="submit" size="sm" :disabled="nameForm.processing">
+                        <Button
+                            type="submit"
+                            size="sm"
+                            :disabled="nameForm.processing"
+                        >
                             {{ t('common.save') }}
                         </Button>
                         <Button
@@ -118,7 +128,9 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
                             {{ t('common.cancel') }}
                         </Button>
                     </form>
-                    <p v-if="nameForm.errors.name" class="text-sm text-destructive">{{ nameForm.errors.name }}</p>
+                    <p v-if="nameForm.errors.name" class="text-sm text-destructive">
+                        {{ nameForm.errors.name }}
+                    </p>
                 </div>
             </CardContent>
         </Card>
@@ -166,10 +178,7 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
                 <CardDescription>{{ t('workspace.danger_zone_description') }}</CardDescription>
             </CardHeader>
             <CardContent>
-                <Button
-                    variant="destructive"
-                    @click="$inertia.delete(route('workspaces.destroy', { team: team.id }))"
-                >
+                <Button variant="destructive" @click="deleteWorkspace">
                     <Trash2 class="mr-2 h-4 w-4" />
                     {{ t('workspace.delete_workspace') }}
                 </Button>

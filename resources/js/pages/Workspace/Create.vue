@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3'
+import { Head, router, useForm } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -15,8 +15,12 @@ const form = useForm({
     name: '',
 })
 
-function submit() {
+function submit(): void {
     form.post(route('workspaces.store'))
+}
+
+function goBack(): void {
+    router.visit(route('workspaces.index'))
 }
 </script>
 
@@ -26,7 +30,7 @@ function submit() {
     <div class="max-w-lg">
         <div class="mb-6">
             <h1 class="text-2xl font-semibold tracking-tight">{{ t('workspace.new_workspace') }}</h1>
-            <p class="text-sm text-muted-foreground mt-1">{{ t('workspace.create_description') }}</p>
+            <p class="mt-1 text-sm text-muted-foreground">{{ t('workspace.create_description') }}</p>
         </div>
 
         <Card>
@@ -57,7 +61,7 @@ function submit() {
                         <Button
                             type="button"
                             variant="ghost"
-                            @click="$inertia.visit(route('workspaces.index'))"
+                            @click="goBack"
                         >
                             {{ t('common.cancel') }}
                         </Button>

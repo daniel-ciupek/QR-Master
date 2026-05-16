@@ -21,17 +21,25 @@ interface TeamItem {
     is_owner: boolean
 }
 
+/* eslint-disable-next-line vue/prop-name-casing */
 defineProps<{
     teams: TeamItem[]
-    /* eslint-disable-next-line vue/prop-name-casing */
     current_team_id: number | null
 }>()
 
-function switchToTeam(teamId: number) {
+function goToCreate(): void {
+    router.visit(route('workspaces.create'))
+}
+
+function goToSettings(teamId: number): void {
+    router.visit(route('workspaces.show', { team: teamId }))
+}
+
+function switchToTeam(teamId: number): void {
     router.post(route('workspace.switch', { team: teamId }))
 }
 
-function switchToPersonal() {
+function switchToPersonal(): void {
     router.post(route('workspace.switch'))
 }
 
@@ -61,14 +69,14 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
                 <h1 class="text-2xl font-semibold tracking-tight">{{ t('workspace.workspaces') }}</h1>
                 <p class="mt-1 text-sm text-muted-foreground">{{ t('workspace.workspaces_description') }}</p>
             </div>
-            <Button @click="$inertia.visit(route('workspaces.create'))">
+            <Button @click="goToCreate">
                 <Plus class="mr-2 h-4 w-4" />
                 {{ t('workspace.new_workspace') }}
             </Button>
         </div>
 
         <!-- Personal workspace card -->
-        <Card :class="{ 'ring-2 ring-primary': current_team_id === null }">
+        <Card :class="current_team_id === null ? 'ring-2 ring-primary' : ''">
             <CardHeader class="flex flex-row items-center gap-4 pb-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
                     <Building2 class="h-5 w-5 text-muted-foreground" />
@@ -98,7 +106,7 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
         <Card
             v-for="team in teams"
             :key="team.id"
-            :class="{ 'ring-2 ring-primary': team.is_current }"
+            :class="team.is_current ? 'ring-2 ring-primary' : ''"
         >
             <CardHeader class="flex flex-row items-center gap-4 pb-3">
                 <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
@@ -134,7 +142,7 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
                         variant="ghost"
                         size="icon"
                         class="h-8 w-8"
-                        @click="$inertia.visit(route('workspaces.show', { team: team.id }))"
+                        @click="goToSettings(team.id)"
                     >
                         <Settings class="h-4 w-4" />
                     </Button>
@@ -147,7 +155,7 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
             <Users class="mx-auto h-12 w-12 text-muted-foreground/50" />
             <h3 class="mt-4 text-sm font-medium">{{ t('workspace.no_teams') }}</h3>
             <p class="mt-1 text-sm text-muted-foreground">{{ t('workspace.no_teams_description') }}</p>
-            <Button class="mt-4" @click="$inertia.visit(route('workspaces.create'))">
+            <Button class="mt-4" @click="goToCreate">
                 <Plus class="mr-2 h-4 w-4" />
                 {{ t('workspace.new_workspace') }}
             </Button>
