@@ -928,6 +928,7 @@ const exportOpen = ref(false)
                     <div class="flex items-center justify-between">
                         <p class="text-sm font-medium">{{ t('qr.colors.label') }}</p>
                         <SuggestPaletteButton
+                            :logo-data-url="logoDataUrl"
                             @apply="(dot, bg) => { dotColor = dot; backgroundColor = bg }"
                         />
                     </div>

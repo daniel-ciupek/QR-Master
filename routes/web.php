@@ -156,7 +156,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{qrCode}/duplicate', [QrCodeController::class, 'duplicate'])->name('duplicate');
     });
 
-    Route::get('/api/ai/suggest-palette', SuggestPaletteController::class)->name('ai.suggest-palette')->middleware('ai.rate-limit');
+    Route::post('/api/ai/suggest-palette', SuggestPaletteController::class)->name('ai.suggest-palette')->middleware('ai.rate-limit');
     Route::post('/qr/{qrCode}/ai/suggest-name', SuggestQrNameController::class)->name('qr.ai.suggest-name')->middleware('ai.rate-limit');
     Route::post('/api/ai/suggest-cta', SuggestCtaController::class)->name('ai.suggest-cta')->middleware('ai.rate-limit');
 

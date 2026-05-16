@@ -9,6 +9,10 @@ interface Palette {
     bgColor: string
 }
 
+const props = defineProps<{
+    logoDataUrl?: string | null
+}>()
+
 const emit = defineEmits<{
     apply: [dotColor: string, bgColor: string]
 }>()
@@ -22,15 +26,36 @@ const wrapperRef = ref<HTMLElement>()
 
 onClickOutside(wrapperRef, () => { open.value = false })
 
+function parseDataUrl(dataUrl: string): { base64: string; mimeType: string } | null {
+    const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/)
+    if (!match || !match[1] || !match[2]) return null
+    return { mimeType: match[1], base64: match[2] }
+}
+
 async function suggest() {
     if (loading.value) return
     loading.value = true
     open.value = false
 
     try {
+        const body: Record<string, string> = {}
+        if (props.logoDataUrl) {
+            const parsed = parseDataUrl(props.logoDataUrl)
+            if (parsed) {
+                body.logo_base64 = parsed.base64
+                body.mime_type = parsed.mimeType
+            }
+        }
+
         const res = await fetch('/api/ai/suggest-palette', {
-            headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ?? '',
+            },
             credentials: 'same-origin',
+            body: JSON.stringify(body),
         })
         const data = await res.json() as { palettes: Palette[] }
         palettes.value = data.palettes
