@@ -10,6 +10,7 @@ use App\Data\Team\UpdateTeamData;
 use App\Http\Requests\Team\CreateTeamRequest;
 use App\Http\Requests\Team\UpdateTeamRequest;
 use App\Models\Team;
+use App\Models\TeamInvitation;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
@@ -66,7 +67,7 @@ class TeamController
         /** @var User $user */
         $user = auth()->user();
 
-        $team->load(['members', 'owner']);
+        $team->load(['members', 'owner', 'pendingInvitations.invitedBy']);
 
         $myRole = $user->teamRole($team);
 
@@ -90,6 +91,12 @@ class TeamController
                 'isOwner' => $team->owner_id === $user->id,
                 'myRole' => $myRole?->value,
                 'myId' => $user->id,
+                'pendingInvitations' => $team->pendingInvitations->map(fn (TeamInvitation $inv) => [
+                    'id' => $inv->id,
+                    'email' => $inv->email,
+                    'role' => $inv->role->value,
+                    'expiresAt' => $inv->expires_at->toIso8601String(),
+                ]),
             ],
         ]);
     }

@@ -76,6 +76,20 @@ class Team extends Model
         return $this->hasMany(Tag::class);
     }
 
+    /** @return HasMany<TeamInvitation, $this> */
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(TeamInvitation::class);
+    }
+
+    /** @return HasMany<TeamInvitation, $this> */
+    public function pendingInvitations(): HasMany
+    {
+        return $this->hasMany(TeamInvitation::class)
+            ->whereNull('accepted_at')
+            ->where('expires_at', '>', now());
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────
 
     public function userRole(User $user): ?TeamRole

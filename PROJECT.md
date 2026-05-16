@@ -324,7 +324,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 - [x] **12.1** **Teams / Workspaces** — multi-tenancy (single DB, tenant_id na kluczowych tabelach)
 - [x] **12.2** Role w workspace: Owner, Admin, Editor, Viewer
-- [ ] **12.3** Invitations + email + akceptacja
+- [x] **12.3** Invitations + email + akceptacja
 - [ ] **12.4** Per-team billing (jeden Stripe customer per workspace)
 - [ ] **12.5** **White-label** — workspace ma własne logo, kolory, custom domain → user widzi „Powered by [BrandX]" zamiast QR-Master
 - [ ] **12.6** **DPA Generator** (Data Processing Agreement) — wygenerowany PDF z danymi klienta dla compliance

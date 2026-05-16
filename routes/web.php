@@ -44,6 +44,7 @@ use App\Http\Controllers\QrPasswordController;
 use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\Team\TeamController;
+use App\Http\Controllers\Team\TeamInvitationController;
 use App\Http\Controllers\Team\TeamMemberController;
 use App\Http\Controllers\Team\TeamSwitchController;
 use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
@@ -118,6 +119,11 @@ Route::get('/b/{slug}', BioLinkPublicController::class)
 Route::get('/b/{slug}/link/{item}', BioLinkClickController::class)
     ->middleware('throttle:public-redirect')
     ->name('bio-link.click');
+
+// Team invitation accept page — public (user may not be logged in yet)
+Route::get('/invitations/{token}', [TeamInvitationController::class, 'show'])
+    ->name('invitations.show')
+    ->middleware('throttle:60,1');
 
 Route::post('/locale', function (Request $request) {
     $locale = in_array($request->input('locale'), ['pl', 'en', 'de', 'es', 'fr', 'it']) ? $request->input('locale') : 'pl';
@@ -279,6 +285,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/{team}/members/{user}/role', [TeamMemberController::class, 'updateRole'])->name('members.role');
         Route::delete('/{team}/members/{user}', [TeamMemberController::class, 'destroy'])->name('members.destroy');
         Route::delete('/{team}/leave', [TeamMemberController::class, 'leave'])->name('members.leave');
+        // Invitations (12.3)
+        Route::post('/{team}/invitations', [TeamInvitationController::class, 'store'])->name('invitations.store');
+        Route::delete('/{team}/invitations/{invitation}', [TeamInvitationController::class, 'destroy'])->name('invitations.destroy');
+        Route::post('/invitations/{token}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
     });
 
     // Switch workspace context (null = personal)

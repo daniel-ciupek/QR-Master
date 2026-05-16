@@ -27,4 +27,13 @@ return [
         'outro' => 'Jeśli nie prosiłeś o reset hasła, nie musisz nic robić. Twoje hasło pozostanie bez zmian.',
         'subcopy' => 'Jeśli nie możesz kliknąć przycisku, skopiuj poniższy link do przeglądarki:',
     ],
+
+    'invitation' => [
+        'subject' => 'Zaproszenie do przestrzeni :team',
+        'greeting' => 'Cześć!',
+        'intro' => ':inviter zaprasza Cię do dołączenia do przestrzeni roboczej ":team" jako :role.',
+        'action' => 'Zaakceptuj zaproszenie',
+        'expiry' => 'Ten link zaproszenia wygaśnie po 7 dniach.',
+        'outro' => 'Jeśli nie spodziewałeś się tego zaproszenia, możesz zignorować tę wiadomość.',
+    ],
 ];

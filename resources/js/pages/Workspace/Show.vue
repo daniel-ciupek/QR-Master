@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3'
-import { ChevronDown, Crown, Eye, LogOut, Pencil, Shield, Trash2, UserMinus, Users } from 'lucide-vue-next'
+import { ChevronDown, Crown, Eye, LogOut, Mail, Pencil, Shield, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Badge } from '@/components/ui/badge'
@@ -35,7 +35,14 @@ interface Member {
     name: string
     email: string
     role: string
-    joined_at: string
+    joinedAt: string
+}
+
+interface PendingInvitation {
+    id: number
+    email: string
+    role: string
+    expiresAt: string
 }
 
 interface TeamDetail {
@@ -44,6 +51,7 @@ interface TeamDetail {
     slug: string
     owner: { id: number; name: string } | null
     members: Member[]
+    pendingInvitations: PendingInvitation[]
     isOwner: boolean
     myRole: string
     myId: number
@@ -53,16 +61,35 @@ const props = defineProps<{ team: TeamDetail }>()
 
 const editingName = ref(false)
 
-const nameForm = useForm({ name: props.team.name })
-
 const canManageMembers = props.team.myRole === 'owner' || props.team.myRole === 'admin'
 
-const roles = ['owner', 'admin', 'editor', 'viewer'] as const
+const nameForm = useForm({ name: props.team.name })
+
+const inviteForm = useForm({
+    email: '',
+    role: 'editor',
+})
+
+const roles = ['admin', 'editor', 'viewer'] as const
 
 function saveName(): void {
     nameForm.patch(route('workspaces.update', { team: props.team.id }), {
         onSuccess: () => { editingName.value = false },
     })
+}
+
+function sendInvite(): void {
+    inviteForm.post(route('workspaces.invitations.store', { team: props.team.id }), {
+        onSuccess: () => { inviteForm.reset() },
+        preserveScroll: true,
+    })
+}
+
+function revokeInvitation(invitationId: number): void {
+    router.delete(
+        route('workspaces.invitations.destroy', { team: props.team.id, invitation: invitationId }),
+        { preserveScroll: true },
+    )
 }
 
 function changeRole(memberId: number, newRole: string): void {
@@ -106,13 +133,12 @@ function roleBadgeVariant(role: string): 'default' | 'secondary' | 'outline' {
 
 function canChangeRole(member: Member): boolean {
     if (!canManageMembers) return false
-    // Only owner can change another owner's role
     if (member.role === 'owner' && props.team.myRole !== 'owner') return false
     return true
 }
 
 function canRemoveMember(member: Member): boolean {
-    if (member.id === props.team.myId) return false // use Leave instead
+    if (member.id === props.team.myId) return false
     if (member.role === 'owner') return false
     return canManageMembers
 }
@@ -174,14 +200,93 @@ function canRemoveMember(member: Member): boolean {
             </CardContent>
         </Card>
 
-        <!-- Members list with role management -->
+        <!-- Invite member (Owner/Admin only) -->
+        <Card v-if="canManageMembers">
+            <CardHeader>
+                <CardTitle class="flex items-center gap-2">
+                    <UserPlus class="h-4 w-4" />
+                    {{ t('workspace.invite_member') }}
+                </CardTitle>
+                <CardDescription>{{ t('workspace.invite_description') }}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form class="flex items-end gap-2" @submit.prevent="sendInvite">
+                    <div class="flex-1 space-y-1.5">
+                        <Label for="invite-email">{{ t('workspace.invite_email') }}</Label>
+                        <Input
+                            id="invite-email"
+                            v-model="inviteForm.email"
+                            type="email"
+                            :placeholder="t('workspace.invite_email_placeholder')"
+                        />
+                        <p v-if="inviteForm.errors.email" class="text-xs text-destructive">
+                            {{ inviteForm.errors.email }}
+                        </p>
+                    </div>
+                    <div class="space-y-1.5">
+                        <Label for="invite-role">{{ t('workspace.member_role') }}</Label>
+                        <select
+                            id="invite-role"
+                            v-model="inviteForm.role"
+                            class="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                        >
+                            <option v-for="r in roles" :key="r" :value="r">
+                                {{ t(`workspace.role_${r}`) }}
+                            </option>
+                        </select>
+                    </div>
+                    <Button type="submit" :disabled="inviteForm.processing">
+                        <Mail class="mr-2 h-4 w-4" />
+                        {{ t('workspace.send_invite') }}
+                    </Button>
+                </form>
+            </CardContent>
+        </Card>
+
+        <!-- Pending invitations -->
+        <Card v-if="canManageMembers && team.pendingInvitations.length > 0">
+            <CardHeader>
+                <CardTitle class="text-sm font-medium">{{ t('workspace.pending_invitations') }}</CardTitle>
+            </CardHeader>
+            <CardContent class="p-0">
+                <Table>
+                    <TableBody>
+                        <TableRow v-for="inv in team.pendingInvitations" :key="inv.id">
+                            <TableCell class="text-sm">{{ inv.email }}</TableCell>
+                            <TableCell>
+                                <Badge variant="outline" class="gap-1 text-xs">
+                                    <component :is="roleIcon(inv.role)" class="h-3 w-3" />
+                                    {{ t(`workspace.role_${inv.role}`) }}
+                                </Badge>
+                            </TableCell>
+                            <TableCell class="text-xs text-muted-foreground">
+                                {{ t('workspace.invite_expires') }}
+                            </TableCell>
+                            <TableCell class="text-right">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    class="h-7 w-7 text-muted-foreground hover:text-destructive"
+                                    :title="t('workspace.revoke_invite')"
+                                    @click="revokeInvitation(inv.id)"
+                                >
+                                    <X class="h-3.5 w-3.5" />
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </CardContent>
+        </Card>
+
+        <!-- Members list -->
         <Card>
             <CardHeader>
                 <CardTitle class="flex items-center gap-2">
                     <Users class="h-4 w-4" />
                     {{ t('workspace.members') }}
+                    <Badge variant="secondary" class="ml-1">{{ team.members.length }}</Badge>
                 </CardTitle>
-                <CardDescription>{{ t('workspace.members_description') }}</CardDescription>
             </CardHeader>
             <CardContent class="p-0">
                 <Table>
@@ -201,7 +306,6 @@ function canRemoveMember(member: Member): boolean {
                                 </div>
                             </TableCell>
                             <TableCell>
-                                <!-- Role dropdown (only for authorized users) -->
                                 <DropdownMenu v-if="canChangeRole(member)">
                                     <DropdownMenuTrigger as-child>
                                         <Button variant="outline" size="sm" class="gap-1.5">
@@ -214,9 +318,9 @@ function canRemoveMember(member: Member): boolean {
                                         <DropdownMenuLabel>{{ t('workspace.change_role') }}</DropdownMenuLabel>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
-                                            v-for="r in roles"
+                                            v-for="r in ['owner', 'admin', 'editor', 'viewer']"
                                             :key="r"
-                                            :class="{ 'bg-accent': member.role === r }"
+                                            :class="member.role === r ? 'bg-accent' : ''"
                                             @click="changeRole(member.id, r)"
                                         >
                                             <component :is="roleIcon(r)" class="mr-2 h-4 w-4" />
@@ -229,7 +333,6 @@ function canRemoveMember(member: Member): boolean {
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
-                                <!-- Read-only badge for non-authorized or self -->
                                 <Badge v-else :variant="roleBadgeVariant(member.role)" class="gap-1">
                                     <component :is="roleIcon(member.role)" class="h-3 w-3" />
                                     {{ t(`workspace.role_${member.role}`) }}
@@ -253,7 +356,7 @@ function canRemoveMember(member: Member): boolean {
             </CardContent>
         </Card>
 
-        <!-- Leave workspace (non-owners) -->
+        <!-- Leave workspace -->
         <Card v-if="!team.isOwner">
             <CardHeader>
                 <CardTitle>{{ t('workspace.leave_workspace') }}</CardTitle>
@@ -267,7 +370,7 @@ function canRemoveMember(member: Member): boolean {
             </CardContent>
         </Card>
 
-        <!-- Danger zone (owner only) -->
+        <!-- Danger zone -->
         <Card v-if="team.isOwner" class="border-destructive/50">
             <CardHeader>
                 <CardTitle class="text-destructive">{{ t('workspace.danger_zone') }}</CardTitle>

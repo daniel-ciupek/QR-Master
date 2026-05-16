@@ -27,4 +27,13 @@ return [
         'outro' => 'If you did not request a password reset, no further action is required.',
         'subcopy' => 'If you\'re having trouble clicking the button, copy and paste the URL below into your browser:',
     ],
+
+    'invitation' => [
+        'subject' => 'You\'ve been invited to :team',
+        'greeting' => 'Hello!',
+        'intro' => ':inviter has invited you to join the ":team" workspace as :role.',
+        'action' => 'Accept Invitation',
+        'expiry' => 'This invitation link will expire in 7 days.',
+        'outro' => 'If you did not expect this invitation, you can ignore this email.',
+    ],
 ];
