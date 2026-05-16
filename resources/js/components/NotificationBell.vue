@@ -76,7 +76,8 @@ async function remove(id: string): Promise<void> {
     })
     const idx = notifications.value.findIndex(n => n.id === id)
     if (idx !== -1) {
-        if (!notifications.value[idx].read_at) unreadCount.value = Math.max(0, unreadCount.value - 1)
+        const item = notifications.value[idx]
+        if (item && !item.read_at) unreadCount.value = Math.max(0, unreadCount.value - 1)
         notifications.value.splice(idx, 1)
     }
 }
