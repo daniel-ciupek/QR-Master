@@ -95,9 +95,9 @@ final class RecordScanJob implements ShouldQueue
      */
     private function dispatchWebhooks(int $qrCodeId, string $scannedAt, array $meta): void
     {
-        $qrCode = QrCode::with('user')->find($qrCodeId);
+        $qrCode = QrCode::find($qrCodeId);
 
-        if ($qrCode === null || $qrCode->user === null) {
+        if ($qrCode === null) {
             return;
         }
 
@@ -106,21 +106,34 @@ final class RecordScanJob implements ShouldQueue
             ->whereJsonContains('events', 'qr.scanned')
             ->get();
 
-        foreach ($webhooks as $webhook) {
-            $delivery = WebhookDelivery::create([
-                'webhook_id' => $webhook->id,
-                'event' => 'qr.scanned',
-                'payload' => [
-                    'event' => 'qr.scanned',
-                    'timestamp' => $scannedAt,
-                    'data' => array_merge(['qr_code_id' => $qrCodeId, 'scanned_at' => $scannedAt], $meta),
-                ],
-                'status' => 'pending',
-                'attempts' => 0,
-                'created_at' => now(),
-            ]);
+        if ($webhooks->isEmpty()) {
+            return;
+        }
 
-            DeliverWebhookJob::dispatch($delivery->id);
+        $now = now();
+        $payload = json_encode([
+            'event' => 'qr.scanned',
+            'timestamp' => $scannedAt,
+            'data' => array_merge(['qr_code_id' => $qrCodeId, 'scanned_at' => $scannedAt], $meta),
+        ]);
+
+        $deliveriesData = $webhooks->map(fn (Webhook $webhook) => [
+            'webhook_id' => $webhook->id,
+            'event' => 'qr.scanned',
+            'payload' => $payload,
+            'status' => 'pending',
+            'attempts' => 0,
+            'created_at' => $now,
+        ])->all();
+
+        WebhookDelivery::insert($deliveriesData);
+
+        $deliveryIds = WebhookDelivery::whereIn('webhook_id', $webhooks->pluck('id'))
+            ->where('created_at', '>=', $now)
+            ->pluck('id');
+
+        foreach ($deliveryIds as $deliveryId) {
+            DeliverWebhookJob::dispatch($deliveryId);
         }
     }
 }
