@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Globe, Monitor, Moon, Search, Sun } from 'lucide-vue-next'
+import { Globe, Search } from 'lucide-vue-next'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppSidebar from '@/components/AppSidebar.vue'
@@ -16,13 +16,11 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
-import { useColorMode } from '@/composables/useColorMode'
 import { useLocale } from '@/composables/useLocale'
 
 defineProps<{ title?: string }>()
 
 const { t } = useI18n()
-const { mode, setMode } = useColorMode()
 const { locale, setLocale } = useLocale()
 
 const commandOpen = ref(false)
@@ -56,44 +54,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                 <!-- Notification bell -->
                 <NotificationBell />
 
-                <!-- Dark mode toggle -->
-                <DropdownMenu>
-                    <DropdownMenuTrigger as-child>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            class="size-8"
-                        >
-                            <Sun
-                                v-if="mode === 'light'"
-                                class="size-4"
-                            />
-                            <Moon
-                                v-else-if="mode === 'dark'"
-                                class="size-4"
-                            />
-                            <Monitor
-                                v-else
-                                class="size-4"
-                            />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem @click="setMode('light')">
-                            <Sun class="mr-2 size-4" />
-                            {{ t('theme.light') }}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem @click="setMode('dark')">
-                            <Moon class="mr-2 size-4" />
-                            {{ t('theme.dark') }}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem @click="setMode('system')">
-                            <Monitor class="mr-2 size-4" />
-                            {{ t('theme.system') }}
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-
                 <!-- Language switcher -->
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>
@@ -107,7 +67,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                            v-for="lang in ['pl', 'en', 'de', 'es', 'fr', 'it'] as const"
+                            v-for="lang in ['pl', 'en'] as const"
                             :key="lang"
                             :class="{ 'font-semibold': locale === lang }"
                             @click="setLocale(lang)"

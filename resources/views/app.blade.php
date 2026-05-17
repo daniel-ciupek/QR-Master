@@ -13,17 +13,8 @@
 
         <title inertia>{{ config('app.name') }}</title>
 
-        {{-- Dark mode: apply class before CSS loads to prevent flash --}}
-        <script>
-            (function () {
-                try {
-                    var m = localStorage.getItem('qrmaster-color-mode') || 'system';
-                    if (m === 'dark' || (m === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                        document.documentElement.classList.add('dark');
-                    }
-                } catch (e) {}
-            })();
-        </script>
+        {{-- Dark mode: always dark --}}
+        <script>document.documentElement.classList.add('dark');</script>
 
         @routes
         @vite(['resources/css/app.css', 'resources/js/app.ts'])

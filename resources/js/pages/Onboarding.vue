@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3'
-import { Globe, Monitor, Moon, Sun } from 'lucide-vue-next'
+import { Globe } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LottieAnimation from '@/components/LottieAnimation.vue'
@@ -8,11 +8,9 @@ import { Button } from '@/components/ui/button'
 import welcomeAnimation from '@/animations/welcome'
 import personalizeAnimation from '@/animations/personalize'
 import readyAnimation from '@/animations/ready'
-import { useColorMode } from '@/composables/useColorMode'
 import { useLocale } from '@/composables/useLocale'
 
 const { t } = useI18n()
-const { mode, setMode } = useColorMode()
 const { locale, setLocale } = useLocale()
 
 const step = ref(1)
@@ -72,27 +70,6 @@ function next() {
                         <p class="text-sm text-muted-foreground">{{ t('onboarding.steps.personalize.subtitle') }}</p>
 
                         <div class="mt-6 space-y-4 text-left">
-                            <!-- Theme -->
-                            <div class="space-y-2">
-                                <p class="text-sm font-medium">{{ t('onboarding.steps.personalize.theme') }}</p>
-                                <div class="flex gap-2">
-                                    <Button
-                                        v-for="(icon, m) in { light: Sun, dark: Moon, system: Monitor }"
-                                        :key="m"
-                                        :variant="mode === m ? 'default' : 'outline'"
-                                        size="sm"
-                                        class="flex-1 gap-1.5"
-                                        @click="setMode(m as 'light' | 'dark' | 'system')"
-                                    >
-                                        <component
-                                            :is="icon"
-                                            class="size-3.5"
-                                        />
-                                        {{ t(`theme.${m}`) }}
-                                    </Button>
-                                </div>
-                            </div>
-
                             <!-- Language -->
                             <div class="space-y-2">
                                 <p class="text-sm font-medium">{{ t('onboarding.steps.personalize.language') }}</p>

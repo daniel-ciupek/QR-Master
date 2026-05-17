@@ -139,6 +139,30 @@
     --color-violet-900: oklch(27% 0.11 292);
     --color-violet-950: oklch(18% 0.07 292);
 
+    /* ---- Brand: Cyan / Turquoise ---- */
+    --color-cyan:             oklch(0.72 0.15 200);
+    --color-cyan-foreground:  oklch(0.14 0.02 272);
+    --color-cyan-50:   oklch(0.97 0.03 200);
+    --color-cyan-100:  oklch(0.93 0.06 200);
+    --color-cyan-200:  oklch(0.85 0.10 200);
+    --color-cyan-300:  oklch(0.76 0.14 200);
+    --color-cyan-400:  oklch(0.72 0.15 200);
+    --color-cyan-500:  oklch(0.65 0.15 200);
+    --color-cyan-600:  oklch(0.57 0.14 200);
+    --color-cyan-700:  oklch(0.48 0.12 200);
+
+    /* ---- Brand: Gold / Amber ---- */
+    --color-gold:             oklch(0.78 0.15 85);
+    --color-gold-foreground:  oklch(0.14 0.02 272);
+    --color-gold-50:   oklch(0.98 0.03 85);
+    --color-gold-100:  oklch(0.95 0.06 85);
+    --color-gold-200:  oklch(0.90 0.10 85);
+    --color-gold-300:  oklch(0.85 0.13 85);
+    --color-gold-400:  oklch(0.80 0.15 85);
+    --color-gold-500:  oklch(0.74 0.16 85);
+    --color-gold-600:  oklch(0.65 0.15 85);
+    --color-gold-700:  oklch(0.55 0.13 85);
+
     /* ---- QR-Master brand colors: Status ---- */
     --color-success-50:  oklch(97% 0.03 162);
     --color-success-100: oklch(93% 0.06 162);
@@ -175,64 +199,64 @@
    shadcn-vue CSS variables — light mode
    ============================================================ */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --background:           oklch(0.99 0.006 285);
+    --foreground:           oklch(0.14 0.02 272);
+    --card:                 oklch(1 0 0);
+    --card-foreground:      oklch(0.14 0.02 272);
+    --popover:              oklch(1 0 0);
+    --popover-foreground:   oklch(0.14 0.02 272);
+    --primary:              oklch(0.52 0.27 285);
+    --primary-foreground:   oklch(0.98 0 0);
+    --secondary:            oklch(0.96 0.008 285);
+    --secondary-foreground: oklch(0.14 0.02 272);
+    --muted:                oklch(0.96 0.008 285);
+    --muted-foreground:     oklch(0.50 0.015 272);
+    --accent:               oklch(0.96 0.008 285);
+    --accent-foreground:    oklch(0.14 0.02 272);
+    --destructive:          oklch(0.577 0.245 27.325);
+    --border:               oklch(0.88 0.012 285);
+    --input:                oklch(0.88 0.012 285);
+    --ring:                 oklch(0.52 0.27 285);
+    --sidebar:              oklch(0.97 0.010 285);
+    --sidebar-foreground:   oklch(0.14 0.02 272);
+    --sidebar-primary:      oklch(0.52 0.27 285);
+    --sidebar-primary-foreground: oklch(0.98 0 0);
+    --sidebar-accent:       oklch(0.93 0.012 285);
+    --sidebar-accent-foreground:  oklch(0.14 0.02 272);
+    --sidebar-border:       oklch(0.88 0.012 285);
+    --sidebar-ring:         oklch(0.52 0.27 285);
 }
 
 /* ============================================================
    shadcn-vue CSS variables — dark mode
    ============================================================ */
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --background:           oklch(0.12 0.025 272);
+    --foreground:           oklch(0.96 0.008 280);
+    --card:                 oklch(0.17 0.025 272);
+    --card-foreground:      oklch(0.96 0.008 280);
+    --popover:              oklch(0.17 0.025 272);
+    --popover-foreground:   oklch(0.96 0.008 280);
+    --primary:              oklch(0.66 0.25 285);
+    --primary-foreground:   oklch(0.98 0 0);
+    --secondary:            oklch(0.22 0.025 272);
+    --secondary-foreground: oklch(0.96 0.008 280);
+    --muted:                oklch(0.22 0.025 272);
+    --muted-foreground:     oklch(0.60 0.015 272);
+    --accent:               oklch(0.22 0.025 272);
+    --accent-foreground:    oklch(0.96 0.008 280);
+    --destructive:          oklch(0.65 0.22 25);
+    --border:               oklch(0.28 0.028 272);
+    --input:                oklch(0.28 0.028 272);
+    --ring:                 oklch(0.66 0.25 285);
+    --sidebar:              oklch(0.10 0.030 272);
+    --sidebar-foreground:   oklch(0.96 0.008 280);
+    --sidebar-primary:      oklch(0.66 0.25 285);
+    --sidebar-primary-foreground: oklch(0.98 0 0);
+    --sidebar-accent:       oklch(0.18 0.028 272);
+    --sidebar-accent-foreground:  oklch(0.96 0.008 280);
+    --sidebar-border:       oklch(0.22 0.028 272);
+    --sidebar-ring:         oklch(0.66 0.25 285);
 }
 
 /* ============================================================
