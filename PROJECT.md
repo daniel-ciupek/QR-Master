@@ -318,7 +318,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### Etap 12: Multi-tenancy, White-label, Enterprise Compliance
+### ✅ Etap 12: Multi-tenancy, White-label, Enterprise Compliance *(ukończony 2026-05-17)*
 
 *Cel: Sprzedaż Enterprise — duże firmy, RODO-ready, audyty.*
 
@@ -343,6 +343,19 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 > 🔔 **CODE REVIEW CHECKPOINT — po Stage 12 (OBOWIĄZKOWY przed produkcją)**
 > Uruchom: `/review-full` — pełny przegląd całego projektu 0–12
 > To jest ostatni gate przed deploymentem produkcyjnym. Napraw WSZYSTKIE BLOKERY i WYSOKIE PRIORYTETY.
+
+---
+
+### ✅ Etap 13: Dashboard, Global Analytics i Demo Data *(ukończony 2026-05-17)*
+
+*Cel: Dokończenie UI — pełny dashboard z danymi, globalna analityka, bogaty seeder demo.*
+
+- [x] **13.1** `DashboardController` + `Dashboard.vue` z widgetami (stat cards, ApexCharts area chart, top QR, recent QR, plan usage, quick actions, empty state)
+- [x] **13.2** `GlobalAnalyticsController` + `Analytics/Index.vue` (aggregate scans, timeline, top QR codes, device/country/browser breakdown, range picker 7/30/90d)
+- [x] **13.3** Enable `/analytics` route + usunięcie `disabled` z AppSidebar.vue
+- [x] **13.4** DemoSeeder enrichment: plan_tier na userach, ~600 ScanLogs z realistycznym rozkładem (kraje/device/browser/godziny), WiFi+vCard+Geo+Calendar QR, Team "Acme Corp" z 3 członkami, BioLink z 4 itemami, ~1338 StatusChecks + 1 StatusIncident
+
+**Kryterium ukończenia:** Po `php artisan migrate:fresh --seed` dashboard pokazuje wykresy z danymi, analityka ma pełny widok aggregate, status page ma historię z 90 dni, workspace "Acme Corp" działa z członkami.
 
 ---
 
