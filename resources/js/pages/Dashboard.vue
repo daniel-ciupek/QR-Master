@@ -427,7 +427,7 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                                 class="w-full justify-start"
                                 as-child
                             >
-                                <Link :href="r('qr.import.show')">
+                                <Link :href="r('qr.import')">
                                     <Upload class="mr-2 size-4" />
                                     {{ t('dashboard.quickActions.importCsv') }}
                                 </Link>
