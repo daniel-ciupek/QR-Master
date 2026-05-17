@@ -25,22 +25,47 @@ final class ScimAuthenticate
             return $this->unauthorized();
         }
 
-        $settings = $team->settings ?? [];
-        $storedHash = $settings['scim_token_hash'] ?? null;
+        $bearer = $request->bearerToken();
 
-        if (! is_string($storedHash) || $storedHash === '') {
+        if ($bearer === null) {
             return $this->unauthorized();
         }
 
-        $bearer = $request->bearerToken();
-
-        if ($bearer === null || ! hash_equals($storedHash, hash('sha256', $bearer))) {
+        if (! $this->tokenValid($team, $bearer)) {
             return $this->unauthorized();
         }
 
         $request->attributes->set('scim_team', $team);
 
         return $next($request);
+    }
+
+    private function tokenValid(Team $team, string $bearer): bool
+    {
+        $settings = $team->settings ?? [];
+        $incomingHash = hash('sha256', $bearer);
+
+        // New format: list of tokens
+        $tokens = $settings['scim_tokens'] ?? null;
+        if (is_array($tokens) && $tokens !== []) {
+            foreach ($tokens as $token) {
+                if (is_array($token) && isset($token['hash']) && is_string($token['hash'])) {
+                    if (hash_equals($token['hash'], $incomingHash)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        // Legacy format: single scim_token_hash
+        $legacyHash = $settings['scim_token_hash'] ?? null;
+        if (is_string($legacyHash) && $legacyHash !== '') {
+            return hash_equals($legacyHash, $incomingHash);
+        }
+
+        return false;
     }
 
     private function unauthorized(): Response

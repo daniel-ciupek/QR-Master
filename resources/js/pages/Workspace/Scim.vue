@@ -1,25 +1,36 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3'
-import { ArrowLeft, Check, Copy, RefreshCw, Server, Trash2 } from 'lucide-vue-next'
+import { Head, useForm, router } from '@inertiajs/vue3'
+import { ArrowLeft, Check, Copy, Plus, Server, Trash2 } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import AppLayout from '@/layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
 
 const { t } = useI18n()
 
+interface ScimToken {
+    id: string
+    name: string
+    created_at: string
+}
+
 const props = defineProps<{
     team: { id: number; name: string; slug: string }
-    hasToken: boolean
+    tokens: ScimToken[]
     newToken: string | null
     scimBaseUrl: string
+    maxTokens: number
 }>()
 
 const copied = ref(false)
-const confirmRevoke = ref(false)
+const confirmRevokeId = ref<string | null>(null)
+
+const generateForm = useForm({ name: '' })
 
 function copyToken(): void {
     if (props.newToken) {
@@ -35,12 +46,15 @@ function copyUrl(url: string): void {
 }
 
 function generate(): void {
-    router.post(route('workspaces.scim.generate', { team: props.team.slug }))
+    generateForm.post(route('workspaces.scim.generate', { team: props.team.slug }), {
+        onSuccess: () => { generateForm.reset() },
+    })
 }
 
-function revoke(): void {
+function revoke(tokenId: string): void {
     router.delete(route('workspaces.scim.revoke', { team: props.team.slug }), {
-        onSuccess: () => { confirmRevoke.value = false },
+        data: { token_id: tokenId },
+        onSuccess: () => { confirmRevokeId.value = null },
     })
 }
 
@@ -88,7 +102,12 @@ const endpoints = [
             </p>
             <div class="flex items-center gap-2">
                 <code class="flex-1 overflow-x-auto rounded bg-white/50 px-3 py-2 font-mono text-xs dark:bg-black/20">{{ newToken }}</code>
-                <Button size="icon" variant="ghost" @click="copyToken">
+                <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Copy token"
+                    @click="copyToken"
+                >
                     <Check v-if="copied" class="size-4 text-green-600" />
                     <Copy v-else class="size-4" />
                 </Button>
@@ -100,38 +119,75 @@ const endpoints = [
         <Card>
             <CardHeader>
                 <CardTitle>{{ t('workspace.scim.token_title') }}</CardTitle>
-                <CardDescription>{{ t('workspace.scim.token_desc') }}</CardDescription>
+                <CardDescription>{{ t('workspace.scim.token_desc', { max: maxTokens }) }}</CardDescription>
             </CardHeader>
             <CardContent class="space-y-4">
-                <div class="flex items-center gap-3">
+                <!-- Token list -->
+                <div v-if="tokens.length > 0" class="divide-y rounded-md border">
                     <div
-                        class="size-2.5 rounded-full"
-                        :class="hasToken ? 'bg-green-500' : 'bg-muted'"
-                    />
-                    <span class="text-sm">{{ hasToken ? t('workspace.scim.token_active') : t('workspace.scim.token_none') }}</span>
-                </div>
-
-                <div class="flex gap-3">
-                    <Button @click="generate">
-                        <RefreshCw class="mr-2 size-4" />
-                        {{ hasToken ? t('workspace.scim.token_regenerate') : t('workspace.scim.token_generate') }}
-                    </Button>
-                    <div v-if="hasToken">
-                        <Button
-                            v-if="!confirmRevoke"
-                            variant="outline"
-                            size="default"
-                            @click="confirmRevoke = true"
-                        >
-                            <Trash2 class="mr-2 size-4" />
-                            {{ t('workspace.scim.token_revoke') }}
-                        </Button>
-                        <div v-else class="flex gap-2">
-                            <Button variant="destructive" size="sm" @click="revoke">{{ t('workspace.scim.confirm_revoke') }}</Button>
-                            <Button variant="ghost" size="sm" @click="confirmRevoke = false">{{ t('common.cancel') }}</Button>
+                        v-for="token in tokens"
+                        :key="token.id"
+                        class="flex items-center justify-between px-4 py-3"
+                    >
+                        <div>
+                            <p class="text-sm font-medium">{{ token.name }}</p>
+                            <p class="text-xs text-muted-foreground">
+                                {{ t('workspace.scim.token_table_created') }}: {{ new Date(token.created_at).toLocaleDateString() }}
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <Button
+                                v-if="confirmRevokeId !== token.id"
+                                variant="ghost"
+                                size="sm"
+                                class="text-destructive hover:text-destructive"
+                                @click="confirmRevokeId = token.id"
+                            >
+                                <Trash2 class="mr-1 size-3.5" />
+                                {{ t('workspace.scim.token_revoke') }}
+                            </Button>
+                            <div v-else class="flex gap-2">
+                                <Button variant="destructive" size="sm" @click="revoke(token.id)">
+                                    {{ t('workspace.scim.confirm_revoke') }}
+                                </Button>
+                                <Button variant="ghost" size="sm" @click="confirmRevokeId = null">
+                                    {{ t('common.cancel') }}
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <p v-else class="text-sm text-muted-foreground">{{ t('workspace.scim.token_none') }}</p>
+
+                <!-- Generate new token -->
+                <form
+                    v-if="tokens.length < maxTokens"
+                    class="flex items-end gap-3"
+                    @submit.prevent="generate"
+                >
+                    <div class="flex-1">
+                        <Label for="scim-token-name">{{ t('workspace.scim.token_name') }}</Label>
+                        <Input
+                            id="scim-token-name"
+                            v-model="generateForm.name"
+                            :placeholder="t('workspace.scim.token_name_placeholder')"
+                            maxlength="40"
+                            class="mt-1"
+                        />
+                        <p v-if="generateForm.errors.name" class="mt-1 text-xs text-destructive">
+                            {{ generateForm.errors.name }}
+                        </p>
+                    </div>
+                    <Button type="submit" :disabled="generateForm.processing">
+                        <Plus class="mr-2 size-4" />
+                        {{ t('workspace.scim.token_generate') }}
+                    </Button>
+                </form>
+
+                <p v-else class="text-sm text-muted-foreground">
+                    {{ t('workspace.scim.max_tokens_reached') }}
+                </p>
             </CardContent>
         </Card>
 
@@ -155,6 +211,7 @@ const endpoints = [
                         size="icon"
                         variant="ghost"
                         class="size-7 shrink-0"
+                        :aria-label="`Copy ${ep.label} URL`"
                         @click="copyUrl(scimBaseUrl + ep.path)"
                     >
                         <Copy class="size-3.5" />
