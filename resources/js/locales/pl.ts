@@ -129,7 +129,92 @@ export default {
 
     dashboard: {
         title: 'Dashboard',
-        subtitle: 'Witaj w QR-Master — Etap 1 w budowie.',
+        subtitle: 'Przegląd kodów QR i aktywności skanowania.',
+        stats: {
+            totalQr: 'Wszystkie kody QR',
+            activeQr: 'Aktywne kody',
+            scansMonth: 'Skany w tym miesiącu',
+            expiringQr: 'Wygasające wkrótce',
+            vsLastMonth: 'vs poprzedni miesiąc',
+            in7days: 'w ciągu 7 dni',
+            noChange: 'Brak danych',
+        },
+        chart: {
+            title: 'Aktywność skanowania',
+            subtitle: 'Ostatnie 30 dni',
+            scans: 'Skany',
+            noData: 'Brak danych o skanach',
+        },
+        recentQr: {
+            title: 'Ostatnie kody QR',
+            viewAll: 'Pokaż wszystkie',
+            noQr: 'Brak kodów QR',
+            createFirst: 'Utwórz swój pierwszy kod QR',
+            scans: 'skanów',
+            active: 'Aktywny',
+            inactive: 'Nieaktywny',
+            expired: 'Wygasły',
+        },
+        topQr: {
+            title: 'Najpopularniejsze',
+            scans: 'skanów',
+        },
+        planUsage: {
+            title: 'Wykorzystanie planu',
+            qrCodes: 'Kody QR',
+            scansMonth: 'Skany / Miesiąc',
+            unlimited: 'Bez limitu',
+            upgrade: 'Ulepsz plan',
+            of: 'z',
+        },
+        quickActions: {
+            title: 'Szybkie akcje',
+            createQr: 'Utwórz kod QR',
+            importCsv: 'Importuj CSV',
+            viewAnalytics: 'Analityka',
+        },
+        empty: {
+            title: 'Witaj w QR-Master',
+            description: 'Utwórz swój pierwszy dynamiczny kod QR aby zacząć.',
+            cta: 'Utwórz kod QR',
+        },
+    },
+
+    analytics: {
+        title: 'Analityka',
+        subtitle: 'Zbiorcze statystyki skanowania dla wszystkich Twoich kodów QR.',
+        range: {
+            label: 'Zakres czasowy',
+            days7: 'Ostatnie 7 dni',
+            days30: 'Ostatnie 30 dni',
+            days90: 'Ostatnie 90 dni',
+        },
+        stats: {
+            totalScans: 'Łączne skany',
+            uniqueScans: 'Unikalne skany',
+            avgPerDay: 'Śr. / dzień',
+            trend: 'vs poprzedni okres',
+        },
+        chart: {
+            title: 'Aktywność skanowania',
+            scans: 'Skany',
+            noData: 'Brak danych za ten okres',
+        },
+        topQr: {
+            title: 'Popularne kody QR',
+            code: 'Kod QR',
+            scans: 'Skany',
+            share: 'Udział',
+            noData: 'Brak danych za ten okres',
+        },
+        device: { title: 'Urządzenia' },
+        country: { title: 'Kraje' },
+        browser: { title: 'Przeglądarki' },
+        noData: {
+            title: 'Brak danych analitycznych',
+            description: 'Zacznij skanować kody QR, aby zobaczyć tu statystyki.',
+            cta: 'Przejdź do kodów QR',
+        },
     },
 
     profile: {

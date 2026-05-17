@@ -47,7 +47,7 @@ const initials = user
 const navMain = [
     { titleKey: 'nav.dashboard', href: '/dashboard', icon: LayoutDashboard },
     { titleKey: 'nav.qrCodes', href: '/qr', icon: QrCode },
-    { titleKey: 'nav.analytics', href: '/analytics', icon: BarChart2, disabled: true },
+    { titleKey: 'nav.analytics', href: '/analytics', icon: BarChart2 },
 ]
 
 const navAccount = [
@@ -108,18 +108,13 @@ function isActive(href: string) {
                                 as-child
                                 :is-active="isActive(item.href)"
                                 :tooltip="t(item.titleKey)"
-                                :class="{ 'pointer-events-none opacity-50': item.disabled }"
                             >
-                                <Link :href="item.disabled ? '#' : item.href">
+                                <Link :href="item.href">
                                     <component
                                         :is="item.icon"
                                         class="size-4"
                                     />
                                     <span>{{ t(item.titleKey) }}</span>
-                                    <span
-                                        v-if="item.disabled"
-                                        class="ml-auto text-[10px] text-muted-foreground"
-                                    >{{ t('nav.soon') }}</span>
                                 </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>

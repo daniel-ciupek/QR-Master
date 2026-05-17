@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Affiliate\AffiliateDashboardController;
+use App\Http\Controllers\Analytics\GlobalAnalyticsController;
 use App\Http\Controllers\Api\SuggestPaletteController;
 use App\Http\Controllers\Api\Tokens\ApiTokenController;
 use App\Http\Controllers\Auth\SsoAuthController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\BioLink\BioLinkPublicController;
 use App\Http\Controllers\BotChallengeController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CustomDomainController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\Profile\PasskeysController;
@@ -66,7 +68,6 @@ use App\Http\Middleware\CheckBotSuspicion;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 use Symfony\Component\Yaml\Yaml;
 
 Route::get('/', function () {
@@ -158,9 +159,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/onboarding', [OnboardingController::class, 'show'])->name('onboarding');
     Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
 
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/analytics', GlobalAnalyticsController::class)->name('analytics');
 
     Route::prefix('qr')->name('qr.')->group(function () {
         Route::get('/', [QrCodeController::class, 'index'])->name('index');

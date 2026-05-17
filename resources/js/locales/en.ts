@@ -129,7 +129,92 @@ export default {
 
     dashboard: {
         title: 'Dashboard',
-        subtitle: 'Welcome to QR-Master — Stage 1 in progress.',
+        subtitle: 'Overview of your QR codes and scan activity.',
+        stats: {
+            totalQr: 'Total QR Codes',
+            activeQr: 'Active Codes',
+            scansMonth: 'Scans This Month',
+            expiringQr: 'Expiring Soon',
+            vsLastMonth: 'vs last month',
+            in7days: 'in 7 days',
+            noChange: 'No data yet',
+        },
+        chart: {
+            title: 'Scan Activity',
+            subtitle: 'Last 30 days',
+            scans: 'Scans',
+            noData: 'No scan data yet',
+        },
+        recentQr: {
+            title: 'Recent QR Codes',
+            viewAll: 'View all',
+            noQr: 'No QR codes yet',
+            createFirst: 'Create your first QR code',
+            scans: 'scans',
+            active: 'Active',
+            inactive: 'Inactive',
+            expired: 'Expired',
+        },
+        topQr: {
+            title: 'Top Performing',
+            scans: 'scans',
+        },
+        planUsage: {
+            title: 'Plan Usage',
+            qrCodes: 'QR Codes',
+            scansMonth: 'Scans / Month',
+            unlimited: 'Unlimited',
+            upgrade: 'Upgrade Plan',
+            of: 'of',
+        },
+        quickActions: {
+            title: 'Quick Actions',
+            createQr: 'Create QR Code',
+            importCsv: 'Import CSV',
+            viewAnalytics: 'View Analytics',
+        },
+        empty: {
+            title: 'Welcome to QR-Master',
+            description: 'Create your first dynamic QR code to get started.',
+            cta: 'Create QR Code',
+        },
+    },
+
+    analytics: {
+        title: 'Analytics',
+        subtitle: 'Aggregate scan statistics across all your QR codes.',
+        range: {
+            label: 'Time range',
+            days7: 'Last 7 days',
+            days30: 'Last 30 days',
+            days90: 'Last 90 days',
+        },
+        stats: {
+            totalScans: 'Total Scans',
+            uniqueScans: 'Unique Scans',
+            avgPerDay: 'Avg / Day',
+            trend: 'vs previous period',
+        },
+        chart: {
+            title: 'Scan Timeline',
+            scans: 'Scans',
+            noData: 'No scan data for this period',
+        },
+        topQr: {
+            title: 'Top QR Codes',
+            code: 'QR Code',
+            scans: 'Scans',
+            share: 'Share',
+            noData: 'No data for this period',
+        },
+        device: { title: 'Devices' },
+        country: { title: 'Countries' },
+        browser: { title: 'Browsers' },
+        noData: {
+            title: 'No scan data yet',
+            description: 'Start scanning your QR codes to see analytics here.',
+            cta: 'Go to QR Codes',
+        },
     },
 
     profile: {
