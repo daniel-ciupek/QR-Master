@@ -327,7 +327,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **12.3** Invitations + email + akceptacja
 - [x] **12.4** Per-team billing (jeden Stripe customer per workspace)
 - [x] **12.5** **White-label** — workspace ma własne logo, kolory, custom domain → user widzi „Powered by [BrandX]" zamiast QR-Master
-- [ ] **12.6** **DPA Generator** (Data Processing Agreement) — wygenerowany PDF z danymi klienta dla compliance
+- [x] **12.6** **DPA Generator** (Data Processing Agreement) — wygenerowany PDF z danymi klienta dla compliance
 - [ ] **12.7** **Compliance Dashboard** (Enterprise) — status RODO, lista przetwarzanych danych, last audit, cookie consent stats
 - [ ] **12.8** **Audit raporty** — eksport pełnego activity log dla auditora (kto co zrobił kiedy)
 - [ ] **12.9** **SSO** — SAML 2.0 / OAuth 2.0 (Google Workspace, Microsoft 365, Okta)

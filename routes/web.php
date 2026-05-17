@@ -43,6 +43,7 @@ use App\Http\Controllers\QrCode\RedirectRuleController;
 use App\Http\Controllers\QrPasswordController;
 use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
+use App\Http\Controllers\Team\DpaController;
 use App\Http\Controllers\Team\TeamBillingController;
 use App\Http\Controllers\Team\TeamBrandingController;
 use App\Http\Controllers\Team\TeamController;
@@ -291,6 +292,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{team}/invitations', [TeamInvitationController::class, 'store'])->name('invitations.store');
         Route::delete('/{team}/invitations/{invitation}', [TeamInvitationController::class, 'destroy'])->name('invitations.destroy');
         Route::post('/invitations/{token}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
+        // DPA Generator (12.6)
+        Route::get('/{team}/dpa', [DpaController::class, 'show'])->name('dpa.show');
+        Route::post('/{team}/dpa', [DpaController::class, 'generate'])->name('dpa.generate');
         // Branding / White-label (12.5)
         Route::get('/{team}/branding', [TeamBrandingController::class, 'show'])->name('branding.show');
         Route::post('/{team}/branding', [TeamBrandingController::class, 'update'])->name('branding.update');
