@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $id
  * @property int $user_id
+ * @property int|null $team_id
  * @property string $domain
  * @property string $status
  * @property string $verification_token
@@ -23,6 +24,7 @@ final class CustomDomain extends Model
 {
     protected $fillable = [
         'user_id',
+        'team_id',
         'domain',
         'status',
         'verification_token',
@@ -42,6 +44,12 @@ final class CustomDomain extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** @return BelongsTo<Team, $this> */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
     }
 
     public function isVerified(): bool

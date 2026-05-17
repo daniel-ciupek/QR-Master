@@ -45,6 +45,7 @@ class HandleInertiaRequests extends Middleware
                 'name' => $currentTeam->name,
                 'slug' => $currentTeam->slug,
             ] : null,
+            'branding' => $currentTeam ? $currentTeam->brandingSettings() : null,
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),

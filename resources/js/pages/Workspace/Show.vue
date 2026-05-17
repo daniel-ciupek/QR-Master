@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3'
-import { ChevronDown, CreditCard, Crown, Eye, LogOut, Mail, Pencil, Shield, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-vue-next'
+import { ChevronDown, CreditCard, Crown, Eye, LogOut, Mail, Paintbrush, Pencil, Shield, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Badge } from '@/components/ui/badge'
@@ -120,6 +120,10 @@ function deleteWorkspace(): void {
 
 function goToBilling(): void {
     router.visit(route('workspaces.billing.show', { team: props.team.slug }))
+}
+
+function goToBranding(): void {
+    router.visit(route('workspaces.branding.show', { team: props.team.slug }))
 }
 
 function roleIcon(role: string): typeof Crown {
@@ -357,6 +361,23 @@ function canRemoveMember(member: Member): boolean {
                         </TableRow>
                     </TableBody>
                 </Table>
+            </CardContent>
+        </Card>
+
+        <!-- Branding / White-label -->
+        <Card v-if="team.isOwner || team.myRole === 'admin'">
+            <CardHeader>
+                <CardTitle class="flex items-center gap-2">
+                    <Paintbrush class="size-4" />
+                    {{ t('workspace.branding.title') }}
+                </CardTitle>
+                <CardDescription>{{ t('workspace.branding.desc') }}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button variant="outline" @click="goToBranding">
+                    <Paintbrush class="mr-2 h-4 w-4" />
+                    {{ t('workspace.branding.manage') }}
+                </Button>
             </CardContent>
         </Card>
 

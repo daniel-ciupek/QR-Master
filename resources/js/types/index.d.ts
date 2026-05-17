@@ -11,10 +11,19 @@ export interface AuthUser {
     two_factor_confirmed_at: string | null
 }
 
+export interface Branding {
+    brand_name: string | null
+    primary_color: string | null
+    powered_by_hidden: boolean
+    logo_url: string | null
+}
+
 export interface SharedData {
     auth: {
         user: AuthUser | null
     }
+    current_team: { id: number; name: string; slug: string } | null
+    branding: Branding | null
     flash: {
         success?: string | null
         error?: string | null

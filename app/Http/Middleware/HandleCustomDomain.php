@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Models\CustomDomain;
+use App\Models\Team;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,6 +40,15 @@ final class HandleCustomDomain
 
         $request->attributes->set('custom_domain', $domain);
         $request->attributes->set('custom_domain_user_id', $domain->user_id);
+
+        if ($domain->team_id !== null) {
+            $team = Team::find($domain->team_id);
+
+            if ($team !== null) {
+                app()->instance('current.team', $team);
+                $request->attributes->set('current_team', $team);
+            }
+        }
 
         return $next($request);
     }

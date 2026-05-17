@@ -38,6 +38,7 @@ import type { PageProps } from '@/types'
 const { t } = useI18n()
 const page = usePage<PageProps>()
 const user = page.props.auth.user
+const branding = page.props.branding
 
 const initials = user
     ? user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
@@ -72,11 +73,20 @@ function isActive(href: string) {
                         class="data-[state=open]:bg-sidebar-accent"
                     >
                         <Link href="/dashboard">
-                            <div class="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                                <QrCode class="size-4" />
+                            <div class="flex aspect-square size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary text-primary-foreground">
+                                <img
+                                    v-if="branding?.logo_url"
+                                    :src="branding.logo_url"
+                                    alt="logo"
+                                    class="size-full object-contain"
+                                >
+                                <QrCode
+                                    v-else
+                                    class="size-4"
+                                />
                             </div>
                             <div class="grid flex-1 text-left text-sm leading-tight">
-                                <span class="truncate font-semibold">{{ t('app.name') }}</span>
+                                <span class="truncate font-semibold">{{ branding?.brand_name || t('app.name') }}</span>
                                 <span class="truncate text-xs text-muted-foreground">{{ t('app.tagline') }}</span>
                             </div>
                         </Link>
