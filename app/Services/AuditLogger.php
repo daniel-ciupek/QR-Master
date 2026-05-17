@@ -46,7 +46,7 @@ final class AuditLogger
                 return null;
             }
 
-            $salt = (string) config('app.key');
+            $salt = (string) config('app.ip_hash_salt', config('app.key'));
 
             return hash_hmac('sha256', $ip, $salt);
         } catch (\Throwable) {

@@ -32,7 +32,7 @@ final class SsoConnectionController extends Controller
                 'id' => $connection->id,
                 'provider' => $connection->provider,
                 'email_domain' => $connection->email_domain,
-                'client_id' => $connection->client_id,
+                'has_client_id' => $connection->client_id !== '',
                 'tenant_id' => $connection->tenant_id,
                 'okta_domain' => $connection->okta_domain,
                 'is_active' => $connection->is_active,
@@ -45,20 +45,24 @@ final class SsoConnectionController extends Controller
     {
         Gate::authorize('manageBilling', $team);
 
+        $existing = SsoConnection::where('team_id', $team->id)->first();
+
         $validated = $request->validate([
             'provider' => ['required', 'in:'.implode(',', self::PROVIDERS)],
             'email_domain' => ['required', 'string', 'max:253', 'regex:/^[a-z0-9]([a-z0-9\-]{0,61}[a-z0-9])?(\.[a-z]{2,})+$/i'],
-            'client_id' => ['required', 'string', 'max:500'],
-            'client_secret' => ['required', 'string', 'max:500'],
+            'client_id' => [$existing ? 'nullable' : 'required', 'string', 'max:500'],
+            'client_secret' => [$existing ? 'nullable' : 'required', 'string', 'max:500'],
             'tenant_id' => ['nullable', 'string', 'max:253'],
             'okta_domain' => ['nullable', 'string', 'max:253'],
             'is_active' => ['boolean'],
             'auto_provision' => ['boolean'],
         ]);
 
+        $payload = array_filter($validated, fn ($v) => $v !== null);
+
         SsoConnection::updateOrCreate(
             ['team_id' => $team->id],
-            [...$validated, 'team_id' => $team->id],
+            [...$payload, 'team_id' => $team->id],
         );
 
         /** @var User $actor */

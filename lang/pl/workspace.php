@@ -158,6 +158,7 @@ return [
         'email_domain_hint' => 'Użytkownicy z tą domeną email będą przekierowani do logowania SSO.',
         'client_id' => 'Client ID / Application ID',
         'client_id_placeholder' => 'np. 12345678-1234-...',
+        'client_id_placeholder_update' => 'Pozostaw puste, aby zachować obecny Client ID',
         'client_secret' => 'Client Secret',
         'client_secret_placeholder' => 'Wprowadź client secret',
         'client_secret_placeholder_update' => 'Pozostaw puste, aby zachować obecny secret',

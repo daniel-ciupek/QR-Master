@@ -158,6 +158,7 @@ return [
         'email_domain_hint' => 'Users with this email domain will be redirected to SSO login.',
         'client_id' => 'Client ID / Application ID',
         'client_id_placeholder' => 'e.g. 12345678-1234-...',
+        'client_id_placeholder_update' => 'Leave blank to keep existing client ID',
         'client_secret' => 'Client Secret',
         'client_secret_placeholder' => 'Enter client secret',
         'client_secret_placeholder_update' => 'Leave blank to keep existing secret',

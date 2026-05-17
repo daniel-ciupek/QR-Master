@@ -17,7 +17,7 @@ interface SsoConn {
     id: number
     provider: string
     email_domain: string
-    client_id: string
+    has_client_id: boolean
     tenant_id: string | null
     okta_domain: string | null
     is_active: boolean
@@ -33,7 +33,7 @@ const props = defineProps<{
 const form = useForm({
     provider: props.connection?.provider ?? 'google',
     email_domain: props.connection?.email_domain ?? '',
-    client_id: props.connection?.client_id ?? '',
+    client_id: '',
     client_secret: '',
     tenant_id: props.connection?.tenant_id ?? '',
     okta_domain: props.connection?.okta_domain ?? '',
@@ -150,7 +150,11 @@ function goBack(): void {
                 <!-- Client ID -->
                 <div class="space-y-2">
                     <Label for="client-id">{{ t('workspace.sso.client_id') }}</Label>
-                    <Input id="client-id" v-model="form.client_id" :placeholder="t('workspace.sso.client_id_placeholder')" />
+                    <Input
+                        id="client-id"
+                        v-model="form.client_id"
+                        :placeholder="connection?.has_client_id ? t('workspace.sso.client_id_placeholder_update') : t('workspace.sso.client_id_placeholder')"
+                    />
                     <p v-if="form.errors.client_id" class="text-sm text-destructive">{{ form.errors.client_id }}</p>
                 </div>
 
