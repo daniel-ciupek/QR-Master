@@ -13,7 +13,7 @@ final class StoreQrCodeApiRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->tokenCan('qrcodes:write') ?? false;
+        return true; // ability check is in the controller (abort_unless tokenCan)
     }
 
     /** @return array<string, mixed> */

@@ -94,6 +94,8 @@ final class QrCodeController extends Controller
         SyncQrCodeTagsAction $syncTags,
         QrContentBuilderService $builder,
     ): JsonResponse {
+        abort_unless((bool) $request->user()?->tokenCan('qrcodes:write'), 403, 'Missing ability: qrcodes:write');
+
         /** @var User $user */
         $user = $request->user();
         $validated = $request->validated();
@@ -191,6 +193,7 @@ final class QrCodeController extends Controller
         UpdateQrCodeAction $action,
         SyncQrCodeTagsAction $syncTags,
     ): QrCodeResource {
+        abort_unless((bool) $request->user()?->tokenCan('qrcodes:write'), 403, 'Missing ability: qrcodes:write');
         Gate::authorize('update', $qrCode);
 
         $validated = $request->validated();

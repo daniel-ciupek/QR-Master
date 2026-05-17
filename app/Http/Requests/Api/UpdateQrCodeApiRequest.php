@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Api;
 
-use App\Models\QrCode;
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -13,16 +11,7 @@ final class UpdateQrCodeApiRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        if (! ($this->user()?->tokenCan('qrcodes:write') ?? false)) {
-            return false;
-        }
-
-        /** @var User $user */
-        $user = $this->user();
-        /** @var QrCode $qrCode */
-        $qrCode = $this->route('qrCode');
-
-        return $user->id === $qrCode->user_id;
+        return true; // ability + ownership checks are in the controller
     }
 
     /** @return array<string, mixed> */
