@@ -71,7 +71,14 @@ final class StatusPageController extends Controller
         // Query 3: 90-day daily history for all services at once
         $historyRows = StatusCheck::whereIn('service', $serviceKeys)
             ->where('checked_at', '>=', $since90->copy()->startOfDay())
-            ->selectRaw('service, DATE(checked_at) as day, MIN(status) as worst')
+            ->selectRaw(
+                "service, DATE(checked_at) as day,
+                CASE
+                    WHEN MAX(CASE WHEN status = 'outage' THEN 1 ELSE 0 END) > 0 THEN 'outage'
+                    WHEN MAX(CASE WHEN status = 'degraded' THEN 1 ELSE 0 END) > 0 THEN 'degraded'
+                    ELSE 'operational'
+                END as worst"
+            )
             ->groupByRaw('service, DATE(checked_at)')
             ->get();
 

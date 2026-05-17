@@ -12,7 +12,10 @@ final class LogAuditEventJob implements ShouldQueue
 {
     use Queueable;
 
-    public int $tries = 1;
+    public int $tries = 3;
+
+    /** @var list<int> */
+    public array $backoff = [10, 60];
 
     public bool $failOnTimeout = true;
 

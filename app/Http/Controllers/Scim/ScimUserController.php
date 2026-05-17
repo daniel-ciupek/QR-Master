@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\AuditLogger;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -219,13 +220,35 @@ final class ScimUserController extends Controller
                 $this->updateNamePart($user, $path, (string) $value);
                 break;
             case 'userName':
-                $user->update(['email' => strtolower((string) $value)]);
+                $this->updateScimEmail($user, (string) $value);
                 break;
             case 'emails':
-                if (is_array($value) && isset($value[0]['value'])) {
-                    $user->update(['email' => strtolower((string) $value[0]['value'])]);
+                $emailValue = is_array($value) && isset($value[0]['value'])
+                    ? (string) $value[0]['value']
+                    : null;
+                if ($emailValue !== null && $emailValue !== '') {
+                    $this->updateScimEmail($user, $emailValue);
                 }
                 break;
+        }
+    }
+
+    private function updateScimEmail(User $user, string $raw): void
+    {
+        $email = strtolower(trim($raw));
+
+        if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return;
+        }
+
+        if (User::where('email', $email)->where('id', '!=', $user->id)->exists()) {
+            return;
+        }
+
+        try {
+            $user->update(['email' => $email]);
+        } catch (QueryException) {
+            // unique constraint race — silently skip (IdP will re-sync)
         }
     }
 
