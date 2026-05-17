@@ -120,10 +120,12 @@ function goBack(): void {
                         <label
                             v-for="p in providers"
                             :key="p"
+                            :for="`provider-${p}`"
                             class="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors"
                             :class="form.provider === p ? 'border-primary bg-primary/5' : 'border-input hover:bg-muted/50'"
                         >
                             <input
+                                :id="`provider-${p}`"
                                 v-model="form.provider"
                                 type="radio"
                                 :value="p"

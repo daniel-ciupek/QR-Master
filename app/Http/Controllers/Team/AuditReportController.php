@@ -8,10 +8,10 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Team;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class AuditReportController extends Controller
 {
@@ -62,7 +62,7 @@ final class AuditReportController extends Controller
         ]);
     }
 
-    public function export(Request $request, Team $team): Response
+    public function export(Request $request, Team $team): StreamedResponse
     {
         Gate::authorize('update', $team);
 
@@ -82,26 +82,31 @@ final class AuditReportController extends Controller
             $query->whereDate('created_at', '<=', $request->string('to')->toString());
         }
 
-        $logs = $query->limit(10_000)->get();
-
-        $csv = "Date,User,Email,Action,Description,Subject\n";
-
-        foreach ($logs as $log) {
-            $csv .= implode(',', [
-                '"'.$log->created_at->toIso8601String().'"',
-                '"'.($log->user !== null ? $log->user->name : 'System').'"',
-                '"'.($log->user !== null ? $log->user->email : '').'"',
-                '"'.$log->action.'"',
-                '"'.str_replace('"', '""', $log->description).'"',
-                '"'.($log->subject_type ? $log->subject_type.'#'.$log->subject_id : '').'"',
-            ])."\n";
-        }
-
         $filename = 'audit-log-'.$team->slug.'-'.now()->format('Y-m-d').'.csv';
 
-        return response($csv, 200, [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
-        ]);
+        return response()->streamDownload(function () use ($query): void {
+            $handle = fopen('php://output', 'w');
+
+            if ($handle === false) {
+                return;
+            }
+
+            fputcsv($handle, ['Date', 'User', 'Email', 'Action', 'Description', 'Subject']);
+
+            $query->chunk(500, function ($logs) use ($handle): void {
+                foreach ($logs as $log) {
+                    fputcsv($handle, [
+                        $log->created_at->toIso8601String(),
+                        $log->user !== null ? $log->user->name : 'System',
+                        $log->user !== null ? $log->user->email : '',
+                        $log->action,
+                        $log->description,
+                        $log->subject_type ? $log->subject_type.'#'.$log->subject_id : '',
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 }

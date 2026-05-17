@@ -36,7 +36,7 @@ Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'plan.feature:
 });
 
 // SCIM v2 — auto-provisioning (Bearer token per-team, no Sanctum)
-Route::prefix('scim/v2/{teamSlug}')->name('scim.')->middleware(['scim.auth', 'throttle:60,1'])->group(function () {
+Route::prefix('scim/v2/{teamSlug}')->name('scim.')->middleware(['scim.auth', 'throttle:scim'])->group(function () {
     Route::get('ServiceProviderConfig', [ScimConfigController::class, 'serviceProviderConfig'])->name('config');
     Route::get('Schemas', [ScimConfigController::class, 'schemas'])->name('schemas');
     Route::get('Users', [ScimUserController::class, 'index'])->name('users.index');

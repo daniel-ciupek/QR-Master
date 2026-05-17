@@ -51,6 +51,7 @@ function openPortal(): void {
             <Button
                 variant="ghost"
                 size="icon"
+                :aria-label="t('common.back')"
                 @click="goBack"
             >
                 <ArrowLeft class="size-4" />

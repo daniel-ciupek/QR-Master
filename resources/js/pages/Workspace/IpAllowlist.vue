@@ -60,7 +60,12 @@ function goBack(): void {
 
     <div class="mx-auto max-w-2xl space-y-6 p-6">
         <div class="flex items-center gap-3">
-            <Button variant="ghost" size="icon" @click="goBack">
+            <Button
+                variant="ghost"
+                size="icon"
+                :aria-label="t('common.back')"
+                @click="goBack"
+            >
                 <ArrowLeft class="size-4" />
             </Button>
             <div>
@@ -165,6 +170,7 @@ function goBack(): void {
                             size="icon"
                             variant="ghost"
                             class="size-7 shrink-0 text-muted-foreground hover:text-destructive"
+                            :aria-label="`Remove ${entry}`"
                             @click="removeEntry(entry)"
                         >
                             <Trash2 class="size-3.5" />

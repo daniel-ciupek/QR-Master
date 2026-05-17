@@ -8,6 +8,7 @@ use App\Contracts\GeoLookupInterface;
 use App\Contracts\UserAgentParserInterface;
 use App\Listeners\StartProTrialOnRegistration;
 use App\Models\QrCode;
+use App\Models\Team;
 use App\Observers\QrCodeObserver;
 use App\Services\GeoLookupService;
 use App\Services\UserAgentParserService;
@@ -100,6 +101,14 @@ class AppServiceProvider extends ServiceProvider
             $user = $request->user();
 
             return Limit::perMinute(5)->by($user ? 'webauthn:'.$user->id : $request->ip());
+        });
+
+        // SCIM API — 60 req/min per team (not per IP, since IdPs use varying IPs)
+        RateLimiter::for('scim', function (Request $request) {
+            $team = $request->attributes->get('scim_team');
+            $key = $team instanceof Team ? 'scim:'.$team->id : 'scim:'.$request->ip();
+
+            return Limit::perMinute(60)->by($key);
         });
     }
 }
