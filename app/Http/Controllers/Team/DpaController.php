@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Team;
 use App\Actions\Team\GenerateDpaAction;
 use App\Http\Controllers\Controller;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
@@ -42,6 +43,9 @@ final class DpaController extends Controller
     {
         Gate::authorize('update', $team);
 
+        /** @var User $actor */
+        $actor = $request->user();
+
         /** @var array{
          *   company_name: string,
          *   company_address: string,
@@ -66,7 +70,7 @@ final class DpaController extends Controller
             'agreement_date' => ['required', 'date'],
         ])->validate();
 
-        $pdf = $action->handle($team, $validated);
+        $pdf = $action->handle($team, $validated, $actor);
 
         $filename = 'DPA-'.str_replace(' ', '-', $team->name).'-'.$validated['agreement_date'].'.pdf';
 

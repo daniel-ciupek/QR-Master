@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3'
-import { ChevronDown, CreditCard, Crown, Eye, FileText, LogOut, Mail, Paintbrush, Pencil, Shield, ShieldCheck, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-vue-next'
+import { ChevronDown, ClipboardList, CreditCard, Crown, Eye, FileText, LogOut, Mail, Paintbrush, Pencil, Shield, ShieldCheck, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Badge } from '@/components/ui/badge'
@@ -132,6 +132,10 @@ function goToDpa(): void {
 
 function goToCompliance(): void {
     router.visit(route('workspaces.compliance.show', { team: props.team.slug }))
+}
+
+function goToAudit(): void {
+    router.visit(route('workspaces.audit.show', { team: props.team.slug }))
 }
 
 function roleIcon(role: string): typeof Crown {
@@ -385,6 +389,23 @@ function canRemoveMember(member: Member): boolean {
                 <Button variant="outline" @click="goToBranding">
                     <Paintbrush class="mr-2 h-4 w-4" />
                     {{ t('workspace.branding.manage') }}
+                </Button>
+            </CardContent>
+        </Card>
+
+        <!-- Audit Report -->
+        <Card v-if="team.isOwner || team.myRole === 'admin'">
+            <CardHeader>
+                <CardTitle class="flex items-center gap-2">
+                    <ClipboardList class="size-4" />
+                    {{ t('workspace.audit.title') }}
+                </CardTitle>
+                <CardDescription>{{ t('workspace.audit.desc') }}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button variant="outline" @click="goToAudit">
+                    <ClipboardList class="mr-2 h-4 w-4" />
+                    {{ t('workspace.audit.manage') }}
                 </Button>
             </CardContent>
         </Card>

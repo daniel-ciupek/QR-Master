@@ -43,6 +43,7 @@ use App\Http\Controllers\QrCode\RedirectRuleController;
 use App\Http\Controllers\QrPasswordController;
 use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
+use App\Http\Controllers\Team\AuditReportController;
 use App\Http\Controllers\Team\ComplianceDashboardController;
 use App\Http\Controllers\Team\DpaController;
 use App\Http\Controllers\Team\TeamBillingController;
@@ -293,6 +294,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{team}/invitations', [TeamInvitationController::class, 'store'])->name('invitations.store');
         Route::delete('/{team}/invitations/{invitation}', [TeamInvitationController::class, 'destroy'])->name('invitations.destroy');
         Route::post('/invitations/{token}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
+        // Audit Report (12.8)
+        Route::get('/{team}/audit', [AuditReportController::class, 'show'])->name('audit.show');
+        Route::get('/{team}/audit/export', [AuditReportController::class, 'export'])->name('audit.export');
         // Compliance Dashboard (12.7)
         Route::get('/{team}/compliance', [ComplianceDashboardController::class, 'show'])->name('compliance.show');
         Route::post('/{team}/compliance/audit', [ComplianceDashboardController::class, 'markAudited'])->name('compliance.audit');

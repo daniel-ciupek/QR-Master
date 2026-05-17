@@ -7,6 +7,7 @@ namespace App\Actions\Team;
 use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\AuditLogger;
 use Illuminate\Validation\ValidationException;
 
 final class UpdateTeamMemberRoleAction
@@ -37,5 +38,7 @@ final class UpdateTeamMemberRoleAction
         }
 
         $team->members()->updateExistingPivot($target->id, ['role' => $newRole->value]);
+
+        AuditLogger::log($team, 'member.role_changed', "{$actor->name} changed {$target->name}'s role to {$newRole->value}.", $actor, $target, ['new_role' => $newRole->value]);
     }
 }

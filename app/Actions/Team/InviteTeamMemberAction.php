@@ -9,6 +9,7 @@ use App\Models\Team;
 use App\Models\TeamInvitation;
 use App\Models\User;
 use App\Notifications\Team\TeamInvitationNotification;
+use App\Services\AuditLogger;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -46,6 +47,8 @@ final class InviteTeamMemberAction
 
         Notification::route('mail', $invitation->email)
             ->notify(new TeamInvitationNotification($team, $invitedBy, $invitation->token));
+
+        AuditLogger::log($team, 'member.invited', "Invited {$email} as {$role->value}.", $invitedBy, null, ['email' => $email, 'role' => $role->value]);
 
         return $invitation;
     }

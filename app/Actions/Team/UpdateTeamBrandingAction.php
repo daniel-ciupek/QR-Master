@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Actions\Team;
 
 use App\Models\Team;
+use App\Models\User;
+use App\Services\AuditLogger;
 use Illuminate\Http\UploadedFile;
 
 final class UpdateTeamBrandingAction
@@ -16,7 +18,7 @@ final class UpdateTeamBrandingAction
      *   powered_by_hidden?: bool,
      * } $data
      */
-    public function handle(Team $team, array $data, ?UploadedFile $logo = null, bool $removeLogo = false): void
+    public function handle(Team $team, array $data, ?UploadedFile $logo = null, bool $removeLogo = false, ?User $actor = null): void
     {
         $settings = $team->settings ?? [];
 
@@ -40,5 +42,7 @@ final class UpdateTeamBrandingAction
             $team->addMedia($logo)
                 ->toMediaCollection('brand_logo');
         }
+
+        AuditLogger::log($team, 'branding.updated', 'Workspace branding settings updated.', $actor);
     }
 }

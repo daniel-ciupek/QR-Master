@@ -7,6 +7,7 @@ namespace App\Actions\Team;
 use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\AuditLogger;
 use Illuminate\Validation\ValidationException;
 
 final class RemoveTeamMemberAction
@@ -43,5 +44,11 @@ final class RemoveTeamMemberAction
         }
 
         $team->members()->detach($target->id);
+
+        $desc = $actor->id === $target->id
+            ? "{$target->name} left the workspace."
+            : "{$actor->name} removed {$target->name} from the workspace.";
+
+        AuditLogger::log($team, 'member.removed', $desc, $actor, $target);
     }
 }

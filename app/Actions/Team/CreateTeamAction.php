@@ -8,6 +8,7 @@ use App\Data\Team\CreateTeamData;
 use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\AuditLogger;
 
 final class CreateTeamAction
 {
@@ -27,6 +28,8 @@ final class CreateTeamAction
 
         // Switch user to the new team context
         $owner->update(['current_team_id' => $team->id]);
+
+        AuditLogger::log($team, 'team.created', "Workspace \"{$team->name}\" created.", $owner, $team);
 
         return $team;
     }

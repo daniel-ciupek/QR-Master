@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Team;
 use App\Actions\Team\UpdateTeamBrandingAction;
 use App\Http\Controllers\Controller;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -34,6 +35,9 @@ final class TeamBrandingController extends Controller
     {
         Gate::authorize('update', $team);
 
+        /** @var User $actor */
+        $actor = $request->user();
+
         $validated = Validator::make($request->all(), [
             'brand_name' => ['nullable', 'string', 'max:60'],
             'primary_color' => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
@@ -53,6 +57,7 @@ final class TeamBrandingController extends Controller
             ],
             is_array($logo) ? null : $logo,
             (bool) ($validated['remove_logo'] ?? false),
+            $actor,
         );
 
         return back()->with('success', __('workspace.branding_updated'));
