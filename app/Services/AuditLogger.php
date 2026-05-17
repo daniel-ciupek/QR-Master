@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\AuditLog;
+use App\Jobs\LogAuditEventJob;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -23,30 +23,34 @@ final class AuditLogger
         ?Model $subject = null,
         ?array $metadata = null,
     ): void {
-        $ipHash = null;
+        dispatch(new LogAuditEventJob(
+            teamId: $team->id,
+            action: $action,
+            description: $description,
+            actorId: $actor?->id,
+            subjectType: $subject ? class_basename($subject) : null,
+            subjectId: $subject?->getKey(),
+            ipHash: self::resolveIpHash(),
+            metadata: $metadata,
+        ));
+    }
 
+    private static function resolveIpHash(): ?string
+    {
         try {
             /** @var Request $request */
             $request = app(Request::class);
             $ip = $request->ip();
 
-            if ($ip !== null && $ip !== '127.0.0.1' && $ip !== '::1') {
-                $salt = (string) config('app.key');
-                $ipHash = hash_hmac('sha256', $ip, $salt);
+            if ($ip === null || $ip === '127.0.0.1' || $ip === '::1') {
+                return null;
             }
-        } catch (\Throwable) {
-            // CLI context or test — no IP available
-        }
 
-        AuditLog::create([
-            'team_id' => $team->id,
-            'user_id' => $actor?->id,
-            'action' => $action,
-            'subject_type' => $subject ? class_basename($subject) : null,
-            'subject_id' => $subject?->getKey(),
-            'description' => $description,
-            'metadata' => $metadata,
-            'ip_hash' => $ipHash,
-        ]);
+            $salt = (string) config('app.key');
+
+            return hash_hmac('sha256', $ip, $salt);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }

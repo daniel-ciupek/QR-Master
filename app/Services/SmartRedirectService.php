@@ -19,10 +19,15 @@ final class SmartRedirectService
      */
     public function resolve(QrCode $qrCode, Request $request): ?string
     {
-        $rules = $qrCode->redirectRules()
-            ->where('is_active', true)
-            ->orderBy('priority')
-            ->get();
+        // Cache rules per QR code — avoids DB hit on every scan for popular codes
+        $rules = cache()->remember(
+            "qr_rules:{$qrCode->id}",
+            60,
+            fn () => $qrCode->redirectRules()
+                ->where('is_active', true)
+                ->orderBy('priority')
+                ->get()
+        );
 
         foreach ($rules as $rule) {
             if ($this->evaluateRule($rule, $request)) {
