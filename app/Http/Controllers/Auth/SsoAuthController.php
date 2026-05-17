@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SsoConnection;
 use App\Models\User;
 use App\Services\AuditLogger;
+use App\Support\IpMatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -99,6 +100,15 @@ final class SsoAuthController extends Controller
         }
 
         $team = $connection->team;
+
+        // H-1: enforce IP allowlist — SSO cannot bypass workspace IP restrictions
+        if ($team !== null) {
+            $allowlist = array_values((array) ($team->settings['ip_allowlist'] ?? []));
+            if ($allowlist !== [] && ! IpMatcher::matches($request->ip() ?? '', $allowlist)) {
+                return redirect()->route('login')
+                    ->withErrors(['email' => 'Access denied: your IP address is not permitted for this workspace.']);
+            }
+        }
 
         if ($team !== null && ! $user->belongsToTeam($team)) {
             $team->members()->attach($user->id, [

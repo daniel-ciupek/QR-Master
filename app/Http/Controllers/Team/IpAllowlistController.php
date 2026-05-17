@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Team;
 use App\Http\Controllers\Controller;
 use App\Models\Team;
 use App\Models\User;
+use App\Rules\ValidIpOrCidr;
 use App\Services\AuditLogger;
 use App\Support\IpMatcher;
 use Illuminate\Http\RedirectResponse;
@@ -39,7 +40,7 @@ final class IpAllowlistController extends Controller
         Gate::authorize('manageBilling', $team);
 
         $validated = $request->validate([
-            'entry' => ['required', 'string', 'max:50', 'regex:/^(\d{1,3}\.){3}\d{1,3}(\/\d{1,2})?$|^[0-9a-fA-F:]+(\/(12[0-8]|1[01]\d|\d{1,2}))?$/'],
+            'entry' => ['required', 'string', 'max:45', new ValidIpOrCidr],
         ]);
 
         $entry = trim($validated['entry']);
