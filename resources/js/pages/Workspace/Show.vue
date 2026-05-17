@@ -146,6 +146,10 @@ function goToScim(): void {
     router.visit(route('workspaces.scim.show', { team: props.team.slug }))
 }
 
+function goToIpAllowlist(): void {
+    router.visit(route('workspaces.ip-allowlist.show', { team: props.team.slug }))
+}
+
 function roleIcon(role: string): typeof Crown {
     if (role === 'owner') return Crown
     if (role === 'admin') return Shield
@@ -397,6 +401,23 @@ function canRemoveMember(member: Member): boolean {
                 <Button variant="outline" @click="goToBranding">
                     <Paintbrush class="mr-2 h-4 w-4" />
                     {{ t('workspace.branding.manage') }}
+                </Button>
+            </CardContent>
+        </Card>
+
+        <!-- IP Allowlist -->
+        <Card v-if="team.isOwner">
+            <CardHeader>
+                <CardTitle class="flex items-center gap-2">
+                    <Shield class="size-4" />
+                    {{ t('workspace.ip_allowlist.title') }}
+                </CardTitle>
+                <CardDescription>{{ t('workspace.ip_allowlist.desc') }}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button variant="outline" @click="goToIpAllowlist">
+                    <Shield class="mr-2 h-4 w-4" />
+                    {{ t('workspace.ip_allowlist.manage') }}
                 </Button>
             </CardContent>
         </Card>

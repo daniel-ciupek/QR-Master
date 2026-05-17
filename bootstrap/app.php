@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\EnforceIpAllowlist;
 use App\Http\Middleware\EnsureAiRateLimit;
 use App\Http\Middleware\EnsureOnboardingComplete;
 use App\Http\Middleware\EnsurePlanFeature;
@@ -39,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             EnsureOnboardingComplete::class,
             TrackAffiliateRef::class,
             SetCurrentTeam::class,
+            EnforceIpAllowlist::class,
         ]);
 
         $middleware->alias([

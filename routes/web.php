@@ -47,6 +47,7 @@ use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\Team\AuditReportController;
 use App\Http\Controllers\Team\ComplianceDashboardController;
 use App\Http\Controllers\Team\DpaController;
+use App\Http\Controllers\Team\IpAllowlistController;
 use App\Http\Controllers\Team\ScimTokenController;
 use App\Http\Controllers\Team\SsoConnectionController;
 use App\Http\Controllers\Team\TeamBillingController;
@@ -304,6 +305,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{team}/invitations', [TeamInvitationController::class, 'store'])->name('invitations.store');
         Route::delete('/{team}/invitations/{invitation}', [TeamInvitationController::class, 'destroy'])->name('invitations.destroy');
         Route::post('/invitations/{token}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
+        // IP Allowlisting (12.11)
+        Route::get('/{team}/ip-allowlist', [IpAllowlistController::class, 'show'])->name('ip-allowlist.show');
+        Route::post('/{team}/ip-allowlist', [IpAllowlistController::class, 'store'])->name('ip-allowlist.store');
+        Route::delete('/{team}/ip-allowlist', [IpAllowlistController::class, 'destroy'])->name('ip-allowlist.destroy');
+        Route::delete('/{team}/ip-allowlist/clear', [IpAllowlistController::class, 'clear'])->name('ip-allowlist.clear');
         // SCIM provisioning (12.10)
         Route::get('/{team}/scim', [ScimTokenController::class, 'show'])->name('scim.show');
         Route::post('/{team}/scim/token', [ScimTokenController::class, 'generate'])->name('scim.generate');
