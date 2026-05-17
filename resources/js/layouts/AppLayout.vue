@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { Globe, Search } from 'lucide-vue-next'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { Globe } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import AppSidebar from '@/components/AppSidebar.vue'
 import ChatWidget from '@/components/ChatWidget.vue'
-import CommandPalette from '@/components/CommandPalette.vue'
 import NotificationBell from '@/components/NotificationBell.vue'
 import { Button } from '@/components/ui/button'
 import {
@@ -23,17 +21,6 @@ defineProps<{ title?: string }>()
 const { t } = useI18n()
 const { locale, setLocale } = useLocale()
 
-const commandOpen = ref(false)
-
-function onKeydown(e: KeyboardEvent) {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        commandOpen.value = !commandOpen.value
-    }
-}
-
-onMounted(() => window.addEventListener('keydown', onKeydown))
-onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
@@ -77,19 +64,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                <!-- Cmd+K trigger -->
-                <Button
-                    variant="outline"
-                    size="sm"
-                    class="h-8 gap-2 text-muted-foreground"
-                    @click="commandOpen = true"
-                >
-                    <Search class="size-3.5" />
-                    <span class="hidden text-xs sm:inline">{{ t('ui.search') }}</span>
-                    <kbd class="hidden rounded border bg-muted px-1.5 py-0.5 text-[10px] font-mono sm:inline">
-                        ⌘K
-                    </kbd>
-                </Button>
             </header>
 
             <!-- Page content -->
@@ -99,7 +73,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
         </SidebarInset>
     </SidebarProvider>
 
-    <CommandPalette v-model:open="commandOpen" />
     <ChatWidget />
     <Toaster />
 </template>
