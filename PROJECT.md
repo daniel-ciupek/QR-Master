@@ -331,7 +331,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 - [x] **12.7** **Compliance Dashboard** (Enterprise) — status RODO, lista przetwarzanych danych, last audit, cookie consent stats
 - [x] **12.8** **Audit raporty** — eksport pełnego activity log dla auditora (kto co zrobił kiedy)
 - [x] **12.9** **SSO** — SAML 2.0 / OAuth 2.0 (Google Workspace, Microsoft 365, Okta)
-- [ ] **12.10** **SCIM provisioning** — auto-provisioning userów z IdP
+- [x] **12.10** **SCIM provisioning** — auto-provisioning userów z IdP
 - [ ] **12.11** **IP allowlisting** — workspace może ograniczyć dostęp do konkretnych IP/CIDR
 - [ ] **12.12** **Data residency** — wybór regionu (EU / US) dla zgodności z lokalnymi regulacjami
 - [ ] **12.13** **SLA dashboard** publiczny (status.qr-master.app)

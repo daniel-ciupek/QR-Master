@@ -47,6 +47,7 @@ use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\Team\AuditReportController;
 use App\Http\Controllers\Team\ComplianceDashboardController;
 use App\Http\Controllers\Team\DpaController;
+use App\Http\Controllers\Team\ScimTokenController;
 use App\Http\Controllers\Team\SsoConnectionController;
 use App\Http\Controllers\Team\TeamBillingController;
 use App\Http\Controllers\Team\TeamBrandingController;
@@ -303,6 +304,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{team}/invitations', [TeamInvitationController::class, 'store'])->name('invitations.store');
         Route::delete('/{team}/invitations/{invitation}', [TeamInvitationController::class, 'destroy'])->name('invitations.destroy');
         Route::post('/invitations/{token}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
+        // SCIM provisioning (12.10)
+        Route::get('/{team}/scim', [ScimTokenController::class, 'show'])->name('scim.show');
+        Route::post('/{team}/scim/token', [ScimTokenController::class, 'generate'])->name('scim.generate');
+        Route::delete('/{team}/scim/token', [ScimTokenController::class, 'revoke'])->name('scim.revoke');
         // SSO configuration (12.9)
         Route::get('/{team}/sso', [SsoConnectionController::class, 'show'])->name('sso.show');
         Route::put('/{team}/sso', [SsoConnectionController::class, 'update'])->name('sso.update');

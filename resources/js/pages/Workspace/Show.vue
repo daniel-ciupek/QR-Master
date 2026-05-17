@@ -142,6 +142,10 @@ function goToSso(): void {
     router.visit(route('workspaces.sso.show', { team: props.team.slug }))
 }
 
+function goToScim(): void {
+    router.visit(route('workspaces.scim.show', { team: props.team.slug }))
+}
+
 function roleIcon(role: string): typeof Crown {
     if (role === 'owner') return Crown
     if (role === 'admin') return Shield
@@ -393,6 +397,23 @@ function canRemoveMember(member: Member): boolean {
                 <Button variant="outline" @click="goToBranding">
                     <Paintbrush class="mr-2 h-4 w-4" />
                     {{ t('workspace.branding.manage') }}
+                </Button>
+            </CardContent>
+        </Card>
+
+        <!-- SCIM -->
+        <Card v-if="team.isOwner">
+            <CardHeader>
+                <CardTitle class="flex items-center gap-2">
+                    <Users class="size-4" />
+                    {{ t('workspace.scim.title') }}
+                </CardTitle>
+                <CardDescription>{{ t('workspace.scim.desc') }}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button variant="outline" @click="goToScim">
+                    <Users class="mr-2 h-4 w-4" />
+                    {{ t('workspace.scim.manage') }}
                 </Button>
             </CardContent>
         </Card>

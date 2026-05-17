@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\QrCode\BulkQrCodeController;
 use App\Http\Controllers\Api\QrCode\QrCodeController;
 use App\Http\Controllers\Api\Tag\TagController;
+use App\Http\Controllers\Scim\ScimConfigController;
+use App\Http\Controllers\Scim\ScimUserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,4 +33,16 @@ Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'plan.feature:
     // Folders (Tags)
     Route::get('folders', [TagController::class, 'index'])->name('folders.index');
     Route::post('folders', [TagController::class, 'store'])->name('folders.store');
+});
+
+// SCIM v2 — auto-provisioning (Bearer token per-team, no Sanctum)
+Route::prefix('scim/v2/{teamSlug}')->name('scim.')->middleware(['scim.auth', 'throttle:60,1'])->group(function () {
+    Route::get('ServiceProviderConfig', [ScimConfigController::class, 'serviceProviderConfig'])->name('config');
+    Route::get('Schemas', [ScimConfigController::class, 'schemas'])->name('schemas');
+    Route::get('Users', [ScimUserController::class, 'index'])->name('users.index');
+    Route::post('Users', [ScimUserController::class, 'store'])->name('users.store');
+    Route::get('Users/{userId}', [ScimUserController::class, 'show'])->name('users.show');
+    Route::put('Users/{userId}', [ScimUserController::class, 'update'])->name('users.update');
+    Route::patch('Users/{userId}', [ScimUserController::class, 'update'])->name('users.patch');
+    Route::delete('Users/{userId}', [ScimUserController::class, 'destroy'])->name('users.destroy');
 });

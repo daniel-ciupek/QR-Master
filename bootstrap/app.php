@@ -7,6 +7,7 @@ use App\Http\Middleware\EnsureOnboardingComplete;
 use App\Http\Middleware\EnsurePlanFeature;
 use App\Http\Middleware\HandleCustomDomain;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\ScimAuthenticate;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetCurrentTeam;
 use App\Http\Middleware\SetLocale;
@@ -43,6 +44,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'plan.feature' => EnsurePlanFeature::class,
             'ai.rate-limit' => EnsureAiRateLimit::class,
+            'scim.auth' => ScimAuthenticate::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
