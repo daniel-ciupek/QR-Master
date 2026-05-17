@@ -132,6 +132,8 @@ return [
         'endpoints_title' => 'SCIM Endpoints',
         'endpoints_desc' => 'Use these URLs in your identity provider configuration.',
         'guide_title' => 'Setup Guide',
+        'okta_title' => 'Okta',
+        'azure_title' => 'Microsoft Azure AD',
         'okta_step1' => 'In Okta Admin: Applications → Your App → Provisioning → Enable SCIM',
         'okta_step2' => 'Set SCIM connector base URL to the Base URL shown above',
         'okta_step3' => 'Set HTTP Header Authorization to: Bearer <your-token>',

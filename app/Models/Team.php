@@ -114,6 +114,7 @@ class Team extends Model implements HasMedia
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
+            ->queued()
             ->width(120)
             ->height(120);
     }

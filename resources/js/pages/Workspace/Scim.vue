@@ -227,7 +227,7 @@ const endpoints = [
             </CardHeader>
             <CardContent class="space-y-3 text-sm text-muted-foreground">
                 <div>
-                    <p class="mb-1 font-semibold text-foreground">Okta</p>
+                    <p class="mb-1 font-semibold text-foreground">{{ t('workspace.scim.okta_title') }}</p>
                     <ol class="list-decimal space-y-1 pl-4">
                         <li>{{ t('workspace.scim.okta_step1') }}</li>
                         <li>{{ t('workspace.scim.okta_step2') }}</li>
@@ -235,7 +235,7 @@ const endpoints = [
                     </ol>
                 </div>
                 <div>
-                    <p class="mb-1 font-semibold text-foreground">Microsoft Azure AD</p>
+                    <p class="mb-1 font-semibold text-foreground">{{ t('workspace.scim.azure_title') }}</p>
                     <ol class="list-decimal space-y-1 pl-4">
                         <li>{{ t('workspace.scim.azure_step1') }}</li>
                         <li>{{ t('workspace.scim.azure_step2') }}</li>

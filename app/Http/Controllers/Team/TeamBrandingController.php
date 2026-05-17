@@ -6,12 +6,11 @@ namespace App\Http\Controllers\Team;
 
 use App\Actions\Team\UpdateTeamBrandingAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Team\UpdateTeamBrandingRequest;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -31,20 +30,14 @@ final class TeamBrandingController extends Controller
         ]);
     }
 
-    public function update(Request $request, Team $team, UpdateTeamBrandingAction $action): RedirectResponse
+    public function update(UpdateTeamBrandingRequest $request, Team $team, UpdateTeamBrandingAction $action): RedirectResponse
     {
         Gate::authorize('update', $team);
 
         /** @var User $actor */
         $actor = $request->user();
 
-        $validated = Validator::make($request->all(), [
-            'brand_name' => ['nullable', 'string', 'max:60'],
-            'primary_color' => ['nullable', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'powered_by_hidden' => ['sometimes', 'boolean'],
-            'logo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
-            'remove_logo' => ['sometimes', 'boolean'],
-        ])->validate();
+        $validated = $request->validated();
 
         $logo = $request->hasFile('logo') ? $request->file('logo') : null;
 
