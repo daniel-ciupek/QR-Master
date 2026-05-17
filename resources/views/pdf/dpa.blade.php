@@ -199,6 +199,7 @@
     <div class="doc-subtitle">
         Agreement date: {{ \Carbon\Carbon::parse($controller['agreement_date'])->format('d F Y') }}
         &nbsp;·&nbsp; Reference: DPA-{{ $team->id }}-{{ \Carbon\Carbon::parse($controller['agreement_date'])->format('Ymd') }}
+        &nbsp;·&nbsp; Data Region: {{ strtoupper($team->settings['data_region'] ?? 'EU') }}
     </div>
 </div>
 

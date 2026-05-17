@@ -44,6 +44,8 @@ const props = defineProps<{
         exportAvailable: boolean
         lastAuditAt: string | null
         auditNotes: string | null
+        dataRegion: string
+        dataResidencyConfirmedAt: string | null
     }
     processors: Processor[]
     dataCategories: DataCategory[]
@@ -100,6 +102,16 @@ const statusItems = computed(() => [
         detail: props.status.lastAuditAt
             ? t('workspace.compliance.status_audit_date', { date: props.status.lastAuditAt })
             : t('workspace.compliance.status_audit_missing'),
+    },
+    {
+        key: 'region',
+        label: t('workspace.compliance.status_region'),
+        ok: props.status.dataResidencyConfirmedAt !== null,
+        detail: props.status.dataResidencyConfirmedAt
+            ? t('workspace.compliance.status_region_set', { region: props.status.dataRegion.toUpperCase(), date: props.status.dataResidencyConfirmedAt.slice(0, 10) })
+            : t('workspace.compliance.status_region_missing'),
+        action: () => router.visit(route('workspaces.data-residency.show', { team: props.team.slug })),
+        actionLabel: t('workspace.compliance.set_region'),
     },
 ])
 </script>

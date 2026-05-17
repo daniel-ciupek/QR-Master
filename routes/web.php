@@ -46,6 +46,7 @@ use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\Team\AuditReportController;
 use App\Http\Controllers\Team\ComplianceDashboardController;
+use App\Http\Controllers\Team\DataResidencyController;
 use App\Http\Controllers\Team\DpaController;
 use App\Http\Controllers\Team\IpAllowlistController;
 use App\Http\Controllers\Team\ScimTokenController;
@@ -305,6 +306,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{team}/invitations', [TeamInvitationController::class, 'store'])->name('invitations.store');
         Route::delete('/{team}/invitations/{invitation}', [TeamInvitationController::class, 'destroy'])->name('invitations.destroy');
         Route::post('/invitations/{token}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
+        // Data Residency (12.12)
+        Route::get('/{team}/data-residency', [DataResidencyController::class, 'show'])->name('data-residency.show');
+        Route::put('/{team}/data-residency', [DataResidencyController::class, 'update'])->name('data-residency.update');
         // IP Allowlisting (12.11)
         Route::get('/{team}/ip-allowlist', [IpAllowlistController::class, 'show'])->name('ip-allowlist.show');
         Route::post('/{team}/ip-allowlist', [IpAllowlistController::class, 'store'])->name('ip-allowlist.store');

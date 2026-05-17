@@ -50,6 +50,8 @@ final class ComplianceDashboardController extends Controller
                 'exportAvailable' => true,
                 'lastAuditAt' => $compliance['last_audit_at'] ?? null,
                 'auditNotes' => $compliance['audit_notes'] ?? null,
+                'dataRegion' => $team->settings['data_region'] ?? 'eu',
+                'dataResidencyConfirmedAt' => $team->settings['data_residency_confirmed_at'] ?? null,
             ],
             'processors' => $this->subProcessors(),
             'dataCategories' => $this->dataCategories(),

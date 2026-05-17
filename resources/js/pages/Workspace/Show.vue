@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3'
-import { ChevronDown, ClipboardList, CreditCard, Crown, Eye, FileText, KeyRound, LogOut, Mail, Paintbrush, Pencil, Shield, ShieldCheck, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-vue-next'
+import { ChevronDown, ClipboardList, CreditCard, Crown, Eye, FileText, Globe, KeyRound, LogOut, Mail, Paintbrush, Pencil, Shield, ShieldCheck, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Badge } from '@/components/ui/badge'
@@ -148,6 +148,10 @@ function goToScim(): void {
 
 function goToIpAllowlist(): void {
     router.visit(route('workspaces.ip-allowlist.show', { team: props.team.slug }))
+}
+
+function goToDataResidency(): void {
+    router.visit(route('workspaces.data-residency.show', { team: props.team.slug }))
 }
 
 function roleIcon(role: string): typeof Crown {
@@ -401,6 +405,23 @@ function canRemoveMember(member: Member): boolean {
                 <Button variant="outline" @click="goToBranding">
                     <Paintbrush class="mr-2 h-4 w-4" />
                     {{ t('workspace.branding.manage') }}
+                </Button>
+            </CardContent>
+        </Card>
+
+        <!-- Data Residency -->
+        <Card v-if="team.isOwner">
+            <CardHeader>
+                <CardTitle class="flex items-center gap-2">
+                    <Globe class="size-4" />
+                    {{ t('workspace.data_residency.title') }}
+                </CardTitle>
+                <CardDescription>{{ t('workspace.data_residency.desc') }}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button variant="outline" @click="goToDataResidency">
+                    <Globe class="mr-2 h-4 w-4" />
+                    {{ t('workspace.data_residency.manage') }}
                 </Button>
             </CardContent>
         </Card>
