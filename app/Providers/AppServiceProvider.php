@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Sentry\State\Scope;
+use SocialiteProviders\Azure\AzureExtendSocialite;
+use SocialiteProviders\Manager\SocialiteWasCalled;
+use SocialiteProviders\Okta\OktaExtendSocialite;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -59,6 +62,8 @@ class AppServiceProvider extends ServiceProvider
     private function configureEvents(): void
     {
         Event::listen(Registered::class, StartProTrialOnRegistration::class);
+        Event::listen(SocialiteWasCalled::class, AzureExtendSocialite::class.'@handle');
+        Event::listen(SocialiteWasCalled::class, OktaExtendSocialite::class.'@handle');
     }
 
     private function configureRateLimiters(): void

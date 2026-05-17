@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3'
-import { ChevronDown, ClipboardList, CreditCard, Crown, Eye, FileText, LogOut, Mail, Paintbrush, Pencil, Shield, ShieldCheck, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-vue-next'
+import { ChevronDown, ClipboardList, CreditCard, Crown, Eye, FileText, KeyRound, LogOut, Mail, Paintbrush, Pencil, Shield, ShieldCheck, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Badge } from '@/components/ui/badge'
@@ -136,6 +136,10 @@ function goToCompliance(): void {
 
 function goToAudit(): void {
     router.visit(route('workspaces.audit.show', { team: props.team.slug }))
+}
+
+function goToSso(): void {
+    router.visit(route('workspaces.sso.show', { team: props.team.slug }))
 }
 
 function roleIcon(role: string): typeof Crown {
@@ -389,6 +393,23 @@ function canRemoveMember(member: Member): boolean {
                 <Button variant="outline" @click="goToBranding">
                     <Paintbrush class="mr-2 h-4 w-4" />
                     {{ t('workspace.branding.manage') }}
+                </Button>
+            </CardContent>
+        </Card>
+
+        <!-- SSO -->
+        <Card v-if="team.isOwner">
+            <CardHeader>
+                <CardTitle class="flex items-center gap-2">
+                    <KeyRound class="size-4" />
+                    {{ t('workspace.sso.title') }}
+                </CardTitle>
+                <CardDescription>{{ t('workspace.sso.desc') }}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button variant="outline" @click="goToSso">
+                    <KeyRound class="mr-2 h-4 w-4" />
+                    {{ t('workspace.sso.manage') }}
                 </Button>
             </CardContent>
         </Card>

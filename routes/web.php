@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Affiliate\AffiliateDashboardController;
 use App\Http\Controllers\Api\SuggestPaletteController;
 use App\Http\Controllers\Api\Tokens\ApiTokenController;
+use App\Http\Controllers\Auth\SsoAuthController;
 use App\Http\Controllers\Billing\BillingDashboardController;
 use App\Http\Controllers\Billing\BillingSuccessController;
 use App\Http\Controllers\Billing\CustomerPortalController;
@@ -46,6 +47,7 @@ use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\Team\AuditReportController;
 use App\Http\Controllers\Team\ComplianceDashboardController;
 use App\Http\Controllers\Team\DpaController;
+use App\Http\Controllers\Team\SsoConnectionController;
 use App\Http\Controllers\Team\TeamBillingController;
 use App\Http\Controllers\Team\TeamBrandingController;
 use App\Http\Controllers\Team\TeamController;
@@ -84,6 +86,13 @@ Route::get('/api/openapi.json', function () {
         ->header('Access-Control-Allow-Origin', '*')
         ->header('Cache-Control', 'public, max-age=3600');
 })->name('api.openapi.json')->middleware('throttle:60,1');
+
+// SSO — OAuth flow (public endpoints, no auth required)
+Route::middleware('throttle:30,1')->group(function () {
+    Route::post('/sso/detect', [SsoAuthController::class, 'detect'])->name('sso.detect');
+    Route::get('/sso/{provider}/redirect', [SsoAuthController::class, 'redirect'])->name('sso.redirect');
+    Route::get('/sso/{provider}/callback', [SsoAuthController::class, 'callback'])->name('sso.callback');
+});
 
 // Stripe Webhooks — public, CSRF excluded (verified by Stripe signature)
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
@@ -294,6 +303,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{team}/invitations', [TeamInvitationController::class, 'store'])->name('invitations.store');
         Route::delete('/{team}/invitations/{invitation}', [TeamInvitationController::class, 'destroy'])->name('invitations.destroy');
         Route::post('/invitations/{token}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
+        // SSO configuration (12.9)
+        Route::get('/{team}/sso', [SsoConnectionController::class, 'show'])->name('sso.show');
+        Route::put('/{team}/sso', [SsoConnectionController::class, 'update'])->name('sso.update');
+        Route::delete('/{team}/sso', [SsoConnectionController::class, 'destroy'])->name('sso.destroy');
         // Audit Report (12.8)
         Route::get('/{team}/audit', [AuditReportController::class, 'show'])->name('audit.show');
         Route::get('/{team}/audit/export', [AuditReportController::class, 'export'])->name('audit.export');
