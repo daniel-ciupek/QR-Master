@@ -90,6 +90,11 @@ function actionBadgeClass(action: string): string {
 function formatDate(iso: string): string {
     return new Date(iso).toLocaleString()
 }
+
+function decodeHtml(html: string): string {
+    const doc = new DOMParser().parseFromString(html, 'text/html')
+    return doc.documentElement.textContent ?? html
+}
 </script>
 
 <template>
@@ -228,8 +233,7 @@ function formatDate(iso: string): string {
                             class="min-w-8"
                             @click="goToPage(link.url)"
                         >
-                            <!-- eslint-disable-next-line vue/no-v-html -->
-                            <span v-html="link.label" />
+                            {{ decodeHtml(link.label) }}
                         </Button>
                     </div>
                 </div>

@@ -9,6 +9,7 @@ use App\Models\StatusCheck;
 use App\Models\StatusIncident;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 final class StatusPageController extends Controller
@@ -23,7 +24,7 @@ final class StatusPageController extends Controller
 
     public function __invoke(Request $request): View|JsonResponse
     {
-        $data = $this->buildStatusData();
+        $data = cache()->remember('status:page:data', 60, fn () => $this->buildStatusData());
 
         if ($request->expectsJson()) {
             return response()->json($data);
@@ -35,16 +36,73 @@ final class StatusPageController extends Controller
     /** @return array<string, mixed> */
     private function buildStatusData(): array
     {
+        $serviceKeys = array_keys(self::SERVICES);
+        $since90 = now()->subDays(90);
+        $since30 = now()->subDays(30);
+
+        // Query 1: latest check per service (subquery on MAX(id))
+        /** @var Collection<string, StatusCheck> $latestChecks */
+        $latestChecks = StatusCheck::whereIn('service', $serviceKeys)
+            ->whereIn('id', function ($q) use ($serviceKeys): void {
+                $q->selectRaw('MAX(id)')
+                    ->from('status_checks')
+                    ->whereIn('service', $serviceKeys)
+                    ->groupBy('service');
+            })
+            ->get()
+            ->keyBy('service');
+
+        // Query 2: uptime stats for 90d + 30d in one conditional aggregate
+        /** @var Collection<string, StatusCheck> $stats */
+        $stats = StatusCheck::whereIn('service', $serviceKeys)
+            ->where('checked_at', '>=', $since90)
+            ->selectRaw(
+                "service,
+                COUNT(*) as total_90,
+                SUM(CASE WHEN status = 'operational' THEN 1 ELSE 0 END) as op_90,
+                SUM(CASE WHEN checked_at >= ? THEN 1 ELSE 0 END) as total_30,
+                SUM(CASE WHEN status = 'operational' AND checked_at >= ? THEN 1 ELSE 0 END) as op_30",
+                [$since30, $since30]
+            )
+            ->groupBy('service')
+            ->get()
+            ->keyBy('service');
+
+        // Query 3: 90-day daily history for all services at once
+        $historyRows = StatusCheck::whereIn('service', $serviceKeys)
+            ->where('checked_at', '>=', $since90->copy()->startOfDay())
+            ->selectRaw('service, DATE(checked_at) as day, MIN(status) as worst')
+            ->groupByRaw('service, DATE(checked_at)')
+            ->get();
+
+        /** @var array<string, array<string, string>> $historyByService */
+        $historyByService = [];
+        foreach ($historyRows as $row) {
+            /** @var array{service: string, day: string, worst: string} $attrs */
+            $attrs = $row->getAttributes();
+            $historyByService[$attrs['service']][$attrs['day']] = $attrs['worst'];
+        }
+
         $services = [];
-
         foreach (self::SERVICES as $key => $label) {
-            $latest = StatusCheck::where('service', $key)
-                ->orderByDesc('checked_at')
-                ->first();
+            /** @var StatusCheck|null $latest */
+            $latest = $latestChecks->get($key);
 
-            $uptime90 = StatusCheck::uptimePercent($key, 90);
-            $uptime30 = StatusCheck::uptimePercent($key, 30);
-            $history = StatusCheck::dailyHistory($key, 90);
+            /** @var StatusCheck|null $stat */
+            $stat = $stats->get($key);
+
+            /** @var array<string, mixed>|null $statAttrs */
+            $statAttrs = $stat !== null ? $stat->getAttributes() : null;
+
+            $uptime90 = $this->calcUptime($statAttrs, 'total_90', 'op_90');
+            $uptime30 = $this->calcUptime($statAttrs, 'total_30', 'op_30');
+
+            $indexed = $historyByService[$key] ?? [];
+            $history = [];
+            for ($i = 89; $i >= 0; $i--) {
+                $date = now()->subDays($i)->format('Y-m-d');
+                $history[] = ['date' => $date, 'status' => $indexed[$date] ?? 'no-data'];
+            }
 
             $services[$key] = [
                 'label' => $label,
@@ -59,6 +117,7 @@ final class StatusPageController extends Controller
 
         $overallStatus = $this->overallStatus($services);
 
+        // Query 4: recent incidents
         $incidents = StatusIncident::where('starts_at', '>=', now()->subDays(30))
             ->orderByDesc('starts_at')
             ->limit(10)
@@ -81,6 +140,22 @@ final class StatusPageController extends Controller
             'incidents' => $incidents,
             'generated_at' => now()->toIso8601String(),
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $attrs
+     */
+    private function calcUptime(?array $attrs, string $totalKey, string $opKey): float
+    {
+        if ($attrs === null) {
+            return 100.0;
+        }
+        $total = (int) ($attrs[$totalKey] ?? 0);
+        if ($total === 0) {
+            return 100.0;
+        }
+
+        return round((int) ($attrs[$opKey] ?? 0) / $total * 100, 2);
     }
 
     /** @param array<string, array<string, mixed>> $services */

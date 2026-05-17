@@ -112,6 +112,7 @@ final class SsoAuthController extends Controller
         }
 
         $request->session()->forget(['sso_team_id', 'sso_email_hint']);
+        $request->session()->regenerate();
 
         Auth::login($user, remember: true);
 

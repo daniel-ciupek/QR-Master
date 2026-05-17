@@ -30,21 +30,24 @@ final class ScimUserController extends Controller
             $filter = $request->string('filter')->toString();
             if (preg_match('/userName eq "([^"]+)"/i', $filter, $m)) {
                 $query->where('users.email', $m[1]);
+            } elseif (trim($filter) !== '') {
+                return $this->error(400, 'Unsupported filter. Only "userName eq \\"...\\"" is supported.');
             }
         }
 
         $startIndex = max(1, (int) $request->input('startIndex', 1));
         $count = min(100, max(1, (int) $request->input('count', 100)));
-        $members = $query->get();
-        $total = $members->count();
-        $paged = $members->slice($startIndex - 1, $count);
+
+        $total = (clone $query)->count();
+        $paged = $query->skip($startIndex - 1)->take($count)->get();
 
         return $this->scim([
             'schemas' => [self::SCIM_LIST_SCHEMA],
             'totalResults' => $total,
             'startIndex' => $startIndex,
             'itemsPerPage' => $count,
-            'Resources' => $paged->map(fn (User $u) => $this->userResource($u, $team))->values(),
+            // Users fetched from team->members() are all active members — pass true to avoid N+1 hasMember()
+            'Resources' => $paged->map(fn (User $u) => $this->userResource($u, $team, true))->values(),
         ]);
     }
 
@@ -180,16 +183,73 @@ final class ScimUserController extends Controller
         $path = (string) ($op['path'] ?? '');
         $value = $op['value'] ?? null;
 
-        if ($type === 'replace' && ($path === 'active' || (is_array($value) && isset($value['active'])))) {
-            $activeVal = $path === 'active' ? $value : $value['active'];
-
-            if (! (bool) $activeVal) {
-                $team->members()->detach($user->id);
-                AuditLogger::log($team, 'scim.user.deprovisioned', "SCIM deprovisioned {$user->email}.", null, $user);
-            } elseif (! $team->hasMember($user)) {
-                $team->members()->attach($user->id, ['role' => 'viewer', 'joined_at' => now()]);
-            }
+        if ($type === 'replace' || $type === 'add') {
+            $this->applyScimReplace($user, $team, $path, $value);
+        } elseif ($type === 'remove' && $path === 'active') {
+            $this->setScimActive($user, $team, false);
         }
+    }
+
+    private function applyScimReplace(User $user, Team $team, string $path, mixed $value): void
+    {
+        // No-path replace: value is an object with multiple fields
+        if ($path === '' && is_array($value)) {
+            if (array_key_exists('active', $value)) {
+                $this->setScimActive($user, $team, (bool) $value['active']);
+            }
+            if (isset($value['name']) && is_array($value['name'])) {
+                $name = $this->extractName(['name' => $value['name']]);
+                if ($name !== '') {
+                    $user->update(['name' => $name]);
+                }
+            }
+
+            return;
+        }
+
+        switch ($path) {
+            case 'active':
+                $this->setScimActive($user, $team, (bool) $value);
+                break;
+            case 'name.formatted':
+                $user->update(['name' => (string) $value]);
+                break;
+            case 'name.givenName':
+            case 'name.familyName':
+                $this->updateNamePart($user, $path, (string) $value);
+                break;
+            case 'userName':
+                $user->update(['email' => strtolower((string) $value)]);
+                break;
+            case 'emails':
+                if (is_array($value) && isset($value[0]['value'])) {
+                    $user->update(['email' => strtolower((string) $value[0]['value'])]);
+                }
+                break;
+        }
+    }
+
+    private function setScimActive(User $user, Team $team, bool $active): void
+    {
+        if (! $active) {
+            $team->members()->detach($user->id);
+            AuditLogger::log($team, 'scim.user.deprovisioned', "SCIM deprovisioned {$user->email}.", null, $user);
+        } elseif (! $team->hasMember($user)) {
+            $team->members()->attach($user->id, ['role' => 'viewer', 'joined_at' => now()]);
+        }
+    }
+
+    private function updateNamePart(User $user, string $path, string $newValue): void
+    {
+        [$givenName, $familyName] = $this->splitName($user->name);
+
+        if ($path === 'name.givenName') {
+            $givenName = $newValue;
+        } else {
+            $familyName = $newValue;
+        }
+
+        $user->update(['name' => trim("{$givenName} {$familyName}")]);
     }
 
     /** @param array<string, mixed> $body */
