@@ -38,7 +38,7 @@ final class EnsurePlanFeature
             return $next($request);
         }
 
-        if (! $user->plan_tier->{$method}()) {
+        if (! $user->effectivePlan()->{$method}()) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Upgrade your plan to access this feature.'], 403);
             }

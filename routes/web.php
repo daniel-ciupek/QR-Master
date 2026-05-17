@@ -43,6 +43,7 @@ use App\Http\Controllers\QrCode\RedirectRuleController;
 use App\Http\Controllers\QrPasswordController;
 use App\Http\Controllers\QrUserTemplateController;
 use App\Http\Controllers\Tag\TagController;
+use App\Http\Controllers\Team\TeamBillingController;
 use App\Http\Controllers\Team\TeamController;
 use App\Http\Controllers\Team\TeamInvitationController;
 use App\Http\Controllers\Team\TeamMemberController;
@@ -289,6 +290,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{team}/invitations', [TeamInvitationController::class, 'store'])->name('invitations.store');
         Route::delete('/{team}/invitations/{invitation}', [TeamInvitationController::class, 'destroy'])->name('invitations.destroy');
         Route::post('/invitations/{token}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
+        // Billing (12.4)
+        Route::get('/{team}/billing', [TeamBillingController::class, 'show'])->name('billing.show');
+        Route::get('/{team}/billing/subscribe/{plan}', [TeamBillingController::class, 'subscribe'])->name('billing.subscribe');
+        Route::get('/{team}/billing/portal', [TeamBillingController::class, 'portal'])->name('billing.portal');
     });
 
     // Switch workspace context (null = personal)

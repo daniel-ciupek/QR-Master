@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3'
-import { ChevronDown, Crown, Eye, LogOut, Mail, Pencil, Shield, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-vue-next'
+import { ChevronDown, CreditCard, Crown, Eye, LogOut, Mail, Pencil, Shield, Trash2, UserMinus, UserPlus, Users, X } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Badge } from '@/components/ui/badge'
@@ -116,6 +116,10 @@ function leaveWorkspace(): void {
 function deleteWorkspace(): void {
     if (!confirm(t('workspace.confirm_delete'))) return
     router.delete(route('workspaces.destroy', { team: props.team.id }))
+}
+
+function goToBilling(): void {
+    router.visit(route('workspaces.billing.show', { team: props.team.slug }))
 }
 
 function roleIcon(role: string): typeof Crown {
@@ -353,6 +357,23 @@ function canRemoveMember(member: Member): boolean {
                         </TableRow>
                     </TableBody>
                 </Table>
+            </CardContent>
+        </Card>
+
+        <!-- Billing -->
+        <Card v-if="team.isOwner">
+            <CardHeader>
+                <CardTitle class="flex items-center gap-2">
+                    <CreditCard class="size-4" />
+                    {{ t('workspace.billing.billing_nav') }}
+                </CardTitle>
+                <CardDescription>{{ t('workspace.billing.currentPlanDesc') }}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button variant="outline" @click="goToBilling">
+                    <CreditCard class="mr-2 h-4 w-4" />
+                    {{ t('workspace.billing.manageSubscription') }}
+                </Button>
             </CardContent>
         </Card>
 

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Billing;
 
 use App\Enums\PlanTier;
 use App\Models\AffiliateCommission;
+use App\Models\Team;
 use App\Models\User;
 use App\Notifications\Billing\PaymentFailedNotification;
 use App\Notifications\Billing\PaymentSucceededNotification;
@@ -23,15 +24,25 @@ final class StripeWebhookController extends WebhookController
             return $this->successMethod();
         }
 
+        $priceId = $this->resolvePriceIdFromInvoice($payload);
+        $tier = $priceId !== null ? $this->tierFromPriceId($priceId) : null;
+
+        $team = Team::where('stripe_id', $customerId)->first();
+
+        if ($team !== null) {
+            if ($tier !== null) {
+                $team->update(['plan_tier' => $tier->value]);
+            }
+
+            return $this->successMethod();
+        }
+
         /** @var User|null $user */
         $user = $this->getUserByStripeId($customerId);
 
         if ($user === null) {
             return $this->successMethod();
         }
-
-        $priceId = $this->resolvePriceIdFromInvoice($payload);
-        $tier = $priceId !== null ? $this->tierFromPriceId($priceId) : null;
 
         if ($tier !== null) {
             $user->update(['plan_tier' => $tier->value]);
@@ -60,15 +71,25 @@ final class StripeWebhookController extends WebhookController
             return $this->successMethod();
         }
 
+        $priceId = $payload['data']['object']['items']['data'][0]['price']['id'] ?? null;
+        $tier = is_string($priceId) ? $this->tierFromPriceId($priceId) : null;
+
+        $team = Team::where('stripe_id', $customerId)->first();
+
+        if ($team !== null) {
+            if ($tier !== null) {
+                $team->update(['plan_tier' => $tier->value]);
+            }
+
+            return $this->successMethod();
+        }
+
         /** @var User|null $user */
         $user = $this->getUserByStripeId($customerId);
 
         if ($user === null) {
             return $this->successMethod();
         }
-
-        $priceId = $payload['data']['object']['items']['data'][0]['price']['id'] ?? null;
-        $tier = is_string($priceId) ? $this->tierFromPriceId($priceId) : null;
 
         if ($tier !== null) {
             $user->update(['plan_tier' => $tier->value]);
@@ -86,6 +107,14 @@ final class StripeWebhookController extends WebhookController
             return $this->successMethod();
         }
 
+        $team = Team::where('stripe_id', $customerId)->first();
+
+        if ($team !== null) {
+            $team->update(['plan_tier' => PlanTier::Free->value]);
+
+            return $this->successMethod();
+        }
+
         /** @var User|null $user */
         $user = $this->getUserByStripeId($customerId);
 
@@ -100,6 +129,12 @@ final class StripeWebhookController extends WebhookController
         $customerId = $payload['data']['object']['customer'] ?? null;
 
         if (! is_string($customerId)) {
+            return $this->successMethod();
+        }
+
+        $team = Team::where('stripe_id', $customerId)->first();
+
+        if ($team !== null) {
             return $this->successMethod();
         }
 

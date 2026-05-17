@@ -75,4 +75,17 @@ return [
     'deleted' => 'Przestrzeń robocza usunięta.',
     'switched' => 'Przełączono na przestrzeń :name.',
     'switched_personal' => 'Przełączono na kontekst osobisty.',
+    'billing' => [
+        'title' => 'Rozliczenia przestrzeni',
+        'currentPlan' => 'Aktualny plan',
+        'currentPlanDesc' => 'Subskrypcja i dane rozliczeniowe Twojej przestrzeni.',
+        'trialEnds' => 'Okres próbny kończy się {date}',
+        'cancelsOn' => 'Anulowanie {date}',
+        'manageSubscription' => 'Zarządzaj subskrypcją',
+        'choosePlan' => 'Wybierz plan',
+        'month' => 'mies.',
+        'contact' => 'Kontakt',
+        'selectPlan' => 'Wybierz plan',
+        'billing_nav' => 'Rozliczenia',
+    ],
 ];

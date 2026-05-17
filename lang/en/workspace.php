@@ -75,4 +75,18 @@ return [
     'deleted' => 'Workspace deleted.',
     'switched' => 'Switched to :name workspace.',
     'switched_personal' => 'Switched to personal workspace.',
+    'billing' => [
+        'title' => 'Workspace Billing',
+        'currentPlan' => 'Current Plan',
+        'currentPlanDesc' => 'Your workspace subscription and billing details.',
+        'trialEnds' => 'Trial ends on {date}',
+        'cancelsOn' => 'Cancels on {date}',
+        'manageSubscription' => 'Manage Subscription',
+        'choosePlan' => 'Choose a Plan',
+        'month' => 'mo',
+        'contact' => 'Contact Sales',
+        'currentPlan' => 'Current Plan',
+        'selectPlan' => 'Select Plan',
+        'billing_nav' => 'Billing',
+    ],
 ];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\PlanTier;
 use App\Enums\TeamRole;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Cashier\Billable;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
@@ -19,6 +21,11 @@ use Spatie\Sluggable\SlugOptions;
  * @property int $owner_id
  * @property string $name
  * @property string $slug
+ * @property string|null $stripe_id
+ * @property string|null $pm_type
+ * @property string|null $pm_last_four
+ * @property Carbon|null $trial_ends_at
+ * @property PlanTier $plan_tier
  * @property array<string, mixed> $settings
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -26,6 +33,7 @@ use Spatie\Sluggable\SlugOptions;
  */
 class Team extends Model
 {
+    use Billable;
     use HasSlug;
     use SoftDeletes;
 
@@ -35,7 +43,9 @@ class Team extends Model
     protected function casts(): array
     {
         return [
+            'plan_tier' => PlanTier::class,
             'settings' => 'array',
+            'trial_ends_at' => 'datetime',
         ];
     }
 

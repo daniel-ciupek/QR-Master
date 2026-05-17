@@ -22,7 +22,7 @@ final class EnsureAiRateLimit
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        $tier = $user->plan_tier;
+        $tier = $user->effectivePlan();
         $limit = $this->monthlyLimit($tier);
 
         if ($limit === 0) {

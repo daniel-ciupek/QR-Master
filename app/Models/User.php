@@ -114,4 +114,15 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
     {
         return $this->teams()->where('team_id', $team->id)->exists();
     }
+
+    public function effectivePlan(): PlanTier
+    {
+        $team = app()->bound('current.team') ? app('current.team') : null;
+
+        if ($team instanceof Team) {
+            return $team->plan_tier;
+        }
+
+        return $this->plan_tier;
+    }
 }
