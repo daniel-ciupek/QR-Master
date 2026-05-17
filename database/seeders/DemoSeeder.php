@@ -46,7 +46,7 @@ class DemoSeeder extends Seeder
         if ($adminCreated) {
             $admin->assignRole(Role::Admin);
         }
-        $admin->update(['plan_tier' => PlanTier::Business]);
+        $admin->update(['plan_tier' => PlanTier::Business, 'onboarding_completed_at' => now()]);
 
         [$pro, $proCreated] = $this->firstOrCreateUser('pro@qr-master.test', 'Demo Pro User');
         if ($proCreated) {
@@ -55,13 +55,14 @@ class DemoSeeder extends Seeder
         $pro->update([
             'plan_tier' => PlanTier::Pro,
             'trial_ends_at' => now()->addDays(7),
+            'onboarding_completed_at' => now(),
         ]);
 
         [$free, $freeCreated] = $this->firstOrCreateUser('free@qr-master.test', 'Demo Free User');
         if ($freeCreated) {
             $free->assignRole(Role::User);
         }
-        $free->update(['plan_tier' => PlanTier::Free]);
+        $free->update(['plan_tier' => PlanTier::Free, 'onboarding_completed_at' => now()]);
 
         if (User::count() < 10) {
             $tiers = [PlanTier::Pro, PlanTier::Pro, PlanTier::Pro, PlanTier::Free, PlanTier::Free, PlanTier::Free, PlanTier::Free];
