@@ -43,6 +43,8 @@ use App\Http\Controllers\QrCode\QrCodeZipExportController;
 use App\Http\Controllers\QrCode\RedirectRuleController;
 use App\Http\Controllers\QrPasswordController;
 use App\Http\Controllers\QrUserTemplateController;
+use App\Http\Controllers\Status\StatusIncidentController;
+use App\Http\Controllers\Status\StatusPageController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\Team\AuditReportController;
 use App\Http\Controllers\Team\ComplianceDashboardController;
@@ -89,6 +91,9 @@ Route::get('/api/openapi.json', function () {
         ->header('Access-Control-Allow-Origin', '*')
         ->header('Cache-Control', 'public, max-age=3600');
 })->name('api.openapi.json')->middleware('throttle:60,1');
+
+// Public status page — no auth, accessible at /status (or status.qr-master.app via custom domain)
+Route::get('/status', StatusPageController::class)->name('status')->middleware('throttle:60,1');
 
 // SSO — OAuth flow (public endpoints, no auth required)
 Route::middleware('throttle:30,1')->group(function () {
@@ -342,6 +347,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Switch workspace context (null = personal)
     Route::post('/workspace/switch/{team?}', TeamSwitchController::class)->name('workspace.switch');
+
+    // Status incidents management (admin only)
+    Route::prefix('admin/status')->name('admin.status.')->middleware('role:super-admin')->group(function () {
+        Route::get('/incidents', [StatusIncidentController::class, 'index'])->name('incidents.index');
+        Route::post('/incidents', [StatusIncidentController::class, 'store'])->name('incidents.store');
+        Route::put('/incidents/{incident}', [StatusIncidentController::class, 'update'])->name('incidents.update');
+        Route::delete('/incidents/{incident}', [StatusIncidentController::class, 'destroy'])->name('incidents.destroy');
+    });
 
     // WebAuthn passkey registration (wymaga auth)
     Route::prefix('webauthn')->name('webauthn.')->middleware('throttle:webauthn-register')->group(function () {

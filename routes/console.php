@@ -34,3 +34,9 @@ Schedule::command('billing:expire-trials')
     ->hourly()
     ->withoutOverlapping()
     ->runInBackground();
+
+// SLA: run service health checks every 5 minutes
+Schedule::command('status:check-services')
+    ->everyFiveMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();
