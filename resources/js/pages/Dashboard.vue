@@ -189,40 +189,56 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
             <!-- Stat cards -->
             <div class="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
                 <!-- Total QR -->
-                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5 hover:border-primary/40 hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.12)] transition-all duration-200">
+                <div class="group relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5
+                            hover:border-primary/50 hover:shadow-[0_0_32px_oklch(0.66_0.25_285/0.18)]
+                            hover:-translate-y-0.5 transition-all duration-300 ease-out">
+                    <!-- Static top-border -->
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
-                    <div class="flex items-start justify-between">
+                    <!-- Shimmer sweep on hover -->
+                    <div class="absolute inset-x-0 top-0 h-px overflow-hidden">
+                        <div class="animate-shimmer h-full w-1/3 bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-0 group-hover:opacity-100" />
+                    </div>
+                    <!-- Gradient fill on hover -->
+                    <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div class="relative flex items-start justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.totalQr') }}</p>
-                            <p class="mt-1 text-2xl font-bold sm:text-3xl">{{ stats.totalQr }}</p>
+                            <p class="mt-1 text-2xl font-bold tabular-nums sm:text-3xl">{{ stats.totalQr }}</p>
                         </div>
-                        <div class="flex size-10 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
+                        <div class="flex size-10 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20
+                                    group-hover:bg-primary/20 group-hover:ring-primary/40 group-hover:shadow-[0_0_12px_oklch(0.66_0.25_285/0.35)]
+                                    transition-all duration-300">
                             <QrCode class="size-5 text-primary" />
                         </div>
                     </div>
-                    <p class="mt-2 text-xs text-muted-foreground">
+                    <p class="relative mt-2 text-xs text-muted-foreground">
                         {{ stats.activeQr }} {{ t('dashboard.recentQr.active').toLowerCase() }}
                     </p>
                 </div>
 
                 <!-- Scans this month -->
-                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5 hover:border-cyan-400/40 hover:shadow-[0_0_24px_oklch(0.72_0.15_200/0.12)] transition-all duration-200">
+                <div class="group relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5
+                            hover:border-cyan-400/50 hover:shadow-[0_0_32px_oklch(0.72_0.15_200/0.18)]
+                            hover:-translate-y-0.5 transition-all duration-300 ease-out">
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
-                    <div class="flex items-start justify-between">
+                    <div class="absolute inset-x-0 top-0 h-px overflow-hidden">
+                        <div class="animate-shimmer h-full w-1/3 bg-gradient-to-r from-transparent via-cyan-300/50 to-transparent opacity-0 group-hover:opacity-100" />
+                    </div>
+                    <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-cyan-400/8 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div class="relative flex items-start justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.scansMonth') }}</p>
-                            <p class="mt-1 text-2xl font-bold sm:text-3xl">{{ formatNumber(stats.scansThisMonth) }}</p>
+                            <p class="mt-1 text-2xl font-bold tabular-nums sm:text-3xl">{{ formatNumber(stats.scansThisMonth) }}</p>
                         </div>
-                        <div class="flex size-10 items-center justify-center rounded-full bg-cyan-400/10 ring-1 ring-cyan-400/20">
+                        <div class="flex size-10 items-center justify-center rounded-full bg-cyan-400/10 ring-1 ring-cyan-400/20
+                                    group-hover:bg-cyan-400/20 group-hover:ring-cyan-400/40 group-hover:shadow-[0_0_12px_oklch(0.72_0.15_200/0.35)]
+                                    transition-all duration-300">
                             <BarChart2 class="size-5 text-cyan-400" />
                         </div>
                     </div>
-                    <div class="mt-2 flex items-center gap-1 text-xs">
+                    <div class="relative mt-2 flex items-center gap-1 text-xs">
                         <template v-if="stats.scansLastMonth > 0 || stats.scansThisMonth > 0">
-                            <TrendingUp
-                                v-if="stats.scansTrend >= 0"
-                                class="size-3.5 text-green-500"
-                            />
+                            <TrendingUp v-if="stats.scansTrend >= 0" class="size-3.5 text-green-500" />
                             <TrendingDown v-else class="size-3.5 text-red-500" />
                             <span :class="stats.scansTrend >= 0 ? 'text-green-500' : 'text-red-500'">
                                 {{ stats.scansTrend >= 0 ? '+' : '' }}{{ stats.scansTrend }}%
@@ -234,49 +250,72 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                 </div>
 
                 <!-- Active QR -->
-                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5 hover:border-green-500/40 hover:shadow-[0_0_24px_oklch(0.65_0.19_142/0.12)] transition-all duration-200">
+                <div class="group relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5
+                            hover:border-green-500/50 hover:shadow-[0_0_32px_oklch(0.65_0.19_142/0.18)]
+                            hover:-translate-y-0.5 transition-all duration-300 ease-out">
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-500/50 to-transparent" />
-                    <div class="flex items-start justify-between">
+                    <div class="absolute inset-x-0 top-0 h-px overflow-hidden">
+                        <div class="animate-shimmer h-full w-1/3 bg-gradient-to-r from-transparent via-green-400/50 to-transparent opacity-0 group-hover:opacity-100" />
+                    </div>
+                    <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-green-500/8 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div class="relative flex items-start justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.activeQr') }}</p>
-                            <p class="mt-1 text-2xl font-bold sm:text-3xl">{{ stats.activeQr }}</p>
+                            <p class="mt-1 text-2xl font-bold tabular-nums sm:text-3xl">{{ stats.activeQr }}</p>
                         </div>
-                        <div class="flex size-10 items-center justify-center rounded-full bg-green-500/10 ring-1 ring-green-500/20">
+                        <div class="flex size-10 items-center justify-center rounded-full bg-green-500/10 ring-1 ring-green-500/20
+                                    group-hover:bg-green-500/20 group-hover:ring-green-500/40 group-hover:shadow-[0_0_12px_oklch(0.65_0.19_142/0.35)]
+                                    transition-all duration-300">
                             <Zap class="size-5 text-green-500" />
                         </div>
                     </div>
-                    <p class="mt-2 text-xs text-muted-foreground">
+                    <p class="relative mt-2 text-xs text-muted-foreground">
                         {{ stats.totalQr - stats.activeQr }} {{ t('dashboard.recentQr.inactive').toLowerCase() }}
                     </p>
                 </div>
 
                 <!-- Expiring -->
                 <div
-                    class="relative overflow-hidden rounded-xl border bg-card p-4 md:p-5 transition-all duration-200"
+                    class="group relative overflow-hidden rounded-xl border bg-card p-4 md:p-5
+                           hover:-translate-y-0.5 transition-all duration-300 ease-out"
                     :class="stats.expiringQr > 0
-                        ? 'border-amber-500/30 hover:border-amber-500/50 hover:shadow-[0_0_24px_oklch(0.76_0.17_70/0.12)]'
-                        : 'border-border hover:border-border/80'"
+                        ? 'border-amber-500/30 hover:border-amber-500/55 hover:shadow-[0_0_32px_oklch(0.76_0.17_70/0.18)]'
+                        : 'border-border hover:border-border/80 hover:shadow-sm'"
                 >
                     <div
                         class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent"
                         :class="stats.expiringQr > 0 ? 'via-amber-500/50' : 'via-border/60'"
                     />
-                    <div class="flex items-start justify-between">
+                    <div class="absolute inset-x-0 top-0 h-px overflow-hidden">
+                        <div
+                            class="animate-shimmer h-full w-1/3 bg-gradient-to-r from-transparent to-transparent opacity-0 group-hover:opacity-100"
+                            :class="stats.expiringQr > 0 ? 'via-amber-400/50' : 'via-white/20'"
+                        />
+                    </div>
+                    <div
+                        class="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        :class="stats.expiringQr > 0
+                            ? 'bg-gradient-to-br from-amber-500/8 via-transparent to-transparent'
+                            : 'bg-gradient-to-br from-muted/30 via-transparent to-transparent'"
+                    />
+                    <div class="relative flex items-start justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.expiringQr') }}</p>
-                            <p class="mt-1 text-2xl font-bold sm:text-3xl">{{ stats.expiringQr }}</p>
+                            <p class="mt-1 text-2xl font-bold tabular-nums sm:text-3xl">{{ stats.expiringQr }}</p>
                         </div>
                         <div
-                            class="flex size-10 items-center justify-center rounded-full ring-1"
-                            :class="stats.expiringQr > 0 ? 'bg-amber-500/10 ring-amber-500/20' : 'bg-muted ring-border'"
+                            class="flex size-10 items-center justify-center rounded-full ring-1 transition-all duration-300"
+                            :class="stats.expiringQr > 0
+                                ? 'bg-amber-500/10 ring-amber-500/20 group-hover:bg-amber-500/20 group-hover:ring-amber-500/40 group-hover:shadow-[0_0_12px_oklch(0.76_0.17_70/0.35)]'
+                                : 'bg-muted ring-border'"
                         >
                             <AlertTriangle
-                                :class="stats.expiringQr > 0 ? 'text-amber-500' : 'text-muted-foreground'"
                                 class="size-5"
+                                :class="stats.expiringQr > 0 ? 'text-amber-500' : 'text-muted-foreground'"
                             />
                         </div>
                     </div>
-                    <p class="mt-2 text-xs text-muted-foreground">{{ t('dashboard.stats.in7days') }}</p>
+                    <p class="relative mt-2 text-xs text-muted-foreground">{{ t('dashboard.stats.in7days') }}</p>
                 </div>
             </div>
 
