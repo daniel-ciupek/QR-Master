@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3'
+import { Fingerprint, Plus } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
@@ -87,31 +88,54 @@ function base64urlEncode(buffer: ArrayBuffer): string {
 <template>
     <Head :title="t('profile.passkeys.headTitle')" />
 
-    <div class="mx-auto max-w-2xl space-y-8">
-        <div>
-            <h1 class="text-2xl font-bold">{{ t('profile.passkeys.title') }}</h1>
-            <p class="text-sm text-muted-foreground mt-1">{{ t('profile.passkeys.subtitle') }}</p>
+    <div class="mx-auto max-w-2xl space-y-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent">
+                    {{ t('profile.passkeys.title') }}
+                </h1>
+                <p class="mt-1 text-sm text-muted-foreground">{{ t('profile.passkeys.subtitle') }}</p>
+            </div>
+            <Button
+                :disabled="!webAuthnSupported"
+                class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+                @click="registerPasskey"
+            >
+                <Plus class="mr-2 size-4" />
+                {{ t('profile.passkeys.add') }}
+            </Button>
         </div>
 
-        <div class="space-y-3">
+        <div class="relative overflow-hidden rounded-xl border border-border bg-card">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+
+            <!-- Empty state -->
             <div
                 v-if="credentials.length === 0"
-                class="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground"
+                class="flex flex-col items-center justify-center py-14 text-center"
             >
-                {{ t('profile.passkeys.empty') }}
+                <div class="mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20">
+                    <Fingerprint class="size-7 text-primary" />
+                </div>
+                <p class="text-sm text-muted-foreground">{{ t('profile.passkeys.empty') }}</p>
             </div>
 
             <div
                 v-for="cred in credentials"
                 :key="cred.id"
-                class="flex items-center justify-between rounded-lg border p-4"
+                class="flex items-center justify-between border-b border-border/60 px-4 py-4 last:border-0 transition-colors duration-100 hover:bg-muted/30"
             >
-                <div class="space-y-0.5">
-                    <p class="text-sm font-medium">{{ cred.name }}</p>
-                    <p class="text-xs text-muted-foreground">
-                        {{ t('profile.passkeys.addedOn') }} {{ new Date(cred.created_at).toLocaleDateString(locale === 'pl' ? 'pl-PL' : 'en-GB') }}
-                        <span v-if="cred.transports.length"> · {{ cred.transports.join(', ') }}</span>
-                    </p>
+                <div class="flex items-center gap-3">
+                    <div class="flex size-8 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
+                        <Fingerprint class="size-4 text-primary" />
+                    </div>
+                    <div class="space-y-0.5">
+                        <p class="text-sm font-medium">{{ cred.name }}</p>
+                        <p class="text-xs text-muted-foreground">
+                            {{ t('profile.passkeys.addedOn') }} {{ new Date(cred.created_at).toLocaleDateString(locale === 'pl' ? 'pl-PL' : 'en-GB') }}
+                            <span v-if="cred.transports.length"> · {{ cred.transports.join(', ') }}</span>
+                        </p>
+                    </div>
                 </div>
                 <Button
                     size="sm"
@@ -122,13 +146,6 @@ function base64urlEncode(buffer: ArrayBuffer): string {
                 </Button>
             </div>
         </div>
-
-        <Button
-            :disabled="!webAuthnSupported"
-            @click="registerPasskey"
-        >
-            {{ t('profile.passkeys.add') }}
-        </Button>
 
         <p
             v-if="!webAuthnSupported"

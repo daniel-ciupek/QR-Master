@@ -64,7 +64,7 @@ function isActive(href: string) {
 
 <template>
     <Sidebar collapsible="icon">
-        <SidebarHeader>
+        <SidebarHeader class="border-b border-border/40">
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton
@@ -73,7 +73,7 @@ function isActive(href: string) {
                         class="data-[state=open]:bg-sidebar-accent"
                     >
                         <Link href="/dashboard">
-                            <div class="flex aspect-square size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary text-primary-foreground">
+                            <div class="flex aspect-square size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-violet-500 to-primary text-primary-foreground shadow-[0_0_12px_oklch(0.66_0.25_285/0.4)]">
                                 <img
                                     v-if="branding?.logo_url"
                                     :src="branding.logo_url"
@@ -97,22 +97,30 @@ function isActive(href: string) {
 
         <SidebarContent>
             <SidebarGroup>
-                <SidebarGroupLabel>{{ t('nav.dashboard') }}</SidebarGroupLabel>
+                <SidebarGroupLabel class="text-xs uppercase tracking-wider text-muted-foreground/60 font-semibold">{{ t('nav.dashboard') }}</SidebarGroupLabel>
                 <SidebarGroupContent>
                     <SidebarMenu>
                         <SidebarMenuItem
                             v-for="item in navMain"
                             :key="item.href"
+                            class="relative"
                         >
+                            <!-- Left accent bar for active item -->
+                            <div
+                                v-if="isActive(item.href)"
+                                class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-primary"
+                            />
                             <SidebarMenuButton
                                 as-child
                                 :is-active="isActive(item.href)"
                                 :tooltip="t(item.titleKey)"
+                                class="transition-colors duration-150"
                             >
                                 <Link :href="item.href">
                                     <component
                                         :is="item.icon"
-                                        class="size-4"
+                                        :class="isActive(item.href) ? 'text-primary' : 'text-muted-foreground'"
+                                        class="size-4 transition-colors duration-150"
                                     />
                                     <span>{{ t(item.titleKey) }}</span>
                                 </Link>
@@ -122,23 +130,34 @@ function isActive(href: string) {
                 </SidebarGroupContent>
             </SidebarGroup>
 
+            <!-- Section divider -->
+            <div class="mx-3 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+
             <SidebarGroup>
-                <SidebarGroupLabel>{{ t('nav.profile') }}</SidebarGroupLabel>
+                <SidebarGroupLabel class="text-xs uppercase tracking-wider text-muted-foreground/60 font-semibold">{{ t('nav.profile') }}</SidebarGroupLabel>
                 <SidebarGroupContent>
                     <SidebarMenu>
                         <SidebarMenuItem
                             v-for="item in navAccount"
                             :key="item.href"
+                            class="relative"
                         >
+                            <!-- Left accent bar for active item -->
+                            <div
+                                v-if="isActive(item.href)"
+                                class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-full bg-primary"
+                            />
                             <SidebarMenuButton
                                 as-child
                                 :is-active="isActive(item.href)"
                                 :tooltip="t(item.titleKey)"
+                                class="transition-colors duration-150"
                             >
                                 <Link :href="item.href">
                                     <component
                                         :is="item.icon"
-                                        class="size-4"
+                                        :class="isActive(item.href) ? 'text-primary' : 'text-muted-foreground'"
+                                        class="size-4 transition-colors duration-150"
                                     />
                                     <span>{{ t(item.titleKey) }}</span>
                                 </Link>
@@ -149,23 +168,23 @@ function isActive(href: string) {
             </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter>
+        <SidebarFooter class="border-t border-border/40">
             <SidebarMenu>
                 <SidebarMenuItem>
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                             <SidebarMenuButton
                                 size="lg"
-                                class="data-[state=open]:bg-sidebar-accent"
+                                class="data-[state=open]:bg-sidebar-accent transition-colors duration-150"
                             >
-                                <Avatar class="size-8 rounded-lg">
-                                    <AvatarFallback class="rounded-lg text-xs">{{ initials }}</AvatarFallback>
+                                <Avatar class="size-8 rounded-lg ring-1 ring-primary/30">
+                                    <AvatarFallback class="rounded-lg bg-primary/20 text-xs font-semibold text-primary">{{ initials }}</AvatarFallback>
                                 </Avatar>
                                 <div class="grid flex-1 text-left text-sm leading-tight">
                                     <span class="truncate font-semibold">{{ user?.name }}</span>
                                     <span class="truncate text-xs text-muted-foreground">{{ user?.email }}</span>
                                 </div>
-                                <ChevronsUpDown class="ml-auto size-4" />
+                                <ChevronsUpDown class="ml-auto size-4 text-muted-foreground" />
                             </SidebarMenuButton>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent

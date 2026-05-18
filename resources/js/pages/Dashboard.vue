@@ -133,10 +133,15 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold">{{ t('dashboard.title') }}</h1>
+                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent">
+                    {{ t('dashboard.title') }}
+                </h1>
                 <p class="text-sm text-muted-foreground">{{ t('dashboard.subtitle') }}</p>
             </div>
-            <Button as-child>
+            <Button
+                as-child
+                class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+            >
                 <Link :href="r('qr.create')">
                     <Plus class="mr-2 size-4" />
                     {{ t('dashboard.quickActions.createQr') }}
@@ -147,12 +152,19 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
         <!-- Empty state -->
         <div
             v-if="stats.totalQr === 0"
-            class="flex flex-col items-center justify-center rounded-xl border border-dashed py-20 text-center"
+            class="relative flex flex-col items-center justify-center overflow-hidden rounded-xl border border-dashed py-20 text-center"
         >
-            <QrCode class="mb-4 size-12 text-muted-foreground/40" />
+            <!-- Dot grid background -->
+            <div class="absolute inset-0 bg-[radial-gradient(oklch(0.66_0.25_285/0.04)_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
+            <div class="relative flex size-16 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20 mb-4">
+                <QrCode class="size-8 text-primary" />
+            </div>
             <h2 class="mb-1 text-lg font-semibold">{{ t('dashboard.empty.title') }}</h2>
             <p class="mb-6 max-w-sm text-sm text-muted-foreground">{{ t('dashboard.empty.description') }}</p>
-            <Button as-child>
+            <Button
+                as-child
+                class="relative shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+            >
                 <Link :href="r('qr.create')">
                     <Plus class="mr-2 size-4" />
                     {{ t('dashboard.empty.cta') }}
@@ -164,85 +176,95 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
             <!-- Stat cards -->
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <!-- Total QR -->
-                <Card>
-                    <CardContent class="pt-6">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.totalQr') }}</p>
-                                <p class="mt-1 text-3xl font-bold">{{ stats.totalQr }}</p>
-                            </div>
-                            <div class="rounded-lg bg-primary/10 p-2">
-                                <QrCode class="size-5 text-primary" />
-                            </div>
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.12)] transition-all duration-200">
+                    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.totalQr') }}</p>
+                            <p class="mt-1 text-3xl font-bold">{{ stats.totalQr }}</p>
                         </div>
-                        <p class="mt-2 text-xs text-muted-foreground">
-                            {{ stats.activeQr }} {{ t('dashboard.recentQr.active').toLowerCase() }}
-                        </p>
-                    </CardContent>
-                </Card>
+                        <div class="flex size-10 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
+                            <QrCode class="size-5 text-primary" />
+                        </div>
+                    </div>
+                    <p class="mt-2 text-xs text-muted-foreground">
+                        {{ stats.activeQr }} {{ t('dashboard.recentQr.active').toLowerCase() }}
+                    </p>
+                </div>
 
                 <!-- Scans this month -->
-                <Card>
-                    <CardContent class="pt-6">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.scansMonth') }}</p>
-                                <p class="mt-1 text-3xl font-bold">{{ formatNumber(stats.scansThisMonth) }}</p>
-                            </div>
-                            <div class="rounded-lg bg-violet-500/10 p-2">
-                                <BarChart2 class="size-5 text-violet-500" />
-                            </div>
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-5 hover:border-cyan-400/40 hover:shadow-[0_0_24px_oklch(0.72_0.15_200/0.12)] transition-all duration-200">
+                    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.scansMonth') }}</p>
+                            <p class="mt-1 text-3xl font-bold">{{ formatNumber(stats.scansThisMonth) }}</p>
                         </div>
-                        <div class="mt-2 flex items-center gap-1 text-xs">
-                            <template v-if="stats.scansLastMonth > 0 || stats.scansThisMonth > 0">
-                                <TrendingUp
-                                    v-if="stats.scansTrend >= 0"
-                                    class="size-3.5 text-green-500"
-                                />
-                                <TrendingDown v-else class="size-3.5 text-red-500" />
-                                <span :class="stats.scansTrend >= 0 ? 'text-green-500' : 'text-red-500'">
-                                    {{ stats.scansTrend >= 0 ? '+' : '' }}{{ stats.scansTrend }}%
-                                </span>
-                                <span class="text-muted-foreground">{{ t('dashboard.stats.vsLastMonth') }}</span>
-                            </template>
-                            <span v-else class="text-muted-foreground">{{ t('dashboard.stats.noChange') }}</span>
+                        <div class="flex size-10 items-center justify-center rounded-full bg-cyan-400/10 ring-1 ring-cyan-400/20">
+                            <BarChart2 class="size-5 text-cyan-400" />
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                    <div class="mt-2 flex items-center gap-1 text-xs">
+                        <template v-if="stats.scansLastMonth > 0 || stats.scansThisMonth > 0">
+                            <TrendingUp
+                                v-if="stats.scansTrend >= 0"
+                                class="size-3.5 text-green-500"
+                            />
+                            <TrendingDown v-else class="size-3.5 text-red-500" />
+                            <span :class="stats.scansTrend >= 0 ? 'text-green-500' : 'text-red-500'">
+                                {{ stats.scansTrend >= 0 ? '+' : '' }}{{ stats.scansTrend }}%
+                            </span>
+                            <span class="text-muted-foreground">{{ t('dashboard.stats.vsLastMonth') }}</span>
+                        </template>
+                        <span v-else class="text-muted-foreground">{{ t('dashboard.stats.noChange') }}</span>
+                    </div>
+                </div>
 
                 <!-- Active QR -->
-                <Card>
-                    <CardContent class="pt-6">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.activeQr') }}</p>
-                                <p class="mt-1 text-3xl font-bold">{{ stats.activeQr }}</p>
-                            </div>
-                            <div class="rounded-lg bg-green-500/10 p-2">
-                                <Zap class="size-5 text-green-500" />
-                            </div>
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-5 hover:border-green-500/40 hover:shadow-[0_0_24px_oklch(0.65_0.19_142/0.12)] transition-all duration-200">
+                    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-500/50 to-transparent" />
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.activeQr') }}</p>
+                            <p class="mt-1 text-3xl font-bold">{{ stats.activeQr }}</p>
                         </div>
-                        <p class="mt-2 text-xs text-muted-foreground">
-                            {{ stats.totalQr - stats.activeQr }} {{ t('dashboard.recentQr.inactive').toLowerCase() }}
-                        </p>
-                    </CardContent>
-                </Card>
+                        <div class="flex size-10 items-center justify-center rounded-full bg-green-500/10 ring-1 ring-green-500/20">
+                            <Zap class="size-5 text-green-500" />
+                        </div>
+                    </div>
+                    <p class="mt-2 text-xs text-muted-foreground">
+                        {{ stats.totalQr - stats.activeQr }} {{ t('dashboard.recentQr.inactive').toLowerCase() }}
+                    </p>
+                </div>
 
                 <!-- Expiring -->
-                <Card>
-                    <CardContent class="pt-6">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.expiringQr') }}</p>
-                                <p class="mt-1 text-3xl font-bold">{{ stats.expiringQr }}</p>
-                            </div>
-                            <div :class="stats.expiringQr > 0 ? 'bg-amber-500/10' : 'bg-muted'" class="rounded-lg p-2">
-                                <AlertTriangle :class="stats.expiringQr > 0 ? 'text-amber-500' : 'text-muted-foreground'" class="size-5" />
-                            </div>
+                <div
+                    class="relative overflow-hidden rounded-xl border bg-card p-5 transition-all duration-200"
+                    :class="stats.expiringQr > 0
+                        ? 'border-amber-500/30 hover:border-amber-500/50 hover:shadow-[0_0_24px_oklch(0.76_0.17_70/0.12)]'
+                        : 'border-border hover:border-border/80'"
+                >
+                    <div
+                        class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent"
+                        :class="stats.expiringQr > 0 ? 'via-amber-500/50' : 'via-border/60'"
+                    />
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.expiringQr') }}</p>
+                            <p class="mt-1 text-3xl font-bold">{{ stats.expiringQr }}</p>
                         </div>
-                        <p class="mt-2 text-xs text-muted-foreground">{{ t('dashboard.stats.in7days') }}</p>
-                    </CardContent>
-                </Card>
+                        <div
+                            class="flex size-10 items-center justify-center rounded-full ring-1"
+                            :class="stats.expiringQr > 0 ? 'bg-amber-500/10 ring-amber-500/20' : 'bg-muted ring-border'"
+                        >
+                            <AlertTriangle
+                                :class="stats.expiringQr > 0 ? 'text-amber-500' : 'text-muted-foreground'"
+                                class="size-5"
+                            />
+                        </div>
+                    </div>
+                    <p class="mt-2 text-xs text-muted-foreground">{{ t('dashboard.stats.in7days') }}</p>
+                </div>
             </div>
 
             <!-- Chart + Top QR -->
@@ -316,14 +338,14 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div class="divide-y">
+                        <div class="divide-y divide-border/60">
                             <div
                                 v-for="qr in recentQrCodes"
                                 :key="qr.id"
-                                class="flex items-center gap-3 py-3"
+                                class="flex items-center gap-3 py-3 transition-colors duration-100 hover:bg-muted/30 -mx-2 px-2 rounded-lg"
                             >
-                                <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted">
-                                    <QrCode class="size-4 text-muted-foreground" />
+                                <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
+                                    <QrCode class="size-4 text-primary" />
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <Link
@@ -354,9 +376,16 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                         <CardHeader class="pb-2">
                             <div class="flex items-center justify-between">
                                 <CardTitle class="text-base">{{ t('dashboard.planUsage.title') }}</CardTitle>
-                                <Badge variant="secondary" class="text-xs capitalize">
+                                <span
+                                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ring-1"
+                                    :class="planUsage.plan === 'free'
+                                        ? 'bg-muted text-muted-foreground ring-border'
+                                        : planUsage.plan === 'pro'
+                                            ? 'bg-primary/10 text-primary ring-primary/20'
+                                            : 'bg-gold-500/10 text-gold-500 ring-gold-500/20'"
+                                >
                                     {{ planUsage.planName }}
-                                </Badge>
+                                </span>
                             </div>
                         </CardHeader>
                         <CardContent class="space-y-4">
@@ -396,7 +425,7 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                                 v-if="planUsage.plan === 'free' || planUsage.plan === 'pro'"
                                 variant="outline"
                                 size="sm"
-                                class="w-full"
+                                class="w-full border-gold-500/30 text-gold-500 hover:bg-gold-500/10 hover:border-gold-500/50 transition-colors duration-150"
                                 as-child
                             >
                                 <Link :href="r('pricing')">{{ t('dashboard.planUsage.upgrade') }}</Link>

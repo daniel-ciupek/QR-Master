@@ -294,12 +294,19 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold">{{ t('qr.index.title') }}</h1>
-                <p class="text-sm text-muted-foreground mt-1">{{ t('qr.index.subtitle') }}</p>
+                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent">
+                    {{ t('qr.index.title') }}
+                </h1>
+                <p class="mt-1 text-sm text-muted-foreground">{{ t('qr.index.subtitle') }}</p>
             </div>
             <div class="flex items-center gap-2">
                 <!-- Import CSV -->
-                <Button variant="outline" as-child :title="t('csvImport.subtitle')">
+                <Button
+                    variant="outline"
+                    as-child
+                    :title="t('csvImport.subtitle')"
+                    class="transition-colors duration-150 hover:border-primary/40 hover:text-primary"
+                >
                     <Link href="/qr/import">
                         <Upload class="mr-2 size-4" />
                         {{ t('csvImport.title').split(' ').slice(0, 2).join(' ') }}
@@ -309,7 +316,11 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                 <!-- Export ZIP dropdown -->
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>
-                        <Button variant="outline" :title="t('zipExport.tooltip')">
+                        <Button
+                            variant="outline"
+                            :title="t('zipExport.tooltip')"
+                            class="transition-colors duration-150 hover:border-primary/40 hover:text-primary"
+                        >
                             <Archive class="mr-2 size-4" />
                             {{ t('zipExport.btnLabel') }}
                         </Button>
@@ -329,7 +340,10 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                 </DropdownMenu>
 
                 <!-- New QR -->
-                <Button as-child>
+                <Button
+                    as-child
+                    class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+                >
                     <Link href="/qr/create">
                         <Plus class="mr-2 size-4" />
                         {{ t('qr.index.createBtn') }}
@@ -344,6 +358,7 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                 v-model="search"
                 :placeholder="t('qr.index.searchPlaceholder')"
                 autocomplete="off"
+                class="focus-visible:ring-primary/50 focus-visible:border-primary/50 transition-colors duration-150"
             />
         </div>
 

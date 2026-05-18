@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm, usePage } from '@inertiajs/vue3'
+import { ShieldCheck, ShieldOff, Smartphone } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
@@ -54,22 +55,34 @@ function regenerateRecoveryCodes() {
 <template>
     <Head :title="t('profile.security.headTitle')" />
 
-    <div class="mx-auto max-w-2xl space-y-8">
+    <div class="mx-auto max-w-2xl space-y-6">
         <div>
-            <h1 class="text-2xl font-bold">{{ t('profile.security.title') }}</h1>
-            <p class="text-sm text-muted-foreground">{{ t('profile.security.subtitle') }}</p>
+            <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent">
+                {{ t('profile.security.title') }}
+            </h1>
+            <p class="mt-1 text-sm text-muted-foreground">{{ t('profile.security.subtitle') }}</p>
         </div>
 
         <!-- 2FA disabled — setup -->
         <div
             v-if="!user?.two_factor_enabled && !twoFactorQrCode"
-            class="rounded-lg border p-6 space-y-4"
+            class="relative overflow-hidden rounded-xl border border-border bg-card p-6 space-y-4 hover:border-primary/30 transition-colors duration-200"
         >
-            <div>
-                <h2 class="font-semibold">{{ t('profile.security.twoFactor.title') }}</h2>
-                <p class="text-sm text-muted-foreground mt-1">{{ t('profile.security.twoFactor.disabledDesc') }}</p>
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+            <div class="flex items-center gap-3">
+                <div class="flex size-9 items-center justify-center rounded-full bg-muted ring-1 ring-border">
+                    <ShieldOff class="size-4 text-muted-foreground" />
+                </div>
+                <div>
+                    <h2 class="font-semibold text-base">{{ t('profile.security.twoFactor.title') }}</h2>
+                    <p class="text-xs text-muted-foreground">{{ t('profile.security.twoFactor.disabledDesc') }}</p>
+                </div>
             </div>
-            <Button @click="enableTwoFactor">
+            <div class="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+            <Button
+                class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+                @click="enableTwoFactor"
+            >
                 {{ t('profile.security.twoFactor.enable') }}
             </Button>
         </div>
@@ -77,22 +90,28 @@ function regenerateRecoveryCodes() {
         <!-- QR code to scan -->
         <div
             v-if="twoFactorQrCode"
-            class="rounded-lg border p-6 space-y-6"
+            class="relative overflow-hidden rounded-xl border border-cyan-400/30 bg-card p-6 space-y-6"
         >
-            <div>
-                <h2 class="font-semibold">{{ t('profile.security.twoFactor.scanTitle') }}</h2>
-                <p class="text-sm text-muted-foreground mt-1">{{ t('profile.security.twoFactor.scanDesc') }}</p>
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+            <div class="flex items-center gap-3">
+                <div class="flex size-9 items-center justify-center rounded-full bg-cyan-400/10 ring-1 ring-cyan-400/20">
+                    <Smartphone class="size-4 text-cyan-400" />
+                </div>
+                <div>
+                    <h2 class="font-semibold text-base">{{ t('profile.security.twoFactor.scanTitle') }}</h2>
+                    <p class="text-xs text-muted-foreground">{{ t('profile.security.twoFactor.scanDesc') }}</p>
+                </div>
             </div>
 
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div
-                class="flex justify-center"
+                class="flex justify-center rounded-xl bg-card p-4 ring-1 ring-border"
                 v-html="twoFactorQrCode"
             />
 
             <div
                 v-if="twoFactorSetupKey"
-                class="rounded bg-muted px-3 py-2 text-xs font-mono text-center"
+                class="rounded-lg bg-muted px-3 py-2 text-xs font-mono text-center ring-1 ring-border"
             >
                 {{ twoFactorSetupKey }}
             </div>
@@ -109,6 +128,7 @@ function regenerateRecoveryCodes() {
                         inputmode="numeric"
                         placeholder="000000"
                         type="text"
+                        class="focus-visible:ring-primary/50 focus-visible:border-primary/50 transition-colors duration-150"
                         @keyup.enter="confirmTwoFactor"
                     />
                     <Button
@@ -128,21 +148,23 @@ function regenerateRecoveryCodes() {
         <!-- Recovery codes -->
         <div
             v-if="showingRecoveryCodes && twoFactorRecoveryCodes?.length"
-            class="rounded-lg border p-6 space-y-4"
+            class="relative overflow-hidden rounded-xl border border-gold-500/30 bg-card p-6 space-y-4"
         >
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-500/50 to-transparent" />
             <div>
-                <h2 class="font-semibold">{{ t('profile.security.twoFactor.recoveryTitle') }}</h2>
-                <p class="text-sm text-muted-foreground mt-1">{{ t('profile.security.twoFactor.recoveryDesc') }}</p>
+                <h2 class="font-semibold text-base">{{ t('profile.security.twoFactor.recoveryTitle') }}</h2>
+                <p class="mt-1 text-xs text-muted-foreground">{{ t('profile.security.twoFactor.recoveryDesc') }}</p>
             </div>
-            <div class="grid grid-cols-2 gap-2 rounded bg-muted p-4">
+            <div class="grid grid-cols-2 gap-2 rounded-lg bg-muted p-4 ring-1 ring-border">
                 <code
                     v-for="code in twoFactorRecoveryCodes"
                     :key="code"
-                    class="text-sm font-mono"
+                    class="text-sm font-mono text-gold-500"
                 >{{ code }}</code>
             </div>
             <Button
                 variant="outline"
+                class="transition-colors duration-150 hover:border-primary/40 hover:text-primary"
                 @click="regenerateRecoveryCodes"
             >
                 {{ t('profile.security.twoFactor.regenerate') }}
@@ -152,15 +174,19 @@ function regenerateRecoveryCodes() {
         <!-- 2FA enabled -->
         <div
             v-if="user?.two_factor_enabled && !twoFactorQrCode"
-            class="rounded-lg border border-success-200 bg-success-50 p-6 space-y-4 dark:border-success-700/50 dark:bg-success-700/10"
+            class="relative overflow-hidden rounded-xl border border-green-500/30 bg-green-500/5 p-6 space-y-4"
         >
-            <div class="flex items-center gap-2">
-                <span class="h-2 w-2 rounded-full bg-success-500" />
-                <h2 class="font-semibold">{{ t('profile.security.twoFactor.enabledTitle') }}</h2>
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-500/50 to-transparent" />
+            <div class="flex items-center gap-3">
+                <div class="flex size-9 items-center justify-center rounded-full bg-green-500/10 ring-1 ring-green-500/20">
+                    <ShieldCheck class="size-4 text-green-500" />
+                </div>
+                <h2 class="font-semibold text-base">{{ t('profile.security.twoFactor.enabledTitle') }}</h2>
             </div>
             <div class="flex gap-3">
                 <Button
                     variant="outline"
+                    class="transition-colors duration-150 hover:border-primary/40 hover:text-primary"
                     @click="showingRecoveryCodes = !showingRecoveryCodes"
                 >
                     {{ showingRecoveryCodes ? t('profile.security.twoFactor.hideRecovery') : t('profile.security.twoFactor.showRecovery') }}

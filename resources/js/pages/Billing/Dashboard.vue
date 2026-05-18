@@ -64,34 +64,55 @@ function limitLabel(limit: Limit): string {
     <div class="mx-auto max-w-3xl space-y-6 p-6">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-xl font-bold">{{ t('billing.dashboard.title') }}</h1>
+                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-xl font-bold text-transparent">
+                    {{ t('billing.dashboard.title') }}
+                </h1>
                 <p class="text-sm text-muted-foreground">{{ t('billing.dashboard.subtitle') }}</p>
             </div>
-            <Button variant="outline" as="a" href="/pricing">
+            <Button
+                variant="outline"
+                as="a"
+                href="/pricing"
+                class="transition-colors duration-150 hover:border-primary/40 hover:text-primary"
+            >
                 {{ t('billing.dashboard.viewPlans') }}
             </Button>
         </div>
 
         <!-- Current plan card -->
-        <div class="rounded-2xl border border-border bg-card p-6">
+        <div class="relative overflow-hidden rounded-2xl border bg-card p-6 transition-all duration-200"
+            :class="isFree ? 'border-border' : 'border-primary/30 shadow-[0_0_32px_oklch(0.66_0.25_285/0.08)]'"
+        >
+            <div
+                class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent"
+                :class="isFree ? 'via-border/60' : 'via-gold-500/60'"
+            />
             <div class="flex flex-wrap items-start justify-between gap-4">
                 <div class="space-y-1">
                     <div class="flex items-center gap-2">
-                        <Zap class="h-5 w-5 text-primary" />
+                        <div class="flex size-8 items-center justify-center rounded-full"
+                            :class="isFree ? 'bg-muted' : 'bg-gold-500/10 ring-1 ring-gold-500/20'"
+                        >
+                            <Zap class="size-4" :class="isFree ? 'text-muted-foreground' : 'text-gold-500'" />
+                        </div>
                         <span class="text-lg font-bold">{{ planName }}</span>
-                        <Badge v-if="onTrial" variant="secondary">Trial</Badge>
-                        <Badge v-if="cancelledAt" variant="destructive">{{ t('billing.dashboard.cancelled') }}</Badge>
-                        <Badge v-if="subscribed && !cancelledAt" class="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                            {{ t('billing.dashboard.active') }}
-                        </Badge>
+                        <span
+                            v-if="onTrial"
+                            class="inline-flex items-center rounded-full bg-cyan-400/10 px-2 py-0.5 text-xs font-medium text-cyan-400 ring-1 ring-cyan-400/20"
+                        >Trial</span>
+                        <Badge v-if="cancelledAt" variant="destructive" class="text-xs">{{ t('billing.dashboard.cancelled') }}</Badge>
+                        <span
+                            v-if="subscribed && !cancelledAt"
+                            class="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-500 ring-1 ring-green-500/20"
+                        >{{ t('billing.dashboard.active') }}</span>
                     </div>
-                    <p v-if="onTrial && trialEndsAt" class="text-sm text-muted-foreground">
+                    <p v-if="onTrial && trialEndsAt" class="text-sm text-muted-foreground pl-10">
                         {{ t('billing.dashboard.trialEnds', { date: trialEndsAt }) }}
                     </p>
-                    <p v-if="renewsAtDate && !cancelledAt" class="text-sm text-muted-foreground">
+                    <p v-if="renewsAtDate && !cancelledAt" class="text-sm text-muted-foreground pl-10">
                         {{ t('billing.dashboard.renewsAt', { date: renewsAtDate }) }}
                     </p>
-                    <p v-if="cancelledAt" class="text-sm text-muted-foreground">
+                    <p v-if="cancelledAt" class="text-sm text-muted-foreground pl-10">
                         {{ t('billing.dashboard.accessUntil', { date: cancelledAt }) }}
                     </p>
                 </div>
@@ -101,17 +122,19 @@ function limitLabel(limit: Limit): string {
                         v-if="subscribed || onTrial"
                         variant="outline"
                         size="sm"
+                        class="transition-colors duration-150 hover:border-primary/40 hover:text-primary"
                         @click="router.visit('/billing/portal')"
                     >
-                        <CreditCard class="mr-2 h-4 w-4" />
+                        <CreditCard class="mr-2 size-4" />
                         {{ t('billing.dashboard.manageSubscription') }}
                     </Button>
                     <Button
                         v-if="isFree"
                         size="sm"
+                        class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
                         @click="router.visit('/pricing')"
                     >
-                        <Zap class="mr-2 h-4 w-4" />
+                        <Zap class="mr-2 size-4" />
                         {{ t('billing.dashboard.upgrade') }}
                     </Button>
                 </div>
@@ -119,7 +142,8 @@ function limitLabel(limit: Limit): string {
         </div>
 
         <!-- Usage limits -->
-        <div class="rounded-2xl border border-border bg-card p-6 space-y-5">
+        <div class="relative overflow-hidden rounded-2xl border border-border bg-card p-6 space-y-5">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
             <h2 class="text-sm font-semibold">{{ t('billing.dashboard.usageTitle') }}</h2>
 
             <!-- Dynamic QR codes -->
@@ -129,17 +153,17 @@ function limitLabel(limit: Limit): string {
                     <div class="flex items-center gap-2">
                         <AlertTriangle
                             v-if="usageWarning(limits.dynamicQr)"
-                            class="h-4 w-4 text-yellow-500"
+                            class="size-4 text-amber-500"
                         />
-                        <span :class="usageWarning(limits.dynamicQr) ? 'text-yellow-600 dark:text-yellow-400' : 'text-muted-foreground'">
+                        <span :class="usageWarning(limits.dynamicQr) ? 'text-amber-500' : 'text-muted-foreground'">
                             {{ limitLabel(limits.dynamicQr) }}
                         </span>
                     </div>
                 </div>
-                <div v-if="limits.dynamicQr.max !== null" class="h-2 w-full rounded-full bg-muted">
+                <div v-if="limits.dynamicQr.max !== null" class="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
                     <div
-                        class="h-2 rounded-full transition-all"
-                        :class="usageWarning(limits.dynamicQr) ? 'bg-yellow-500' : 'bg-primary'"
+                        class="h-full rounded-full transition-all duration-300"
+                        :class="usageWarning(limits.dynamicQr) ? 'bg-amber-500' : 'bg-primary'"
                         :style="{ width: `${usagePercent(limits.dynamicQr)}%` }"
                     />
                 </div>
@@ -152,26 +176,32 @@ function limitLabel(limit: Limit): string {
                     <span class="font-medium">{{ t('billing.dashboard.scansPerMonth') }}</span>
                     <span class="text-muted-foreground">{{ limitLabel(limits.scansPerMonth) }}</span>
                 </div>
-                <div v-if="limits.scansPerMonth.max !== null" class="h-2 w-full rounded-full bg-muted">
-                    <div class="h-2 w-0 rounded-full bg-primary" />
+                <div v-if="limits.scansPerMonth.max !== null" class="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+                    <div
+                        class="h-full rounded-full bg-cyan-400 transition-all duration-300"
+                        :style="{ width: `${usagePercent(limits.scansPerMonth)}%` }"
+                    />
                 </div>
                 <div v-else class="text-xs text-muted-foreground">{{ t('billing.dashboard.unlimited') }}</div>
             </div>
         </div>
 
         <!-- Features -->
-        <div class="rounded-2xl border border-border bg-card p-6">
+        <div class="relative overflow-hidden rounded-2xl border border-border bg-card p-6">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
             <h2 class="mb-4 text-sm font-semibold">{{ t('billing.dashboard.featuresTitle') }}</h2>
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <div
                     v-for="[key, enabled] in Object.entries(features)"
                     :key="key"
-                    class="flex items-center gap-3 rounded-lg border border-border p-3"
-                    :class="enabled ? '' : 'opacity-50'"
+                    class="flex items-center gap-3 rounded-lg border p-3 transition-colors duration-150"
+                    :class="enabled
+                        ? 'border-green-500/20 bg-green-500/5'
+                        : 'border-border opacity-50 hover:opacity-70'"
                 >
                     <component
                         :is="enabled ? Check : Minus"
-                        class="h-4 w-4 shrink-0"
+                        class="size-4 shrink-0"
                         :class="enabled ? 'text-green-500' : 'text-muted-foreground'"
                     />
                     <span class="text-sm">{{ t(`billing.dashboard.featureNames.${key}`) }}</span>
@@ -179,10 +209,10 @@ function limitLabel(limit: Limit): string {
                         v-if="!enabled"
                         variant="ghost"
                         size="sm"
-                        class="ml-auto h-6 px-2 text-xs text-primary"
+                        class="ml-auto h-6 px-2 text-xs text-primary transition-colors hover:bg-primary/10"
                         @click="router.visit('/pricing')"
                     >
-                        <ExternalLink class="h-3 w-3" />
+                        <ExternalLink class="size-3" />
                     </Button>
                 </div>
             </div>
@@ -191,12 +221,18 @@ function limitLabel(limit: Limit): string {
         <!-- Upsell banner for Free users -->
         <div
             v-if="isFree"
-            class="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center space-y-3"
+            class="relative overflow-hidden rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center space-y-3"
         >
-            <Zap class="mx-auto h-8 w-8 text-primary" />
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+            <div class="mx-auto flex size-12 items-center justify-center rounded-2xl bg-primary/20 ring-1 ring-primary/30">
+                <Zap class="size-6 text-primary" />
+            </div>
             <h2 class="font-semibold">{{ t('billing.dashboard.upsellTitle') }}</h2>
             <p class="text-sm text-muted-foreground">{{ t('billing.dashboard.upsellSubtitle') }}</p>
-            <Button @click="router.visit('/billing/subscribe/pro')">
+            <Button
+                class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+                @click="router.visit('/billing/subscribe/pro')"
+            >
                 {{ t('billing.dashboard.upsellCta') }}
             </Button>
         </div>

@@ -29,11 +29,14 @@ const { locale, setLocale } = useLocale()
 
         <SidebarInset>
             <!-- Topbar -->
-            <header class="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-                <SidebarTrigger class="-ml-1" />
+            <header class="relative flex h-14 shrink-0 items-center gap-2 border-b border-border/60 bg-background/80 px-4 backdrop-blur-sm">
+                <!-- Subtle gradient bottom line -->
+                <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+                <SidebarTrigger class="-ml-1 transition-colors duration-150 hover:text-primary" />
                 <Separator
                     orientation="vertical"
-                    class="mr-2 h-4"
+                    class="mr-2 h-4 opacity-50"
                 />
 
                 <div class="flex-1" />
@@ -47,7 +50,7 @@ const { locale, setLocale } = useLocale()
                         <Button
                             variant="ghost"
                             size="icon"
-                            class="size-8"
+                            class="size-8 transition-colors duration-150 hover:text-primary"
                         >
                             <Globe class="size-4" />
                         </Button>
@@ -56,7 +59,7 @@ const { locale, setLocale } = useLocale()
                         <DropdownMenuItem
                             v-for="lang in ['pl', 'en'] as const"
                             :key="lang"
-                            :class="{ 'font-semibold': locale === lang }"
+                            :class="{ 'font-semibold text-primary': locale === lang }"
                             @click="setLocale(lang)"
                         >
                             {{ t(`lang.${lang}`) }}
