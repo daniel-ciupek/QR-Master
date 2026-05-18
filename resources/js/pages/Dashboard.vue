@@ -130,17 +130,30 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
     <Head :title="t('dashboard.title')" />
 
     <div class="space-y-4 md:space-y-6">
-        <!-- Header -->
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
+        <!-- Header — mesh gradient card -->
+        <div class="relative overflow-hidden rounded-2xl border border-border/50 bg-card p-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <!-- Animated mesh gradient (3 radiale) -->
+            <div
+                class="pointer-events-none absolute inset-0"
+                style="background:
+                    radial-gradient(ellipse at 15% 50%, oklch(0.66 0.25 285 / 0.13) 0%, transparent 55%),
+                    radial-gradient(ellipse at 85% 20%, oklch(0.72 0.15 200 / 0.10) 0%, transparent 50%),
+                    radial-gradient(ellipse at 55% 90%, oklch(0.78 0.15 85 / 0.07) 0%, transparent 45%);"
+            />
+            <!-- Gradient top-border violet→cyan -->
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/80 via-50% to-cyan-400/40 to-transparent" />
+            <!-- Dot grid overlay -->
+            <div class="absolute inset-0 bg-[radial-gradient(oklch(0.66_0.25_285/0.04)_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+
+            <div class="relative">
                 <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
                     {{ t('dashboard.title') }}
                 </h1>
-                <p class="text-sm text-muted-foreground">{{ t('dashboard.subtitle') }}</p>
+                <p class="mt-0.5 text-sm text-muted-foreground">{{ t('dashboard.subtitle') }}</p>
             </div>
             <Button
                 as-child
-                class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200 self-start sm:self-auto"
+                class="relative self-start sm:self-auto shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_28px_oklch(0.66_0.25_285/0.6)] hover:-translate-y-0.5 transition-all duration-300"
             >
                 <Link :href="r('qr.create')">
                     <Plus class="mr-2 size-4" />
