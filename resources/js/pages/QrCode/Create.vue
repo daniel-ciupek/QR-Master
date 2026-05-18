@@ -8,6 +8,8 @@ import {
     AlignLeft,
     Bitcoin,
     Calendar,
+    ChevronLeft,
+    ChevronRight,
     Contact,
     FileText,
     Globe,
@@ -84,6 +86,11 @@ const QR_TYPES: QrTypeItem[] = [
     { id: 'crypto',   labelKey: 'qr.tabs.crypto',   icon: Bitcoin,        iconColor: 'text-amber-400',   iconBg: 'bg-amber-400/10',   iconRing: 'ring-amber-400/30',   activeBorder: 'border-amber-400/50',   activeGlow: 'shadow-[0_0_16px_oklch(0.76_0.17_70/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-amber-400/70 to-transparent',   labelColor: 'text-amber-400' },
     { id: 'review',   labelKey: 'qr.tabs.review',   icon: Star,           iconColor: 'text-orange-400',  iconBg: 'bg-orange-400/10',  iconRing: 'ring-orange-400/30',  activeBorder: 'border-orange-400/50',  activeGlow: 'shadow-[0_0_16px_oklch(0.70_0.18_40/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-orange-400/70 to-transparent',  labelColor: 'text-orange-400' },
 ]
+
+const carouselRef = ref<HTMLDivElement | null>(null)
+function scrollCarousel(dir: 'left' | 'right') {
+    carouselRef.value?.scrollBy({ left: dir === 'left' ? -220 : 220, behavior: 'smooth' })
+}
 
 // QR data capacity: conservative limit for good scannability at ECC M
 const MAX_CHARS = 900
@@ -509,43 +516,73 @@ const exportOpen = ref(false)
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
                     <div class="p-5">
                         <Tabs v-model="activeTab" class="w-full">
-                            <!-- Custom type selector grid -->
-                            <div class="grid grid-cols-4 gap-1.5 sm:grid-cols-5 lg:grid-cols-7">
-                                <button
-                                    v-for="type in QR_TYPES"
-                                    :key="type.id"
-                                    type="button"
-                                    class="group relative flex flex-col items-center gap-1.5 overflow-hidden rounded-xl border p-2.5 transition-all duration-200"
-                                    :class="activeTab === type.id
-                                        ? [type.activeBorder, type.activeGlow, 'bg-card']
-                                        : 'border-border bg-transparent hover:border-border/70 hover:bg-muted/25'"
-                                    @click="activeTab = type.id"
-                                >
-                                    <!-- Gradient top-border (active only) -->
-                                    <div
-                                        v-if="activeTab === type.id"
-                                        class="absolute inset-x-0 top-0 h-px"
-                                        :class="type.topBorder"
-                                    />
-                                    <!-- Icon circle -->
-                                    <div
-                                        class="flex size-8 items-center justify-center rounded-full ring-1 transition-all duration-200"
-                                        :class="activeTab === type.id
-                                            ? [type.iconBg, type.iconRing, 'scale-110']
-                                            : 'bg-muted/50 ring-border group-hover:bg-muted'"
+                            <!-- Type selector — karuzela z przewijaniem -->
+                            <div class="relative">
+                                <!-- Left arrow + fade -->
+                                <div class="absolute left-0 top-0 bottom-1 z-10 flex items-center">
+                                    <div class="pointer-events-none absolute inset-y-0 left-6 w-6 bg-gradient-to-r from-card to-transparent" />
+                                    <button
+                                        type="button"
+                                        class="flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-card shadow-sm transition-all duration-150 hover:bg-muted hover:shadow-[0_0_8px_oklch(0.66_0.25_285/0.2)]"
+                                        @click="scrollCarousel('left')"
                                     >
-                                        <component
-                                            :is="type.icon"
-                                            class="size-4 transition-colors duration-200"
-                                            :class="activeTab === type.id ? type.iconColor : 'text-muted-foreground group-hover:text-foreground/70'"
+                                        <ChevronLeft class="size-3.5 text-muted-foreground" />
+                                    </button>
+                                </div>
+
+                                <!-- Scrollable strip -->
+                                <div
+                                    ref="carouselRef"
+                                    class="flex gap-2 overflow-x-auto scroll-smooth px-9 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                                >
+                                    <button
+                                        v-for="type in QR_TYPES"
+                                        :key="type.id"
+                                        type="button"
+                                        class="group relative flex w-[68px] shrink-0 flex-col items-center gap-1.5 overflow-hidden rounded-xl border p-2.5 transition-all duration-200"
+                                        :class="activeTab === type.id
+                                            ? [type.activeBorder, type.activeGlow, 'bg-card']
+                                            : 'border-border bg-transparent hover:border-border/70 hover:bg-muted/25'"
+                                        @click="activeTab = type.id"
+                                    >
+                                        <!-- Gradient top-border (active only) -->
+                                        <div
+                                            v-if="activeTab === type.id"
+                                            class="absolute inset-x-0 top-0 h-px"
+                                            :class="type.topBorder"
                                         />
-                                    </div>
-                                    <!-- Label -->
-                                    <span
-                                        class="text-[11px] font-medium leading-tight transition-colors duration-200"
-                                        :class="activeTab === type.id ? type.labelColor : 'text-muted-foreground group-hover:text-foreground/70'"
-                                    >{{ t(type.labelKey) }}</span>
-                                </button>
+                                        <!-- Icon circle -->
+                                        <div
+                                            class="flex size-8 items-center justify-center rounded-full ring-1 transition-all duration-200"
+                                            :class="activeTab === type.id
+                                                ? [type.iconBg, type.iconRing, 'scale-110']
+                                                : 'bg-muted/50 ring-border group-hover:bg-muted'"
+                                        >
+                                            <component
+                                                :is="type.icon"
+                                                class="size-4 transition-colors duration-200"
+                                                :class="activeTab === type.id ? type.iconColor : 'text-muted-foreground group-hover:text-foreground/70'"
+                                            />
+                                        </div>
+                                        <!-- Label -->
+                                        <span
+                                            class="text-center text-[10px] font-medium leading-tight transition-colors duration-200"
+                                            :class="activeTab === type.id ? type.labelColor : 'text-muted-foreground group-hover:text-foreground/70'"
+                                        >{{ t(type.labelKey) }}</span>
+                                    </button>
+                                </div>
+
+                                <!-- Right arrow + fade -->
+                                <div class="absolute right-0 top-0 bottom-1 z-10 flex items-center">
+                                    <div class="pointer-events-none absolute inset-y-0 right-6 w-6 bg-gradient-to-l from-card to-transparent" />
+                                    <button
+                                        type="button"
+                                        class="flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-card shadow-sm transition-all duration-150 hover:bg-muted hover:shadow-[0_0_8px_oklch(0.66_0.25_285/0.2)]"
+                                        @click="scrollCarousel('right')"
+                                    >
+                                        <ChevronRight class="size-3.5 text-muted-foreground" />
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- URL -->
