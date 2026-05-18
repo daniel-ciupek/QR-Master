@@ -4,7 +4,25 @@ import type { ErrorCorrectionLevel } from 'qr-code-styling'
 import { computed, ref, watch } from 'vue'
 import type { CornerDotStyle, CornerSquareStyle, DotStyle, FrameType } from '@/types/qr-visual'
 import { useI18n } from 'vue-i18n'
-import { QrCode, Save, Download } from 'lucide-vue-next'
+import {
+    AlignLeft,
+    Bitcoin,
+    Calendar,
+    Contact,
+    FileText,
+    Globe,
+    Link2,
+    Mail,
+    MapPin,
+    MessageSquare,
+    Phone,
+    QrCode,
+    Save,
+    Download,
+    Smartphone,
+    Star,
+    Wifi,
+} from 'lucide-vue-next'
 import ColorPicker from '@/components/qr/ColorPicker.vue'
 import CornerStylePicker from '@/components/qr/CornerStylePicker.vue'
 import DotStylePicker from '@/components/qr/DotStylePicker.vue'
@@ -21,7 +39,7 @@ import QrFrame from '@/components/qr/QrFrame.vue'
 import ExportModal from '@/components/qr/ExportModal.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { useContrastChecker } from '@/composables/useContrastChecker'
 import { useOfflineDrafts } from '@/composables/useOfflineDrafts'
 import OfflineBanner from '@/components/OfflineBanner.vue'
@@ -35,12 +53,43 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
+type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf' | 'bio_link' | 'app' | 'calendar' | 'crypto' | 'review'
+
+interface QrTypeItem {
+    id: TabId
+    labelKey: string
+    icon: unknown
+    iconColor: string
+    iconBg: string
+    iconRing: string
+    activeBorder: string
+    activeGlow: string
+    topBorder: string
+    labelColor: string
+}
+
+const QR_TYPES: QrTypeItem[] = [
+    { id: 'url',      labelKey: 'qr.tabs.url',      icon: Globe,          iconColor: 'text-violet-400',  iconBg: 'bg-violet-400/10',  iconRing: 'ring-violet-400/30',  activeBorder: 'border-violet-400/50',  activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.22_292/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-violet-400/70 to-transparent',  labelColor: 'text-violet-400' },
+    { id: 'text',     labelKey: 'qr.tabs.text',     icon: AlignLeft,      iconColor: 'text-slate-300',   iconBg: 'bg-slate-400/10',   iconRing: 'ring-slate-400/30',   activeBorder: 'border-slate-400/50',   activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.01_272/0.2)]',   topBorder: 'bg-gradient-to-r from-transparent via-slate-400/70 to-transparent',   labelColor: 'text-slate-300' },
+    { id: 'email',    labelKey: 'qr.tabs.email',    icon: Mail,           iconColor: 'text-gold-500',    iconBg: 'bg-gold-500/10',    iconRing: 'ring-gold-500/30',    activeBorder: 'border-gold-500/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.78_0.15_85/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-gold-500/70 to-transparent',    labelColor: 'text-gold-500' },
+    { id: 'phone',    labelKey: 'qr.tabs.phone',    icon: Phone,          iconColor: 'text-green-400',   iconBg: 'bg-green-400/10',   iconRing: 'ring-green-400/30',   activeBorder: 'border-green-400/50',   activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.19_142/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-green-400/70 to-transparent',   labelColor: 'text-green-400' },
+    { id: 'sms',      labelKey: 'qr.tabs.sms',      icon: MessageSquare,  iconColor: 'text-teal-400',    iconBg: 'bg-teal-400/10',    iconRing: 'ring-teal-400/30',    activeBorder: 'border-teal-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.70_0.14_180/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-teal-400/70 to-transparent',    labelColor: 'text-teal-400' },
+    { id: 'vcard',    labelKey: 'qr.tabs.vcard',    icon: Contact,        iconColor: 'text-cyan-400',    iconBg: 'bg-cyan-400/10',    iconRing: 'ring-cyan-400/30',    activeBorder: 'border-cyan-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.72_0.15_200/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-cyan-400/70 to-transparent',    labelColor: 'text-cyan-400' },
+    { id: 'wifi',     labelKey: 'qr.tabs.wifi',     icon: Wifi,           iconColor: 'text-sky-400',     iconBg: 'bg-sky-400/10',     iconRing: 'ring-sky-400/30',     activeBorder: 'border-sky-400/50',     activeGlow: 'shadow-[0_0_16px_oklch(0.67_0.17_220/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-sky-400/70 to-transparent',     labelColor: 'text-sky-400' },
+    { id: 'geo',      labelKey: 'qr.tabs.geo',      icon: MapPin,         iconColor: 'text-emerald-400', iconBg: 'bg-emerald-400/10', iconRing: 'ring-emerald-400/30', activeBorder: 'border-emerald-400/50', activeGlow: 'shadow-[0_0_16px_oklch(0.69_0.17_162/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-emerald-400/70 to-transparent', labelColor: 'text-emerald-400' },
+    { id: 'pdf',      labelKey: 'qr.tabs.pdf',      icon: FileText,       iconColor: 'text-red-400',     iconBg: 'bg-red-400/10',     iconRing: 'ring-red-400/30',     activeBorder: 'border-red-400/50',     activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.22_25/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-red-400/70 to-transparent',     labelColor: 'text-red-400' },
+    { id: 'bio_link', labelKey: 'qr.tabs.bio_link', icon: Link2,          iconColor: 'text-pink-400',    iconBg: 'bg-pink-400/10',    iconRing: 'ring-pink-400/30',    activeBorder: 'border-pink-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.70_0.20_340/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-pink-400/70 to-transparent',    labelColor: 'text-pink-400' },
+    { id: 'app',      labelKey: 'qr.tabs.app',      icon: Smartphone,     iconColor: 'text-indigo-400',  iconBg: 'bg-indigo-400/10',  iconRing: 'ring-indigo-400/30',  activeBorder: 'border-indigo-400/50',  activeGlow: 'shadow-[0_0_16px_oklch(0.55_0.25_270/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-indigo-400/70 to-transparent',  labelColor: 'text-indigo-400' },
+    { id: 'calendar', labelKey: 'qr.tabs.calendar', icon: Calendar,       iconColor: 'text-rose-400',    iconBg: 'bg-rose-400/10',    iconRing: 'ring-rose-400/30',    activeBorder: 'border-rose-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.67_0.22_15/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-rose-400/70 to-transparent',    labelColor: 'text-rose-400' },
+    { id: 'crypto',   labelKey: 'qr.tabs.crypto',   icon: Bitcoin,        iconColor: 'text-amber-400',   iconBg: 'bg-amber-400/10',   iconRing: 'ring-amber-400/30',   activeBorder: 'border-amber-400/50',   activeGlow: 'shadow-[0_0_16px_oklch(0.76_0.17_70/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-amber-400/70 to-transparent',   labelColor: 'text-amber-400' },
+    { id: 'review',   labelKey: 'qr.tabs.review',   icon: Star,           iconColor: 'text-orange-400',  iconBg: 'bg-orange-400/10',  iconRing: 'ring-orange-400/30',  activeBorder: 'border-orange-400/50',  activeGlow: 'shadow-[0_0_16px_oklch(0.70_0.18_40/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-orange-400/70 to-transparent',  labelColor: 'text-orange-400' },
+]
+
 // QR data capacity: conservative limit for good scannability at ECC M
 const MAX_CHARS = 900
 
 const ALLOWED_URL_SCHEMES = ['https://', 'http://']
 
-type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'geo' | 'pdf' | 'bio_link' | 'app' | 'calendar' | 'crypto' | 'review'
 type EccLevel = ErrorCorrectionLevel
 
 const ECC_LEVELS: EccLevel[] = ['L', 'M', 'Q', 'H']
@@ -460,22 +509,44 @@ const exportOpen = ref(false)
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
                     <div class="p-5">
                         <Tabs v-model="activeTab" class="w-full">
-                            <TabsList class="w-full overflow-x-auto flex-nowrap justify-start">
-                                <TabsTrigger value="url" class="shrink-0">{{ t('qr.tabs.url') }}</TabsTrigger>
-                                <TabsTrigger value="text" class="shrink-0">{{ t('qr.tabs.text') }}</TabsTrigger>
-                                <TabsTrigger value="email" class="shrink-0">{{ t('qr.tabs.email') }}</TabsTrigger>
-                                <TabsTrigger value="phone" class="shrink-0">{{ t('qr.tabs.phone') }}</TabsTrigger>
-                                <TabsTrigger value="sms" class="shrink-0">{{ t('qr.tabs.sms') }}</TabsTrigger>
-                                <TabsTrigger value="vcard" class="shrink-0">{{ t('qr.tabs.vcard') }}</TabsTrigger>
-                                <TabsTrigger value="wifi" class="shrink-0">{{ t('qr.tabs.wifi') }}</TabsTrigger>
-                                <TabsTrigger value="geo" class="shrink-0">{{ t('qr.tabs.geo') }}</TabsTrigger>
-                                <TabsTrigger value="pdf" class="shrink-0">{{ t('qr.tabs.pdf') }}</TabsTrigger>
-                                <TabsTrigger value="bio_link" class="shrink-0">{{ t('qr.tabs.bio_link') }}</TabsTrigger>
-                                <TabsTrigger value="app" class="shrink-0">{{ t('qr.tabs.app') }}</TabsTrigger>
-                                <TabsTrigger value="calendar" class="shrink-0">{{ t('qr.tabs.calendar') }}</TabsTrigger>
-                                <TabsTrigger value="crypto" class="shrink-0">{{ t('qr.tabs.crypto') }}</TabsTrigger>
-                                <TabsTrigger value="review" class="shrink-0">{{ t('qr.tabs.review') }}</TabsTrigger>
-                            </TabsList>
+                            <!-- Custom type selector grid -->
+                            <div class="grid grid-cols-4 gap-1.5 sm:grid-cols-5 lg:grid-cols-7">
+                                <button
+                                    v-for="type in QR_TYPES"
+                                    :key="type.id"
+                                    type="button"
+                                    class="group relative flex flex-col items-center gap-1.5 overflow-hidden rounded-xl border p-2.5 transition-all duration-200"
+                                    :class="activeTab === type.id
+                                        ? [type.activeBorder, type.activeGlow, 'bg-card']
+                                        : 'border-border bg-transparent hover:border-border/70 hover:bg-muted/25'"
+                                    @click="activeTab = type.id"
+                                >
+                                    <!-- Gradient top-border (active only) -->
+                                    <div
+                                        v-if="activeTab === type.id"
+                                        class="absolute inset-x-0 top-0 h-px"
+                                        :class="type.topBorder"
+                                    />
+                                    <!-- Icon circle -->
+                                    <div
+                                        class="flex size-8 items-center justify-center rounded-full ring-1 transition-all duration-200"
+                                        :class="activeTab === type.id
+                                            ? [type.iconBg, type.iconRing, 'scale-110']
+                                            : 'bg-muted/50 ring-border group-hover:bg-muted'"
+                                    >
+                                        <component
+                                            :is="type.icon"
+                                            class="size-4 transition-colors duration-200"
+                                            :class="activeTab === type.id ? type.iconColor : 'text-muted-foreground group-hover:text-foreground/70'"
+                                        />
+                                    </div>
+                                    <!-- Label -->
+                                    <span
+                                        class="text-[11px] font-medium leading-tight transition-colors duration-200"
+                                        :class="activeTab === type.id ? type.labelColor : 'text-muted-foreground group-hover:text-foreground/70'"
+                                    >{{ t(type.labelKey) }}</span>
+                                </button>
+                            </div>
 
                             <!-- URL -->
                             <TabsContent value="url" class="mt-4 space-y-2">
