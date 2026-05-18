@@ -29,11 +29,13 @@ const { locale, setLocale } = useLocale()
 
         <SidebarInset>
             <!-- Topbar -->
-            <header class="relative flex h-14 shrink-0 items-center gap-2 border-b border-border/60 bg-background/80 px-4 backdrop-blur-sm">
-                <!-- Subtle gradient bottom line -->
-                <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+            <header class="relative flex h-14 shrink-0 items-center gap-2 border-b border-border/40 bg-background/85 px-4 backdrop-blur-md">
+                <!-- Stronger gradient bottom border -->
+                <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 via-50% to-cyan-400/20 to-transparent" />
+                <!-- Ambient top glow -->
+                <div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-primary/[0.04] to-transparent pointer-events-none" />
 
-                <SidebarTrigger class="-ml-1 transition-colors duration-150 hover:text-primary" />
+                <SidebarTrigger class="-ml-1 transition-all duration-150 hover:text-primary hover:scale-110" />
                 <Separator
                     orientation="vertical"
                     class="mr-2 h-4 opacity-50"
@@ -50,7 +52,7 @@ const { locale, setLocale } = useLocale()
                         <Button
                             variant="ghost"
                             size="icon"
-                            class="size-8 transition-colors duration-150 hover:text-primary"
+                            class="size-8 transition-all duration-150 hover:text-primary hover:bg-primary/10"
                         >
                             <Globe class="size-4" />
                         </Button>
