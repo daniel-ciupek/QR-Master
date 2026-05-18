@@ -129,18 +129,18 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
 <template>
     <Head :title="t('dashboard.title')" />
 
-    <div class="space-y-6 p-6">
+    <div class="space-y-4 md:space-y-6">
         <!-- Header -->
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent">
+                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
                     {{ t('dashboard.title') }}
                 </h1>
                 <p class="text-sm text-muted-foreground">{{ t('dashboard.subtitle') }}</p>
             </div>
             <Button
                 as-child
-                class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+                class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200 self-start sm:self-auto"
             >
                 <Link :href="r('qr.create')">
                     <Plus class="mr-2 size-4" />
@@ -174,14 +174,14 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
 
         <template v-else>
             <!-- Stat cards -->
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
                 <!-- Total QR -->
-                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.12)] transition-all duration-200">
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5 hover:border-primary/40 hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.12)] transition-all duration-200">
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.totalQr') }}</p>
-                            <p class="mt-1 text-3xl font-bold">{{ stats.totalQr }}</p>
+                            <p class="mt-1 text-2xl font-bold sm:text-3xl">{{ stats.totalQr }}</p>
                         </div>
                         <div class="flex size-10 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
                             <QrCode class="size-5 text-primary" />
@@ -193,12 +193,12 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                 </div>
 
                 <!-- Scans this month -->
-                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-5 hover:border-cyan-400/40 hover:shadow-[0_0_24px_oklch(0.72_0.15_200/0.12)] transition-all duration-200">
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5 hover:border-cyan-400/40 hover:shadow-[0_0_24px_oklch(0.72_0.15_200/0.12)] transition-all duration-200">
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.scansMonth') }}</p>
-                            <p class="mt-1 text-3xl font-bold">{{ formatNumber(stats.scansThisMonth) }}</p>
+                            <p class="mt-1 text-2xl font-bold sm:text-3xl">{{ formatNumber(stats.scansThisMonth) }}</p>
                         </div>
                         <div class="flex size-10 items-center justify-center rounded-full bg-cyan-400/10 ring-1 ring-cyan-400/20">
                             <BarChart2 class="size-5 text-cyan-400" />
@@ -221,12 +221,12 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                 </div>
 
                 <!-- Active QR -->
-                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-5 hover:border-green-500/40 hover:shadow-[0_0_24px_oklch(0.65_0.19_142/0.12)] transition-all duration-200">
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5 hover:border-green-500/40 hover:shadow-[0_0_24px_oklch(0.65_0.19_142/0.12)] transition-all duration-200">
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-500/50 to-transparent" />
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.activeQr') }}</p>
-                            <p class="mt-1 text-3xl font-bold">{{ stats.activeQr }}</p>
+                            <p class="mt-1 text-2xl font-bold sm:text-3xl">{{ stats.activeQr }}</p>
                         </div>
                         <div class="flex size-10 items-center justify-center rounded-full bg-green-500/10 ring-1 ring-green-500/20">
                             <Zap class="size-5 text-green-500" />
@@ -239,7 +239,7 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
 
                 <!-- Expiring -->
                 <div
-                    class="relative overflow-hidden rounded-xl border bg-card p-5 transition-all duration-200"
+                    class="relative overflow-hidden rounded-xl border bg-card p-4 md:p-5 transition-all duration-200"
                     :class="stats.expiringQr > 0
                         ? 'border-amber-500/30 hover:border-amber-500/50 hover:shadow-[0_0_24px_oklch(0.76_0.17_70/0.12)]'
                         : 'border-border hover:border-border/80'"
@@ -251,7 +251,7 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">{{ t('dashboard.stats.expiringQr') }}</p>
-                            <p class="mt-1 text-3xl font-bold">{{ stats.expiringQr }}</p>
+                            <p class="mt-1 text-2xl font-bold sm:text-3xl">{{ stats.expiringQr }}</p>
                         </div>
                         <div
                             class="flex size-10 items-center justify-center rounded-full ring-1"
@@ -268,7 +268,7 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
             </div>
 
             <!-- Chart + Top QR -->
-            <div class="grid gap-4 lg:grid-cols-3">
+            <div class="grid gap-3 md:gap-4 lg:grid-cols-3">
                 <!-- Scan chart -->
                 <Card class="lg:col-span-2">
                     <CardHeader class="pb-2">
@@ -326,7 +326,7 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
             </div>
 
             <!-- Recent QR + Plan Usage + Quick Actions -->
-            <div class="grid gap-4 lg:grid-cols-3">
+            <div class="grid gap-3 md:gap-4 lg:grid-cols-3">
                 <!-- Recent QR codes -->
                 <Card class="lg:col-span-2">
                     <CardHeader class="pb-2">

@@ -70,7 +70,7 @@ function formatMoney(grosze: number, currency: string): string {
                 <div class="flex size-10 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20 mx-auto mb-3">
                     <Users class="size-5 text-primary" />
                 </div>
-                <p class="text-3xl font-bold">{{ referralCount }}</p>
+                <p class="text-2xl font-bold sm:text-3xl">{{ referralCount }}</p>
                 <p class="text-xs text-muted-foreground mt-1">{{ t('affiliate.referrals') }}</p>
             </div>
 
@@ -80,7 +80,7 @@ function formatMoney(grosze: number, currency: string): string {
                 <div class="flex size-10 items-center justify-center rounded-full bg-gold-500/10 ring-1 ring-gold-500/20 mx-auto mb-3">
                     <DollarSign class="size-5 text-gold-500" />
                 </div>
-                <p class="text-3xl font-bold text-gold-500">
+                <p class="text-2xl font-bold text-gold-500 sm:text-3xl">
                     {{ totalPendingPln.toFixed(2) }}
                 </p>
                 <p class="text-xs text-muted-foreground mt-1">{{ t('affiliate.pending') }}</p>
@@ -92,7 +92,7 @@ function formatMoney(grosze: number, currency: string): string {
                 <div class="flex size-10 items-center justify-center rounded-full bg-emerald-400/10 ring-1 ring-emerald-400/20 mx-auto mb-3">
                     <TrendingUp class="size-5 text-emerald-400" />
                 </div>
-                <p class="text-3xl font-bold text-emerald-400">
+                <p class="text-2xl font-bold text-emerald-400 sm:text-3xl">
                     {{ totalPaidPln.toFixed(2) }}
                 </p>
                 <p class="text-xs text-muted-foreground mt-1">{{ t('affiliate.paid') }}</p>

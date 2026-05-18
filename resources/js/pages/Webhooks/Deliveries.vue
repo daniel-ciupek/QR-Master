@@ -164,7 +164,7 @@ const formatDate = (iso: string | null) =>
                         </div>
 
                         <!-- Meta info -->
-                        <div class="flex items-center gap-4 text-xs text-muted-foreground">
+                        <div class="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                             <span>{{ t('webhooks.colAttempts') }}: <span class="text-foreground font-medium">{{ d.attempts }}</span></span>
                             <span
                                 v-if="d.response_status"

@@ -32,9 +32,9 @@ function revokeOthers() {
 <template>
     <Head :title="t('profile.sessions.headTitle')" />
 
-    <div class="mx-auto max-w-2xl space-y-6">
+    <div class="mx-auto w-full max-w-2xl space-y-6">
         <div>
-            <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent">
+            <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
                 {{ t('profile.sessions.title') }}
             </h1>
             <p class="mt-1 text-sm text-muted-foreground">{{ t('profile.sessions.description') }}</p>
@@ -45,11 +45,11 @@ function revokeOthers() {
             <div
                 v-for="session in sessions"
                 :key="session.id"
-                class="flex items-center justify-between px-4 py-4 transition-colors duration-100 hover:bg-muted/30"
+                class="flex items-center justify-between gap-3 px-4 py-4 transition-colors duration-100 hover:bg-muted/30"
             >
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                     <div
-                        class="flex size-8 items-center justify-center rounded-full ring-1"
+                        class="flex size-8 shrink-0 items-center justify-center rounded-full ring-1"
                         :class="session.is_current
                             ? 'bg-primary/10 ring-primary/20'
                             : 'bg-muted ring-border'"
@@ -59,15 +59,15 @@ function revokeOthers() {
                             :class="session.is_current ? 'text-primary' : 'text-muted-foreground'"
                         />
                     </div>
-                    <div class="space-y-0.5">
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm font-medium">{{ session.browser }} — {{ session.os }}</span>
+                    <div class="min-w-0 space-y-0.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-sm font-medium truncate">{{ session.browser }} — {{ session.os }}</span>
                             <span
                                 v-if="session.is_current"
-                                class="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-500 ring-1 ring-green-500/20"
+                                class="inline-flex shrink-0 items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-500 ring-1 ring-green-500/20"
                             >{{ t('profile.sessions.current') }}</span>
                         </div>
-                        <div class="text-xs text-muted-foreground">
+                        <div class="text-xs text-muted-foreground truncate">
                             {{ session.ip_address ?? t('profile.sessions.unknownIp') }} · {{ session.last_active_at }}
                         </div>
                     </div>
@@ -77,6 +77,7 @@ function revokeOthers() {
                     v-if="!session.is_current"
                     size="sm"
                     variant="destructive"
+                    class="shrink-0"
                     @click="revoke(session.id)"
                 >
                     {{ t('profile.sessions.revoke') }}

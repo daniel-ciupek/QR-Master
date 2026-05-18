@@ -88,17 +88,17 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
 <template>
     <Head :title="t('analytics.title')" />
 
-    <div class="space-y-6 p-6">
+    <div class="space-y-4 md:space-y-6">
         <!-- Header -->
-        <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <div>
-                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent">
+                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
                     {{ t('analytics.title') }}
                 </h1>
                 <p class="text-sm text-muted-foreground">{{ t('analytics.subtitle') }}</p>
             </div>
             <!-- Range picker -->
-            <div class="flex gap-1 rounded-lg border border-border/60 bg-card p-1">
+            <div class="flex gap-1 rounded-lg border border-border/60 bg-card p-1 self-start sm:self-auto">
                 <button
                     v-for="d in [7, 30, 90]"
                     :key="d"
@@ -131,14 +131,14 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
 
         <template v-else>
             <!-- Stat cards -->
-            <div class="grid gap-4 sm:grid-cols-3">
+            <div class="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-3">
                 <!-- Total scans -->
-                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.12)] transition-all duration-200">
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5 hover:border-primary/40 hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.12)] transition-all duration-200">
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">{{ t('analytics.stats.totalScans') }}</p>
-                            <p class="mt-1 text-3xl font-bold">{{ formatNum(stats.totalScans) }}</p>
+                            <p class="mt-1 text-2xl font-bold sm:text-3xl">{{ formatNum(stats.totalScans) }}</p>
                         </div>
                         <div class="flex size-10 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
                             <BarChart2 class="size-5 text-primary" />
@@ -155,12 +155,12 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                 </div>
 
                 <!-- Unique scans -->
-                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-5 hover:border-cyan-400/40 hover:shadow-[0_0_24px_oklch(0.72_0.15_200/0.12)] transition-all duration-200">
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5 hover:border-cyan-400/40 hover:shadow-[0_0_24px_oklch(0.72_0.15_200/0.12)] transition-all duration-200">
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">{{ t('analytics.stats.uniqueScans') }}</p>
-                            <p class="mt-1 text-3xl font-bold">{{ formatNum(stats.uniqueScans) }}</p>
+                            <p class="mt-1 text-2xl font-bold sm:text-3xl">{{ formatNum(stats.uniqueScans) }}</p>
                         </div>
                         <div class="flex size-10 items-center justify-center rounded-full bg-cyan-400/10 ring-1 ring-cyan-400/20">
                             <QrCode class="size-5 text-cyan-400" />
@@ -172,12 +172,12 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                 </div>
 
                 <!-- Avg per day -->
-                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-5 hover:border-gold-500/40 hover:shadow-[0_0_24px_oklch(0.78_0.15_85/0.12)] transition-all duration-200">
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5 hover:border-gold-500/40 hover:shadow-[0_0_24px_oklch(0.78_0.15_85/0.12)] transition-all duration-200">
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-500/60 to-transparent" />
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">{{ t('analytics.stats.avgPerDay') }}</p>
-                            <p class="mt-1 text-3xl font-bold">{{ stats.avgPerDay }}</p>
+                            <p class="mt-1 text-2xl font-bold sm:text-3xl">{{ stats.avgPerDay }}</p>
                         </div>
                         <div class="flex size-10 items-center justify-center rounded-full bg-gold-500/10 ring-1 ring-gold-500/20">
                             <TrendingUp class="size-5 text-gold-500" />
@@ -203,7 +203,7 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
             </Card>
 
             <!-- Top QR codes + device/browser breakdowns -->
-            <div class="grid gap-4 lg:grid-cols-2">
+            <div class="grid gap-3 md:gap-4 lg:grid-cols-2">
                 <!-- Top QR codes table -->
                 <Card>
                     <CardHeader class="pb-2">
@@ -276,7 +276,7 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
             </div>
 
             <!-- Device + Browser donuts -->
-            <div class="grid gap-4 sm:grid-cols-2">
+            <div class="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <Card>
                     <CardHeader class="pb-2">
                         <CardTitle class="text-base">{{ t('analytics.device.title') }}</CardTitle>

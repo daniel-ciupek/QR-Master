@@ -67,17 +67,17 @@ function deleteAccount() {
 <template>
     <Head :title="t('profile.index.headTitle')" />
 
-    <div class="mx-auto max-w-2xl space-y-6">
+    <div class="mx-auto w-full max-w-2xl space-y-6">
         <!-- Header -->
         <div>
-            <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent">
+            <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
                 {{ t('profile.index.headTitle') }}
             </h1>
             <p class="mt-1 text-sm text-muted-foreground">{{ t('profile.index.personalInfo.subtitle') }}</p>
         </div>
 
         <!-- Personal information -->
-        <section class="relative overflow-hidden rounded-xl border border-border bg-card p-6 space-y-4 hover:border-primary/30 transition-colors duration-200">
+        <section class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-6 space-y-4 hover:border-primary/30 transition-colors duration-200">
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
             <div class="flex items-center gap-3">
                 <div class="flex size-9 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
@@ -154,7 +154,7 @@ function deleteAccount() {
         </section>
 
         <!-- Change password -->
-        <section class="relative overflow-hidden rounded-xl border border-border bg-card p-6 space-y-4 hover:border-cyan-400/30 transition-colors duration-200">
+        <section class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-6 space-y-4 hover:border-cyan-400/30 transition-colors duration-200">
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
             <div class="flex items-center gap-3">
                 <div class="flex size-9 items-center justify-center rounded-full bg-cyan-400/10 ring-1 ring-cyan-400/20">
@@ -237,7 +237,7 @@ function deleteAccount() {
         </section>
 
         <!-- GDPR export -->
-        <section class="relative overflow-hidden rounded-xl border border-border bg-card p-6 space-y-4 hover:border-gold-500/30 transition-colors duration-200">
+        <section class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-6 space-y-4 hover:border-gold-500/30 transition-colors duration-200">
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-500/40 to-transparent" />
             <div class="flex items-center gap-3">
                 <div class="flex size-9 items-center justify-center rounded-full bg-gold-500/10 ring-1 ring-gold-500/20">
@@ -262,7 +262,7 @@ function deleteAccount() {
         </section>
 
         <!-- Danger zone -->
-        <section class="relative overflow-hidden rounded-xl border border-destructive/30 bg-card p-6 space-y-4">
+        <section class="relative overflow-hidden rounded-xl border border-destructive/30 bg-card p-4 md:p-6 space-y-4">
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-destructive/50 to-transparent" />
             <div class="flex items-center gap-3">
                 <div class="flex size-9 items-center justify-center rounded-full bg-destructive/10 ring-1 ring-destructive/20">

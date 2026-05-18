@@ -71,17 +71,17 @@ function revokeToken(id: number): void {
 <template>
     <Head :title="t('apiTokens.pageTitle')" />
 
-    <div class="mx-auto max-w-3xl space-y-6 p-6">
-        <div class="flex items-center justify-between">
+    <div class="mx-auto max-w-3xl space-y-6">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-xl font-bold text-transparent">
+                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
                     {{ t('apiTokens.title') }}
                 </h1>
                 <p class="text-sm text-muted-foreground">{{ t('apiTokens.subtitle') }}</p>
             </div>
             <Button
                 v-if="!showCreateForm"
-                class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+                class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200 self-start sm:self-auto"
                 @click="showCreateForm = true"
             >
                 <Plus class="mr-2 size-4" />
@@ -174,54 +174,93 @@ function revokeToken(id: number): void {
                 </div>
                 <p class="text-sm text-muted-foreground">{{ t('apiTokens.noTokens') }}</p>
             </div>
-            <table v-else class="w-full text-sm">
-                <thead>
-                    <tr class="border-b border-border bg-muted/30">
-                        <th class="p-3 text-left font-medium text-muted-foreground">{{ t('apiTokens.colName') }}</th>
-                        <th class="p-3 text-left font-medium text-muted-foreground">{{ t('apiTokens.colAbilities') }}</th>
-                        <th class="p-3 text-right font-medium text-muted-foreground">{{ t('apiTokens.colExpires') }}</th>
-                        <th class="p-3 text-right font-medium text-muted-foreground">{{ t('apiTokens.colLastUsed') }}</th>
-                        <th class="p-3" />
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
+            <template v-else>
+                <!-- Mobile: card per token -->
+                <div class="sm:hidden divide-y divide-border/60">
+                    <div
                         v-for="token in props.tokens"
                         :key="token.id"
-                        class="border-b border-border/60 last:border-0 transition-colors duration-100 hover:bg-muted/30"
+                        class="p-4 space-y-2"
                     >
-                        <td class="p-3 font-medium">{{ token.name }}</td>
-                        <td class="p-3">
-                            <div class="flex flex-wrap gap-1">
-                                <Badge
-                                    v-for="ability in token.abilities"
-                                    :key="ability"
-                                    variant="secondary"
-                                    class="text-xs"
-                                >
-                                    {{ ability }}
-                                </Badge>
-                            </div>
-                        </td>
-                        <td class="p-3 text-right text-xs text-muted-foreground">
-                            {{ token.expires_at ?? '—' }}
-                        </td>
-                        <td class="p-3 text-right text-xs text-muted-foreground">
-                            {{ token.last_used_at ?? t('apiTokens.never') }}
-                        </td>
-                        <td class="p-3 text-right">
+                        <div class="flex items-start justify-between gap-2">
+                            <p class="font-medium text-sm">{{ token.name }}</p>
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                class="text-destructive transition-colors hover:bg-destructive/10"
+                                class="text-destructive transition-colors hover:bg-destructive/10 shrink-0"
                                 @click="revokeToken(token.id)"
                             >
                                 <Trash2 class="size-4" />
                             </Button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                        </div>
+                        <div class="flex flex-wrap gap-1">
+                            <Badge
+                                v-for="ability in token.abilities"
+                                :key="ability"
+                                variant="secondary"
+                                class="text-xs"
+                            >
+                                {{ ability }}
+                            </Badge>
+                        </div>
+                        <div class="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span>{{ t('apiTokens.colExpires') }}: {{ token.expires_at ?? '—' }}</span>
+                            <span>{{ t('apiTokens.colLastUsed') }}: {{ token.last_used_at ?? t('apiTokens.never') }}</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Desktop: table -->
+                <div class="hidden sm:block overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-border bg-muted/30">
+                                <th class="p-3 text-left font-medium text-muted-foreground">{{ t('apiTokens.colName') }}</th>
+                                <th class="p-3 text-left font-medium text-muted-foreground">{{ t('apiTokens.colAbilities') }}</th>
+                                <th class="p-3 text-right font-medium text-muted-foreground">{{ t('apiTokens.colExpires') }}</th>
+                                <th class="p-3 text-right font-medium text-muted-foreground">{{ t('apiTokens.colLastUsed') }}</th>
+                                <th class="p-3" />
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="token in props.tokens"
+                                :key="token.id"
+                                class="border-b border-border/60 last:border-0 transition-colors duration-100 hover:bg-muted/30"
+                            >
+                                <td class="p-3 font-medium">{{ token.name }}</td>
+                                <td class="p-3">
+                                    <div class="flex flex-wrap gap-1">
+                                        <Badge
+                                            v-for="ability in token.abilities"
+                                            :key="ability"
+                                            variant="secondary"
+                                            class="text-xs"
+                                        >
+                                            {{ ability }}
+                                        </Badge>
+                                    </div>
+                                </td>
+                                <td class="p-3 text-right text-xs text-muted-foreground">
+                                    {{ token.expires_at ?? '—' }}
+                                </td>
+                                <td class="p-3 text-right text-xs text-muted-foreground">
+                                    {{ token.last_used_at ?? t('apiTokens.never') }}
+                                </td>
+                                <td class="p-3 text-right">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        class="text-destructive transition-colors hover:bg-destructive/10"
+                                        @click="revokeToken(token.id)"
+                                    >
+                                        <Trash2 class="size-4" />
+                                    </Button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
         </div>
     </div>
 </template>

@@ -55,9 +55,9 @@ function regenerateRecoveryCodes() {
 <template>
     <Head :title="t('profile.security.headTitle')" />
 
-    <div class="mx-auto max-w-2xl space-y-6">
+    <div class="mx-auto w-full max-w-2xl space-y-6">
         <div>
-            <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent">
+            <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
                 {{ t('profile.security.title') }}
             </h1>
             <p class="mt-1 text-sm text-muted-foreground">{{ t('profile.security.subtitle') }}</p>
@@ -66,7 +66,7 @@ function regenerateRecoveryCodes() {
         <!-- 2FA disabled — setup -->
         <div
             v-if="!user?.two_factor_enabled && !twoFactorQrCode"
-            class="relative overflow-hidden rounded-xl border border-border bg-card p-6 space-y-4 hover:border-primary/30 transition-colors duration-200"
+            class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-6 space-y-4 hover:border-primary/30 transition-colors duration-200"
         >
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
             <div class="flex items-center gap-3">
@@ -90,7 +90,7 @@ function regenerateRecoveryCodes() {
         <!-- QR code to scan -->
         <div
             v-if="twoFactorQrCode"
-            class="relative overflow-hidden rounded-xl border border-cyan-400/30 bg-card p-6 space-y-6"
+            class="relative overflow-hidden rounded-xl border border-cyan-400/30 bg-card p-4 md:p-6 space-y-6"
         >
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
             <div class="flex items-center gap-3">
@@ -148,7 +148,7 @@ function regenerateRecoveryCodes() {
         <!-- Recovery codes -->
         <div
             v-if="showingRecoveryCodes && twoFactorRecoveryCodes?.length"
-            class="relative overflow-hidden rounded-xl border border-gold-500/30 bg-card p-6 space-y-4"
+            class="relative overflow-hidden rounded-xl border border-gold-500/30 bg-card p-4 md:p-6 space-y-4"
         >
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-500/50 to-transparent" />
             <div>
@@ -174,7 +174,7 @@ function regenerateRecoveryCodes() {
         <!-- 2FA enabled -->
         <div
             v-if="user?.two_factor_enabled && !twoFactorQrCode"
-            class="relative overflow-hidden rounded-xl border border-green-500/30 bg-green-500/5 p-6 space-y-4"
+            class="relative overflow-hidden rounded-xl border border-green-500/30 bg-green-500/5 p-4 md:p-6 space-y-4"
         >
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-500/50 to-transparent" />
             <div class="flex items-center gap-3">

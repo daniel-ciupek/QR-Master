@@ -121,11 +121,11 @@ function handleCta(plan: Plan): void {
         <div class="absolute left-1/2 -top-32 -translate-x-1/2 size-[800px] rounded-full bg-primary/5 blur-3xl pointer-events-none" />
 
         <!-- Header -->
-        <div class="relative mx-auto max-w-6xl px-4 py-16 text-center">
+        <div class="relative mx-auto max-w-6xl px-4 py-10 md:py-16 text-center">
             <Badge v-if="props.onTrial" variant="secondary" class="mb-4 border-gold-500/30 bg-gold-500/10 text-gold-500">
                 {{ t('pricing.trialBadge', { date: props.trialEndsAt }) }}
             </Badge>
-            <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-5xl">
+            <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl lg:text-5xl">
                 {{ t('pricing.title') }}
             </h1>
             <p class="mt-4 text-lg text-muted-foreground">
@@ -156,8 +156,8 @@ function handleCta(plan: Plan): void {
         </div>
 
         <!-- Plan cards -->
-        <div class="relative mx-auto max-w-6xl px-4 pb-16">
-            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="relative mx-auto max-w-6xl px-4 pb-10 md:pb-16">
+            <div class="grid grid-cols-1 gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <div
                     v-for="plan in plans"
                     :key="plan.id"

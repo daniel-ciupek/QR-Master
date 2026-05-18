@@ -61,10 +61,10 @@ function limitLabel(limit: Limit): string {
 <template>
     <Head :title="t('billing.dashboard.pageTitle')" />
 
-    <div class="mx-auto max-w-3xl space-y-6 p-6">
-        <div class="flex items-center justify-between">
+    <div class="mx-auto max-w-3xl space-y-6">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-xl font-bold text-transparent">
+                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
                     {{ t('billing.dashboard.title') }}
                 </h1>
                 <p class="text-sm text-muted-foreground">{{ t('billing.dashboard.subtitle') }}</p>
@@ -73,7 +73,7 @@ function limitLabel(limit: Limit): string {
                 variant="outline"
                 as="a"
                 href="/pricing"
-                class="transition-colors duration-150 hover:border-primary/40 hover:text-primary"
+                class="transition-colors duration-150 hover:border-primary/40 hover:text-primary self-start sm:self-auto"
             >
                 {{ t('billing.dashboard.viewPlans') }}
             </Button>
@@ -190,7 +190,7 @@ function limitLabel(limit: Limit): string {
         <div class="relative overflow-hidden rounded-2xl border border-border bg-card p-6">
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
             <h2 class="mb-4 text-sm font-semibold">{{ t('billing.dashboard.featuresTitle') }}</h2>
-            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div class="grid gap-2 sm:grid-cols-2">
                 <div
                     v-for="[key, enabled] in Object.entries(features)"
                     :key="key"

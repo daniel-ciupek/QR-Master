@@ -297,7 +297,7 @@ onUnmounted(() => {
 <template>
     <Head :title="`${qrCode.title} — Analytics`" />
 
-    <div class="mx-auto max-w-6xl space-y-6 px-4 py-4 md:py-6">
+    <div class="mx-auto w-full max-w-6xl space-y-4 md:space-y-6 px-4 py-4 md:py-6">
         <!-- Header -->
         <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div class="flex items-start gap-3">
@@ -350,14 +350,14 @@ onUnmounted(() => {
                         </span>
                     </div>
                 </div>
-                <p class="text-3xl font-bold">{{ liveTotal.toLocaleString() }}</p>
+                <p class="text-2xl font-bold md:text-3xl">{{ liveTotal.toLocaleString() }}</p>
             </div>
 
             <!-- Unique — cyan accent -->
             <div class="relative rounded-xl border border-border bg-card p-4 md:p-5 overflow-hidden hover:border-cyan-400/40 hover:shadow-[0_0_20px_oklch(0.72_0.15_200/0.1)] transition-all duration-200">
                 <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/70 to-transparent" />
                 <p class="text-xs font-medium text-muted-foreground mb-3">{{ t('qr.analytics.unique') }}</p>
-                <p class="text-3xl font-bold">{{ stats.unique.toLocaleString() }}</p>
+                <p class="text-2xl font-bold md:text-3xl">{{ stats.unique.toLocaleString() }}</p>
                 <p class="text-muted-foreground mt-1 text-xs">{{ t('qr.analytics.distinctIps') }}</p>
             </div>
 
@@ -365,14 +365,14 @@ onUnmounted(() => {
             <div class="relative rounded-xl border border-border bg-card p-4 md:p-5 overflow-hidden hover:border-primary/40 hover:shadow-[0_0_20px_oklch(0.66_0.25_285/0.1)] transition-all duration-200">
                 <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
                 <p class="text-xs font-medium text-muted-foreground mb-3">{{ t('qr.analytics.today') }}</p>
-                <p class="text-3xl font-bold">{{ stats.today.toLocaleString() }}</p>
+                <p class="text-2xl font-bold md:text-3xl">{{ stats.today.toLocaleString() }}</p>
             </div>
 
             <!-- This Month — gold accent -->
             <div class="relative rounded-xl border border-border bg-card p-4 md:p-5 overflow-hidden hover:border-gold-500/40 hover:shadow-[0_0_20px_oklch(0.74_0.16_85/0.1)] transition-all duration-200">
                 <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-500/70 to-transparent" />
                 <p class="text-xs font-medium text-muted-foreground mb-3">{{ t('qr.analytics.thisMonth') }}</p>
-                <p class="text-3xl font-bold">{{ stats.this_month.toLocaleString() }}</p>
+                <p class="text-2xl font-bold md:text-3xl">{{ stats.this_month.toLocaleString() }}</p>
             </div>
         </div>
 
@@ -396,7 +396,7 @@ onUnmounted(() => {
         </div>
 
         <!-- Country treemap + device donut -->
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="grid gap-3 md:gap-4 md:grid-cols-2">
             <div class="relative rounded-xl border border-border bg-card overflow-hidden">
                 <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
                 <div class="p-4 md:p-5">
@@ -440,7 +440,7 @@ onUnmounted(() => {
         </div>
 
         <!-- Browser donut + This week -->
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="grid gap-3 md:gap-4 md:grid-cols-2">
             <div class="relative rounded-xl border border-border bg-card overflow-hidden">
                 <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
                 <div class="p-4 md:p-5">
@@ -475,7 +475,7 @@ onUnmounted(() => {
                         <p class="text-sm font-semibold">{{ t('qr.analytics.thisWeek') }}</p>
                     </div>
                     <div>
-                        <p class="text-5xl font-bold">{{ stats.this_week.toLocaleString() }}</p>
+                        <p class="text-4xl font-bold md:text-5xl">{{ stats.this_week.toLocaleString() }}</p>
                         <p class="text-muted-foreground mt-2 text-sm">{{ t('qr.analytics.scansLastWeek') }}</p>
                     </div>
                 </div>
