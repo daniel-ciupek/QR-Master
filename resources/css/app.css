@@ -260,6 +260,29 @@
 }
 
 /* ============================================================
+   Custom animations — QR-Master visual upgrades
+   ============================================================ */
+
+@keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 8px oklch(0.66 0.25 285 / 0.25); }
+    50%       { box-shadow: 0 0 24px oklch(0.66 0.25 285 / 0.65), 0 0 48px oklch(0.66 0.25 285 / 0.25); }
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50%       { background-position: 100% 50%; }
+}
+
+.animate-shimmer        { animation: shimmer 2.2s linear infinite; }
+.animate-pulse-glow     { animation: pulse-glow 2.5s ease-in-out infinite; }
+.animate-gradient-shift { animation: gradient-shift 6s ease infinite; background-size: 200% 200%; }
+
+/* ============================================================
    Base styles — shadcn-vue global resets
    ============================================================ */
 @layer base {
