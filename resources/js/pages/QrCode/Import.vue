@@ -2,10 +2,10 @@
 import { Head, router, usePage } from '@inertiajs/vue3'
 import { computed, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { FileUp, Check, Loader2, AlertCircle, CheckCircle2, ArrowLeft, Play } from 'lucide-vue-next'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import AppLayout from '@/layouts/AppLayout.vue'
 import type { PageProps } from '@/types'
 
@@ -278,76 +278,108 @@ function reset() {
 <template>
     <Head :title="t('csvImport.pageTitle')" />
 
-    <div class="mx-auto max-w-3xl space-y-6 px-4 py-8">
+    <div class="mx-auto max-w-3xl space-y-6 px-4 py-4 md:py-8">
         <!-- Header -->
-        <div>
-            <h1 class="text-2xl font-bold">{{ t('csvImport.title') }}</h1>
-            <p class="text-muted-foreground mt-1 text-sm">{{ t('csvImport.subtitle') }}</p>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-3">
+                <div class="flex size-10 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20 shrink-0">
+                    <FileUp class="size-5 text-primary" />
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold sm:text-3xl bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-transparent">
+                        {{ t('csvImport.title') }}
+                    </h1>
+                    <p class="text-muted-foreground mt-0.5 text-sm">{{ t('csvImport.subtitle') }}</p>
+                </div>
+            </div>
         </div>
 
         <!-- Stepper -->
-        <div class="flex items-center gap-2 text-sm">
-            <template v-for="(s, i) in steps" :key="s">
-                <div
-                    :class="[
-                        'flex items-center gap-1.5 rounded-full px-3 py-1 font-medium transition-colors',
-                        step === s
-                            ? 'bg-primary text-primary-foreground'
-                            : steps.indexOf(step) > i
-                                ? 'text-muted-foreground line-through'
-                                : 'text-muted-foreground',
-                    ]"
-                >
-                    <span>{{ i + 1 }}.</span>
-                    <span>{{ stepLabels[s] }}</span>
-                </div>
-                <div v-if="i < 3" class="bg-border h-px flex-1" />
-            </template>
+        <div class="relative rounded-xl border border-border bg-card p-4 overflow-hidden">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+            <div class="flex items-center gap-1 overflow-x-auto">
+                <template v-for="(s, i) in steps" :key="s">
+                    <div
+                        :class="[
+                            'flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200 shrink-0',
+                            step === s
+                                ? 'bg-primary text-primary-foreground shadow-[0_0_12px_oklch(0.66_0.25_285/0.3)]'
+                                : steps.indexOf(step) > i
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-muted-foreground',
+                        ]"
+                    >
+                        <span
+                            v-if="steps.indexOf(step) > i"
+                            class="flex size-4 items-center justify-center rounded-full bg-primary/20"
+                        >
+                            <Check class="size-3 text-primary" />
+                        </span>
+                        <span v-else class="text-xs font-mono">{{ i + 1 }}</span>
+                        <span>{{ stepLabels[s] }}</span>
+                    </div>
+                    <div
+                        v-if="i < 3"
+                        class="h-px flex-1 min-w-4 transition-colors duration-300"
+                        :class="steps.indexOf(step) > i ? 'bg-primary/30' : 'bg-border'"
+                    />
+                </template>
+            </div>
         </div>
 
         <!-- Error banner -->
         <div
             v-if="error"
-            class="border-destructive/50 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm"
+            class="relative rounded-xl border border-destructive/40 bg-destructive/10 p-4 overflow-hidden"
         >
-            {{ error }}
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-destructive/50 to-transparent" />
+            <div class="flex items-start gap-3">
+                <AlertCircle class="size-4 text-destructive shrink-0 mt-0.5" />
+                <p class="text-sm text-destructive">{{ error }}</p>
+            </div>
         </div>
 
         <!-- ── Step 1: Upload ──────────────────────────────────────────── -->
-        <Card v-if="step === 'upload'">
-            <CardHeader>
-                <CardTitle>{{ t('csvImport.stepUpload') }}</CardTitle>
-                <CardDescription>{{ t('csvImport.dropzoneHint') }}</CardDescription>
-            </CardHeader>
-            <CardContent class="space-y-4">
+        <div v-if="step === 'upload'" class="relative rounded-xl border border-border bg-card overflow-hidden">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+            <div class="p-5 md:p-6">
+                <p class="text-base font-semibold mb-1">{{ t('csvImport.stepUpload') }}</p>
+                <p class="text-sm text-muted-foreground mb-5">{{ t('csvImport.dropzoneHint') }}</p>
+
+                <!-- Dropzone -->
                 <div
-                    class="border-border hover:border-primary/50 flex cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-6 py-12 transition-colors"
-                    :class="{ 'border-primary bg-primary/5': isDragging }"
+                    class="flex cursor-pointer flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed px-6 py-12 text-center transition-all duration-200"
+                    :class="isDragging
+                        ? 'border-primary bg-primary/5 shadow-[0_0_20px_oklch(0.66_0.25_285/0.15)]'
+                        : 'border-border hover:border-primary/50 hover:bg-primary/5'"
                     @dragover.prevent="isDragging = true"
                     @dragleave="isDragging = false"
                     @drop.prevent="onDrop"
                     @click="($refs.fileInput as HTMLInputElement).click()"
                 >
-                    <svg
-                        class="text-muted-foreground h-10 w-10"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                    <div
+                        class="flex size-16 items-center justify-center rounded-2xl ring-1 transition-all duration-200"
+                        :class="selectedFile
+                            ? 'bg-primary/10 ring-primary/30'
+                            : isDragging
+                                ? 'bg-primary/10 ring-primary/30'
+                                : 'bg-muted ring-border'"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="1.5"
-                            d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        <FileUp
+                            class="size-8 transition-colors duration-200"
+                            :class="selectedFile || isDragging ? 'text-primary' : 'text-muted-foreground'"
                         />
-                    </svg>
-                    <span v-if="!selectedFile" class="text-muted-foreground text-sm">
-                        {{ t('csvImport.dropzone') }}
-                    </span>
-                    <div v-else class="text-center">
-                        <p class="text-sm font-medium">{{ selectedFile.name }}</p>
-                        <p class="text-muted-foreground text-xs">{{ (selectedFile.size / 1024).toFixed(1) }} KB</p>
                     </div>
+
+                    <div v-if="!selectedFile">
+                        <p class="text-sm font-medium text-foreground">{{ t('csvImport.dropzone') }}</p>
+                        <p class="mt-1 text-xs text-muted-foreground">CSV, max 5MB</p>
+                    </div>
+                    <div v-else class="text-center">
+                        <p class="text-sm font-semibold text-foreground">{{ selectedFile.name }}</p>
+                        <p class="text-muted-foreground text-xs mt-1">{{ (selectedFile.size / 1024).toFixed(1) }} KB</p>
+                    </div>
+
                     <input
                         ref="fileInput"
                         type="file"
@@ -357,29 +389,38 @@ function reset() {
                     >
                 </div>
 
-                <Button :disabled="!selectedFile || isUploading" class="w-full" @click="uploadFile">
-                    {{ isUploading ? t('csvImport.importing') : t('csvImport.uploadBtn') }}
+                <Button
+                    :disabled="!selectedFile || isUploading"
+                    class="mt-5 w-full gap-2 shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+                    @click="uploadFile"
+                >
+                    <Loader2 v-if="isUploading" class="size-4 animate-spin" />
+                    <FileUp v-else class="size-4" />
+                    <span>{{ isUploading ? t('csvImport.importing') : t('csvImport.uploadBtn') }}</span>
                 </Button>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
 
         <!-- ── Step 2: Mapping ────────────────────────────────────────── -->
         <template v-if="step === 'mapping' && uploadResult">
             <!-- Preview -->
-            <Card>
-                <CardHeader>
-                    <CardTitle>{{ t('csvImport.previewRows') }}</CardTitle>
-                    <CardDescription>{{ uploadResult.total_rows }} {{ t('csvImport.totalRows') }}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div class="overflow-x-auto">
+            <div class="relative rounded-xl border border-border bg-card overflow-hidden">
+                <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-sm font-semibold">{{ t('csvImport.previewRows') }}</p>
+                        <span class="inline-flex items-center gap-1 rounded-full bg-cyan-400/10 px-2.5 py-0.5 text-xs font-medium text-cyan-400 ring-1 ring-cyan-400/20">
+                            {{ uploadResult.total_rows }} {{ t('csvImport.totalRows') }}
+                        </span>
+                    </div>
+                    <div class="overflow-x-auto rounded-lg border border-border">
                         <table class="w-full text-xs">
-                            <thead>
-                                <tr class="border-b">
+                            <thead class="bg-muted/50">
+                                <tr>
                                     <th
                                         v-for="h in uploadResult.headers"
                                         :key="h"
-                                        class="text-muted-foreground px-2 py-1.5 text-left font-medium"
+                                        class="text-muted-foreground px-3 py-2 text-left font-medium whitespace-nowrap"
                                     >
                                         {{ h }}
                                     </th>
@@ -389,12 +430,12 @@ function reset() {
                                 <tr
                                     v-for="(row, i) in uploadResult.preview_rows"
                                     :key="i"
-                                    class="border-b last:border-0"
+                                    class="border-t border-border/60 hover:bg-muted/30 transition-colors duration-100"
                                 >
                                     <td
                                         v-for="h in uploadResult.headers"
                                         :key="h"
-                                        class="max-w-[120px] truncate px-2 py-1"
+                                        class="max-w-[140px] truncate px-3 py-1.5 text-muted-foreground"
                                         :title="row[h]"
                                     >
                                         {{ row[h] }}
@@ -403,17 +444,17 @@ function reset() {
                             </tbody>
                         </table>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
 
             <!-- Mapping -->
-            <Card>
-                <CardHeader>
-                    <CardTitle>{{ t('csvImport.mappingTitle') }}</CardTitle>
-                    <CardDescription>{{ t('csvImport.mappingHint') }}</CardDescription>
-                </CardHeader>
-                <CardContent class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
+            <div class="relative rounded-xl border border-border bg-card overflow-hidden">
+                <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+                <div class="p-5">
+                    <p class="text-sm font-semibold mb-1">{{ t('csvImport.mappingTitle') }}</p>
+                    <p class="text-xs text-muted-foreground mb-5">{{ t('csvImport.mappingHint') }}</p>
+
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <template
                             v-for="[field, label] in ([
                                 ['title', t('csvImport.fieldTitle')],
@@ -425,11 +466,11 @@ function reset() {
                             ] as [keyof Mapping, string][])"
                             :key="field"
                         >
-                            <div class="space-y-1">
+                            <div class="space-y-1.5">
                                 <label class="text-sm font-medium">{{ label }}</label>
                                 <select
                                     v-model="mapping[field]"
-                                    class="border-input bg-background focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                                    class="border-input bg-background focus:ring-primary/50 focus:border-primary/50 w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none transition-[border-color,box-shadow] duration-150"
                                 >
                                     <option value="">{{ t('csvImport.noColumn') }}</option>
                                     <option
@@ -444,92 +485,145 @@ function reset() {
                         </template>
 
                         <!-- Default type -->
-                        <div class="col-span-2 space-y-1">
+                        <div class="col-span-1 sm:col-span-2 space-y-1.5">
                             <label class="text-sm font-medium">{{ t('csvImport.defaultType') }}</label>
                             <select
                                 v-model="defaultType"
-                                class="border-input bg-background focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                                class="border-input bg-background focus:ring-primary/50 focus:border-primary/50 w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none transition-[border-color,box-shadow] duration-150"
                             >
                                 <option v-for="qt in qrTypes" :key="qt" :value="qt">{{ qt }}</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="flex gap-3 pt-2">
-                        <Button variant="outline" @click="step = 'upload'">← Back</Button>
-                        <Button :disabled="!canStartImport || isProcessing" class="flex-1" @click="startImport">
-                            {{ isProcessing ? t('csvImport.importing') : t('csvImport.startImport') }}
+                    <div class="flex flex-col gap-2 pt-4 sm:flex-row">
+                        <Button
+                            variant="outline"
+                            class="gap-2 hover:border-border/80 transition-colors duration-150"
+                            @click="step = 'upload'"
+                        >
+                            <ArrowLeft class="size-4" />
+                            <span>{{ t('ui.back') ?? 'Back' }}</span>
+                        </Button>
+                        <Button
+                            :disabled="!canStartImport || isProcessing"
+                            class="flex-1 gap-2 shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+                            @click="startImport"
+                        >
+                            <Loader2 v-if="isProcessing" class="size-4 animate-spin" />
+                            <Play v-else class="size-4" />
+                            <span>{{ isProcessing ? t('csvImport.importing') : t('csvImport.startImport') }}</span>
                         </Button>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </template>
 
         <!-- ── Step 3: Progress ───────────────────────────────────────── -->
-        <Card v-if="step === 'progress'">
-            <CardHeader>
-                <CardTitle>{{ t('csvImport.stepProgress') }}</CardTitle>
-            </CardHeader>
-            <CardContent class="space-y-6">
+        <div v-if="step === 'progress'" class="relative rounded-xl border border-border bg-card overflow-hidden">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+            <div class="p-5 md:p-6 space-y-6">
+                <div class="flex items-center gap-3">
+                    <div class="flex size-10 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
+                        <Loader2 class="size-5 text-primary animate-spin" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold">{{ t('csvImport.stepProgress') }}</p>
+                        <p class="text-xs text-muted-foreground">{{ t('csvImport.importing') }}</p>
+                    </div>
+                </div>
+
                 <!-- Progress bar -->
-                <div class="bg-secondary h-3 w-full overflow-hidden rounded-full">
+                <div class="bg-muted h-3 w-full overflow-hidden rounded-full">
                     <div
-                        class="bg-primary h-full rounded-full transition-all duration-500"
+                        class="bg-gradient-to-r from-primary to-violet-400 h-full rounded-full transition-all duration-500 shadow-[0_0_8px_oklch(0.66_0.25_285/0.4)]"
                         :style="{ width: `${progressData.progress_percent}%` }"
                     />
                 </div>
 
-                <div class="flex items-center justify-between text-sm">
-                    <span>
-                        <span class="text-2xl font-bold">{{ progressData.processed }}</span>
-                        <span class="text-muted-foreground">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm">
+                        <span class="text-2xl font-bold text-foreground">{{ progressData.processed }}</span>
+                        <span class="text-muted-foreground ml-1">
                             / {{ progressData.total }} {{ t('csvImport.progressLabel') }}
                         </span>
                     </span>
-                    <Badge v-if="progressData.failed > 0" variant="destructive">
+                    <Badge
+                        v-if="progressData.failed > 0"
+                        class="bg-destructive/10 text-destructive border-destructive/30 border"
+                    >
                         {{ progressData.failed }} {{ t('csvImport.failedLabel') }}
                     </Badge>
                 </div>
-
-                <p class="text-muted-foreground text-center text-sm">{{ t('csvImport.importing') }}</p>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
 
         <!-- ── Step 4: Done ───────────────────────────────────────────── -->
-        <Card v-if="step === 'done'">
-            <CardHeader>
-                <CardTitle>{{ t('csvImport.doneTitle') }}</CardTitle>
-                <CardDescription>
-                    {{
-                        batchStatus === 'finished_with_errors'
-                            ? t('csvImport.finishedWithErrors')
-                            : t('csvImport.finished')
-                    }}
-                </CardDescription>
-            </CardHeader>
-            <CardContent class="space-y-4">
-                <div class="flex gap-6 text-center">
-                    <div class="flex-1 rounded-lg bg-green-50 p-4 dark:bg-green-950/30">
-                        <p class="text-3xl font-bold text-green-600 dark:text-green-400">
+        <div v-if="step === 'done'" class="relative rounded-xl border border-border bg-card overflow-hidden">
+            <div
+                :class="batchStatus === 'finished_with_errors'
+                    ? 'bg-gradient-to-r from-transparent via-gold-500/50 to-transparent'
+                    : 'bg-gradient-to-r from-transparent via-green-500/50 to-transparent'"
+                class="absolute inset-x-0 top-0 h-px"
+            />
+            <div class="p-5 md:p-6 space-y-5">
+                <!-- Status icon -->
+                <div class="flex items-center gap-3">
+                    <div
+                        :class="batchStatus === 'finished_with_errors'
+                            ? 'bg-gold-500/10 ring-gold-500/20'
+                            : 'bg-green-500/10 ring-green-500/20'"
+                        class="flex size-10 items-center justify-center rounded-full ring-1"
+                    >
+                        <CheckCircle2
+                            :class="batchStatus === 'finished_with_errors' ? 'text-gold-500' : 'text-green-400'"
+                            class="size-5"
+                        />
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold">{{ t('csvImport.doneTitle') }}</p>
+                        <p class="text-xs text-muted-foreground">
+                            {{
+                                batchStatus === 'finished_with_errors'
+                                    ? t('csvImport.finishedWithErrors')
+                                    : t('csvImport.finished')
+                            }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="relative rounded-xl border border-green-500/20 bg-green-500/5 p-4 overflow-hidden">
+                        <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-500/40 to-transparent" />
+                        <p class="text-3xl font-bold text-green-400">
                             {{ progressData.processed - progressData.failed }}
                         </p>
                         <p class="text-muted-foreground mt-1 text-sm">{{ t('csvImport.progressLabel') }}</p>
                     </div>
-                    <div v-if="progressData.failed > 0" class="flex-1 rounded-lg bg-red-50 p-4 dark:bg-red-950/30">
-                        <p class="text-3xl font-bold text-red-600 dark:text-red-400">{{ progressData.failed }}</p>
+                    <div v-if="progressData.failed > 0" class="relative rounded-xl border border-destructive/20 bg-destructive/5 p-4 overflow-hidden">
+                        <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-destructive/40 to-transparent" />
+                        <p class="text-3xl font-bold text-destructive">{{ progressData.failed }}</p>
                         <p class="text-muted-foreground mt-1 text-sm">{{ t('csvImport.failedLabel') }}</p>
                     </div>
                 </div>
 
-                <div class="flex gap-3">
-                    <Button variant="outline" class="flex-1" @click="reset">
+                <div class="flex flex-col gap-2 sm:flex-row">
+                    <Button
+                        variant="outline"
+                        class="flex-1 hover:border-border/80 transition-colors duration-150"
+                        @click="reset"
+                    >
                         {{ t('csvImport.importAnother') }}
                     </Button>
-                    <Button class="flex-1" @click="router.visit('/qr')">
+                    <Button
+                        class="flex-1 shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+                        @click="router.visit('/qr')"
+                    >
                         {{ t('csvImport.goToList') }}
                     </Button>
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     </div>
 </template>

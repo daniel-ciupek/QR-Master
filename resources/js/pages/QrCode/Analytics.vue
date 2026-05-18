@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
-import { usePreferredDark } from '@vueuse/core'
-import { Activity, ArrowLeft, Download, Monitor, Smartphone, Tablet } from 'lucide-vue-next'
+import { Activity, ArrowLeft, Download, Globe, Monitor, Smartphone, Tablet, Sparkles, Shield, BarChart3, Clock } from 'lucide-vue-next'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import VueApexCharts from 'vue3-apexcharts'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import AppLayout from '@/layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
@@ -79,8 +77,6 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const isDark = usePreferredDark()
-const themeMode = computed((): 'dark' | 'light' => (isDark.value ? 'dark' : 'light'))
 
 // Fill missing days in last 30 days
 const filledDailyScans = computed(() => {
@@ -98,28 +94,29 @@ const filledDailyScans = computed(() => {
 const timelineOptions = computed(() => ({
     chart: {
         type: 'area' as const,
-        height: 160,
+        height: 180,
         toolbar: { show: false },
         background: 'transparent',
         sparkline: { enabled: false },
         animations: { enabled: true, easing: 'easeinout', speed: 400 },
     },
-    theme: { mode: themeMode.value },
+    theme: { mode: 'dark' as const },
+    colors: ['#8b5cf6'],
     stroke: { curve: 'smooth' as const, width: 2 },
     fill: {
         type: 'gradient',
-        gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.02, stops: [0, 100] },
+        gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.02, stops: [0, 100] },
     },
     dataLabels: { enabled: false },
     xaxis: {
         type: 'datetime' as const,
-        labels: { format: 'dd MMM', style: { fontSize: '11px' } },
+        labels: { format: 'dd MMM', style: { fontSize: '11px', colors: '#71717a' } },
         axisBorder: { show: false },
         axisTicks: { show: false },
     },
-    yaxis: { labels: { style: { fontSize: '11px' } }, min: 0 },
-    grid: { borderColor: isDark.value ? '#333' : '#e5e7eb', strokeDashArray: 4 },
-    tooltip: { x: { format: 'dd MMM yyyy' } },
+    yaxis: { labels: { style: { fontSize: '11px', colors: '#71717a' } }, min: 0 },
+    grid: { borderColor: '#27272a', strokeDashArray: 4 },
+    tooltip: { x: { format: 'dd MMM yyyy' }, theme: 'dark' },
     series: [{ name: 'Scans', data: filledDailyScans.value }],
 }))
 
@@ -130,7 +127,8 @@ const treemapOptions = computed(() => ({
         toolbar: { show: false },
         background: 'transparent',
     },
-    theme: { mode: themeMode.value },
+    theme: { mode: 'dark' as const },
+    colors: ['#8b5cf6', '#22d3ee', '#f59e0b', '#10b981', '#f43f5e', '#3b82f6'],
     dataLabels: { enabled: true, style: { fontSize: '12px' } },
     plotOptions: { treemap: { distributed: true, enableShades: false } },
     series: [
@@ -140,7 +138,7 @@ const treemapOptions = computed(() => ({
                 : [{ x: 'No data', y: 1 }],
         },
     ],
-    tooltip: { y: { formatter: (v: number) => `${v} scans` } },
+    tooltip: { y: { formatter: (v: number) => `${v} scans` }, theme: 'dark' },
 }))
 
 const deviceDonutOptions = computed(() => ({
@@ -149,10 +147,11 @@ const deviceDonutOptions = computed(() => ({
         height: 200,
         background: 'transparent',
     },
-    theme: { mode: themeMode.value },
+    theme: { mode: 'dark' as const },
+    colors: ['#8b5cf6', '#22d3ee', '#f59e0b'],
     labels: props.deviceBreakdown.map((r) => r.type),
     dataLabels: { enabled: true },
-    legend: { position: 'bottom' as const, fontSize: '12px' },
+    legend: { position: 'bottom' as const, fontSize: '12px', labels: { colors: '#a1a1aa' } },
     series: props.deviceBreakdown.map((r) => r.count),
     plotOptions: { pie: { donut: { size: '55%' } } },
 }))
@@ -163,10 +162,11 @@ const browserDonutOptions = computed(() => ({
         height: 200,
         background: 'transparent',
     },
-    theme: { mode: themeMode.value },
+    theme: { mode: 'dark' as const },
+    colors: ['#8b5cf6', '#22d3ee', '#f59e0b', '#10b981', '#f43f5e'],
     labels: props.topBrowsers.map((r) => r.browser),
     dataLabels: { enabled: true },
-    legend: { position: 'bottom' as const, fontSize: '12px' },
+    legend: { position: 'bottom' as const, fontSize: '12px', labels: { colors: '#a1a1aa' } },
     series: props.topBrowsers.map((r) => r.count),
     plotOptions: { pie: { donut: { size: '55%' } } },
 }))
@@ -195,7 +195,7 @@ const heatmapOptions = computed(() => ({
         background: 'transparent',
         animations: { enabled: false },
     },
-    theme: { mode: themeMode.value },
+    theme: { mode: 'dark' as const },
     dataLabels: { enabled: false },
     stroke: { width: 1 },
     plotOptions: {
@@ -204,17 +204,17 @@ const heatmapOptions = computed(() => ({
             radius: 2,
             colorScale: {
                 ranges: [
-                    { from: 0, to: 0, color: isDark.value ? '#1f2937' : '#f3f4f6', name: 'None' },
-                    { from: 1, to: 5, color: '#93c5fd', name: 'Low' },
-                    { from: 6, to: 20, color: '#3b82f6', name: 'Medium' },
-                    { from: 21, to: 9999, color: '#1d4ed8', name: 'High' },
+                    { from: 0, to: 0, color: '#18181b', name: 'None' },
+                    { from: 1, to: 5, color: '#4c1d95', name: 'Low' },
+                    { from: 6, to: 20, color: '#7c3aed', name: 'Medium' },
+                    { from: 21, to: 9999, color: '#a78bfa', name: 'High' },
                 ],
             },
         },
     },
-    xaxis: { labels: { style: { fontSize: '10px' }, rotate: -45 } },
-    yaxis: { labels: { style: { fontSize: '11px' } } },
-    tooltip: { y: { formatter: (v: number) => `${v} scans` } },
+    xaxis: { labels: { style: { fontSize: '10px', colors: '#71717a' }, rotate: -45 } },
+    yaxis: { labels: { style: { fontSize: '11px', colors: '#71717a' } } },
+    tooltip: { y: { formatter: (v: number) => `${v} scans` }, theme: 'dark' },
 }))
 
 const deviceIcon = (type: string | null) => {
@@ -297,113 +297,133 @@ onUnmounted(() => {
 <template>
     <Head :title="`${qrCode.title} — Analytics`" />
 
-    <div class="mx-auto max-w-6xl space-y-6 px-4 py-6">
+    <div class="mx-auto max-w-6xl space-y-6 px-4 py-4 md:py-6">
         <!-- Header -->
-        <div class="flex items-center gap-4">
-            <Button variant="ghost" size="icon" as-child>
-                <Link href="/qr">
-                    <ArrowLeft class="size-4" />
-                </Link>
-            </Button>
-            <div class="flex-1">
-                <div class="flex items-center gap-2">
-                    <h1 class="text-xl font-semibold">{{ qrCode.title }}</h1>
-                    <Badge :variant="qrCode.is_active ? 'default' : 'secondary'">
-                        {{ qrCode.is_active ? t('qr.analytics.active') : t('qr.analytics.paused') }}
-                    </Badge>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div class="flex items-start gap-3">
+                <Button variant="ghost" size="icon" as-child class="shrink-0 mt-0.5 hover:bg-muted/60 transition-colors duration-150">
+                    <Link href="/qr">
+                        <ArrowLeft class="size-4" />
+                    </Link>
+                </Button>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h1 class="text-xl font-bold sm:text-2xl bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                            {{ qrCode.title }}
+                        </h1>
+                        <Badge
+                            :class="qrCode.is_active
+                                ? 'bg-green-500/10 text-green-400 border-green-500/30'
+                                : 'bg-muted text-muted-foreground border-border'"
+                            class="border text-xs"
+                        >
+                            {{ qrCode.is_active ? t('qr.analytics.active') : t('qr.analytics.paused') }}
+                        </Badge>
+                    </div>
+                    <p class="text-muted-foreground text-sm mt-0.5 font-mono">{{ publicUrl }}</p>
                 </div>
-                <p class="text-muted-foreground text-sm">{{ publicUrl }}</p>
             </div>
-            <Button variant="outline" size="sm" as-child>
-                <a :href="`/qr/${qrCode.id}/analytics/export-pdf`" target="_blank" rel="noopener noreferrer">
-                    <Download class="mr-1.5 size-3.5" />
-                    {{ t('qr.analytics.exportPdf') }}
-                </a>
-            </Button>
-            <Button variant="outline" size="sm" as-child>
-                <Link :href="`/qr/${qrCode.id}/edit`">{{ t('qr.analytics.edit') }}</Link>
-            </Button>
+            <div class="flex items-center gap-2 shrink-0">
+                <Button variant="outline" size="sm" as-child class="gap-1.5 hover:border-primary/50 transition-colors duration-150">
+                    <a :href="`/qr/${qrCode.id}/analytics/export-pdf`" target="_blank" rel="noopener noreferrer">
+                        <Download class="size-3.5" />
+                        <span class="hidden sm:inline">{{ t('qr.analytics.exportPdf') }}</span>
+                    </a>
+                </Button>
+                <Button variant="outline" size="sm" as-child class="hover:border-primary/50 transition-colors duration-150">
+                    <Link :href="`/qr/${qrCode.id}/edit`">{{ t('qr.analytics.edit') }}</Link>
+                </Button>
+            </div>
         </div>
 
         <!-- Metric cards -->
-        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-            <Card>
-                <CardHeader class="pb-2">
-                    <CardTitle class="flex items-center gap-1.5">
-                        {{ t('qr.analytics.totalScans') }}
+        <div class="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
+            <!-- Total Scans — violet accent -->
+            <div class="relative rounded-xl border border-border bg-card p-4 md:p-5 overflow-hidden hover:border-primary/40 hover:shadow-[0_0_20px_oklch(0.66_0.25_285/0.1)] transition-all duration-200">
+                <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
+                <div class="flex items-start justify-between gap-2 mb-3">
+                    <p class="text-xs font-medium text-muted-foreground">{{ t('qr.analytics.totalScans') }}</p>
+                    <div class="flex items-center gap-1.5">
                         <span class="relative flex size-2">
                             <span class="bg-primary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" />
                             <span class="bg-primary relative inline-flex size-2 rounded-full" />
                         </span>
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p class="text-3xl font-bold">{{ liveTotal.toLocaleString() }}</p>
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader class="pb-2">
-                    <CardTitle>{{ t('qr.analytics.unique') }}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p class="text-3xl font-bold">{{ stats.unique.toLocaleString() }}</p>
-                    <p class="text-muted-foreground mt-1 text-xs">{{ t('qr.analytics.distinctIps') }}</p>
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader class="pb-2">
-                    <CardTitle>{{ t('qr.analytics.today') }}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p class="text-3xl font-bold">{{ stats.today.toLocaleString() }}</p>
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader class="pb-2">
-                    <CardTitle>{{ t('qr.analytics.thisMonth') }}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p class="text-3xl font-bold">{{ stats.this_month.toLocaleString() }}</p>
-                </CardContent>
-            </Card>
+                    </div>
+                </div>
+                <p class="text-3xl font-bold">{{ liveTotal.toLocaleString() }}</p>
+            </div>
+
+            <!-- Unique — cyan accent -->
+            <div class="relative rounded-xl border border-border bg-card p-4 md:p-5 overflow-hidden hover:border-cyan-400/40 hover:shadow-[0_0_20px_oklch(0.72_0.15_200/0.1)] transition-all duration-200">
+                <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/70 to-transparent" />
+                <p class="text-xs font-medium text-muted-foreground mb-3">{{ t('qr.analytics.unique') }}</p>
+                <p class="text-3xl font-bold">{{ stats.unique.toLocaleString() }}</p>
+                <p class="text-muted-foreground mt-1 text-xs">{{ t('qr.analytics.distinctIps') }}</p>
+            </div>
+
+            <!-- Today — violet accent -->
+            <div class="relative rounded-xl border border-border bg-card p-4 md:p-5 overflow-hidden hover:border-primary/40 hover:shadow-[0_0_20px_oklch(0.66_0.25_285/0.1)] transition-all duration-200">
+                <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+                <p class="text-xs font-medium text-muted-foreground mb-3">{{ t('qr.analytics.today') }}</p>
+                <p class="text-3xl font-bold">{{ stats.today.toLocaleString() }}</p>
+            </div>
+
+            <!-- This Month — gold accent -->
+            <div class="relative rounded-xl border border-border bg-card p-4 md:p-5 overflow-hidden hover:border-gold-500/40 hover:shadow-[0_0_20px_oklch(0.74_0.16_85/0.1)] transition-all duration-200">
+                <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-500/70 to-transparent" />
+                <p class="text-xs font-medium text-muted-foreground mb-3">{{ t('qr.analytics.thisMonth') }}</p>
+                <p class="text-3xl font-bold">{{ stats.this_month.toLocaleString() }}</p>
+            </div>
         </div>
 
         <!-- Timeline chart -->
-        <Card>
-            <CardHeader>
-                <CardTitle>{{ t('qr.analytics.timelineTitle') }}</CardTitle>
-            </CardHeader>
-            <CardContent class="pt-0">
+        <div class="relative rounded-xl border border-border bg-card overflow-hidden">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+            <div class="p-4 md:p-5">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="flex size-7 items-center justify-center rounded-md bg-primary/10">
+                        <BarChart3 class="size-4 text-primary" />
+                    </div>
+                    <p class="text-sm font-semibold">{{ t('qr.analytics.timelineTitle') }}</p>
+                </div>
                 <VueApexCharts
                     type="area"
-                    height="160"
+                    height="180"
                     :options="timelineOptions"
                     :series="timelineOptions.series"
                 />
-            </CardContent>
-        </Card>
+            </div>
+        </div>
 
         <!-- Country treemap + device donut -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Card>
-                <CardHeader>
-                    <CardTitle>{{ t('qr.analytics.countryDistribution') }}</CardTitle>
-                </CardHeader>
-                <CardContent class="pt-0">
+            <div class="relative rounded-xl border border-border bg-card overflow-hidden">
+                <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+                <div class="p-4 md:p-5">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex size-7 items-center justify-center rounded-md bg-cyan-400/10">
+                            <Globe class="size-4 text-cyan-400" />
+                        </div>
+                        <p class="text-sm font-semibold">{{ t('qr.analytics.countryDistribution') }}</p>
+                    </div>
                     <VueApexCharts
                         type="treemap"
                         height="220"
                         :options="treemapOptions"
                         :series="treemapOptions.series"
                     />
-                </CardContent>
-            </Card>
+                </div>
+            </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>{{ t('qr.analytics.deviceTypes') }}</CardTitle>
-                </CardHeader>
-                <CardContent class="pt-0">
+            <div class="relative rounded-xl border border-border bg-card overflow-hidden">
+                <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+                <div class="p-4 md:p-5">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex size-7 items-center justify-center rounded-md bg-primary/10">
+                            <Smartphone class="size-4 text-primary" />
+                        </div>
+                        <p class="text-sm font-semibold">{{ t('qr.analytics.deviceTypes') }}</p>
+                    </div>
                     <template v-if="deviceBreakdown.length">
                         <VueApexCharts
                             type="donut"
@@ -412,20 +432,24 @@ onUnmounted(() => {
                             :series="deviceDonutOptions.series"
                         />
                     </template>
-                    <div v-else class="text-muted-foreground flex h-48 items-center justify-center text-sm">
-                        {{ t('qr.analytics.noDeviceData') }}
+                    <div v-else class="flex h-48 items-center justify-center">
+                        <p class="text-muted-foreground text-sm">{{ t('qr.analytics.noDeviceData') }}</p>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </div>
 
-        <!-- Browser donut -->
+        <!-- Browser donut + This week -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Card>
-                <CardHeader>
-                    <CardTitle>{{ t('qr.analytics.topBrowsers') }}</CardTitle>
-                </CardHeader>
-                <CardContent class="pt-0">
+            <div class="relative rounded-xl border border-border bg-card overflow-hidden">
+                <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+                <div class="p-4 md:p-5">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex size-7 items-center justify-center rounded-md bg-cyan-400/10">
+                            <Monitor class="size-4 text-cyan-400" />
+                        </div>
+                        <p class="text-sm font-semibold">{{ t('qr.analytics.topBrowsers') }}</p>
+                    </div>
                     <template v-if="topBrowsers.length">
                         <VueApexCharts
                             type="donut"
@@ -434,92 +458,120 @@ onUnmounted(() => {
                             :series="browserDonutOptions.series"
                         />
                     </template>
-                    <div v-else class="text-muted-foreground flex h-48 items-center justify-center text-sm">
-                        {{ t('qr.analytics.noBrowserData') }}
+                    <div v-else class="flex h-48 items-center justify-center">
+                        <p class="text-muted-foreground text-sm">{{ t('qr.analytics.noBrowserData') }}</p>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
 
-            <!-- This week stat card -->
-            <Card class="flex flex-col justify-between">
-                <CardHeader>
-                    <CardTitle>{{ t('qr.analytics.thisWeek') }}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p class="text-5xl font-bold">{{ stats.this_week.toLocaleString() }}</p>
-                    <p class="text-muted-foreground mt-2 text-sm">{{ t('qr.analytics.scansLastWeek') }}</p>
-                </CardContent>
-            </Card>
+            <!-- This week stat card — gold accent -->
+            <div class="relative rounded-xl border border-border bg-card overflow-hidden hover:border-gold-500/40 hover:shadow-[0_0_20px_oklch(0.74_0.16_85/0.1)] transition-all duration-200">
+                <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-500/70 to-transparent" />
+                <div class="p-4 md:p-5 flex flex-col justify-between h-full">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex size-7 items-center justify-center rounded-md bg-gold-500/10">
+                            <Clock class="size-4 text-gold-500" />
+                        </div>
+                        <p class="text-sm font-semibold">{{ t('qr.analytics.thisWeek') }}</p>
+                    </div>
+                    <div>
+                        <p class="text-5xl font-bold">{{ stats.this_week.toLocaleString() }}</p>
+                        <p class="text-muted-foreground mt-2 text-sm">{{ t('qr.analytics.scansLastWeek') }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Hourly heatmap -->
-        <Card>
-            <CardHeader>
-                <CardTitle>{{ t('qr.analytics.heatmapTitle') }}</CardTitle>
-            </CardHeader>
-            <CardContent class="pt-0">
+        <div class="relative rounded-xl border border-border bg-card overflow-hidden">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-400/50 to-transparent" />
+            <div class="p-4 md:p-5">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="flex size-7 items-center justify-center rounded-md bg-primary/10">
+                        <Clock class="size-4 text-primary" />
+                    </div>
+                    <p class="text-sm font-semibold">{{ t('qr.analytics.heatmapTitle') }}</p>
+                </div>
                 <VueApexCharts
                     type="heatmap"
                     height="220"
                     :options="heatmapOptions"
                     :series="heatmapSeries"
                 />
-            </CardContent>
-        </Card>
+            </div>
+        </div>
 
         <!-- AI Performance Insights -->
-        <Card class="border-primary/20 bg-primary/5">
-            <CardHeader>
-                <CardTitle class="flex items-center justify-between gap-2">
-                    <span class="flex items-center gap-1.5">
-                        ✨ {{ t('ai.performanceInsights') }}
-                    </span>
+        <div class="relative rounded-xl border border-primary/20 bg-primary/5 overflow-hidden">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+            <div class="p-4 md:p-5">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="flex size-7 items-center justify-center rounded-md bg-primary/10">
+                            <Sparkles class="size-4 text-primary" />
+                        </div>
+                        <p class="text-sm font-semibold">{{ t('ai.performanceInsights') }}</p>
+                    </div>
                     <Button
                         variant="outline"
                         size="sm"
                         :disabled="loadingInsight"
+                        class="hover:border-primary/50 transition-colors duration-150 shrink-0"
                         @click="generateInsight"
                     >
-                        <span v-if="loadingInsight" class="animate-spin mr-1">⏳</span>
+                        <span v-if="loadingInsight" class="animate-spin mr-1.5 size-3.5 inline-block">⏳</span>
                         {{ loadingInsight ? t('ai.generating') : t('ai.generateInsight') }}
                     </Button>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
+                </div>
                 <p v-if="aiInsight" class="text-sm leading-relaxed">{{ aiInsight }}</p>
                 <p v-else class="text-sm text-muted-foreground">{{ t('ai.insightHint') }}</p>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
 
         <!-- AI Anomaly Detection -->
-        <Card :class="anomalyResult?.is_anomalous ? 'border-destructive/40 bg-destructive/5' : 'border-border'">
-            <CardHeader>
-                <CardTitle class="flex items-center justify-between gap-2">
-                    <span class="flex items-center gap-1.5">
-                        🛡️ {{ t('ai.anomalyDetection') }}
+        <div
+            :class="anomalyResult?.is_anomalous
+                ? 'border-destructive/40 bg-destructive/5'
+                : 'border-border bg-card'"
+            class="relative rounded-xl overflow-hidden"
+        >
+            <div
+                :class="anomalyResult?.is_anomalous
+                    ? 'bg-gradient-to-r from-transparent via-destructive/50 to-transparent'
+                    : 'bg-gradient-to-r from-transparent via-border/60 to-transparent'"
+                class="absolute inset-x-0 top-0 h-px"
+            />
+            <div class="p-4 md:p-5">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="flex size-7 items-center justify-center rounded-md bg-muted">
+                            <Shield class="size-4 text-muted-foreground" />
+                        </div>
+                        <p class="text-sm font-semibold">{{ t('ai.anomalyDetection') }}</p>
                         <span
                             v-if="anomalyResult"
-                            :class="anomalyResult.is_anomalous ? 'bg-destructive text-destructive-foreground' : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'"
-                            class="rounded-full px-2 py-0.5 text-xs font-medium"
+                            :class="anomalyResult.is_anomalous
+                                ? 'bg-destructive/10 text-destructive border-destructive/30'
+                                : 'bg-green-500/10 text-green-400 border-green-500/30'"
+                            class="rounded-full border px-2 py-0.5 text-xs font-medium"
                         >
                             {{ anomalyResult.is_anomalous ? t('ai.anomalyDetected') : t('ai.noAnomaly') }}
                         </span>
-                    </span>
+                    </div>
                     <Button
                         variant="outline"
                         size="sm"
                         :disabled="loadingAnomaly"
+                        class="hover:border-primary/50 transition-colors duration-150 shrink-0"
                         @click="detectAnomalies"
                     >
-                        <span v-if="loadingAnomaly" class="animate-spin mr-1">⏳</span>
+                        <span v-if="loadingAnomaly" class="animate-spin mr-1.5 size-3.5 inline-block">⏳</span>
                         {{ loadingAnomaly ? t('ai.analyzing') : t('ai.runAnalysis') }}
                     </Button>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
+                </div>
                 <template v-if="anomalyResult">
                     <p class="text-sm text-muted-foreground mb-2">
-                        {{ t('ai.confidence') }}: <strong>{{ anomalyResult.confidence }}</strong>
+                        {{ t('ai.confidence') }}: <strong class="text-foreground">{{ anomalyResult.confidence }}</strong>
                     </p>
                     <ul v-if="anomalyResult.reasons.length" class="mb-2 space-y-1">
                         <li
@@ -527,38 +579,43 @@ onUnmounted(() => {
                             :key="r"
                             class="flex items-start gap-1.5 text-sm"
                         >
-                            <span class="mt-0.5 text-destructive">⚠</span>
+                            <span class="mt-0.5 text-destructive shrink-0">⚠</span>
                             {{ r }}
                         </li>
                     </ul>
                     <p class="text-sm font-medium">{{ t('ai.recommendation') }}: {{ anomalyResult.recommendation }}</p>
                 </template>
                 <p v-else class="text-sm text-muted-foreground">{{ t('ai.anomalyHint') }}</p>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
 
         <!-- Recent scans -->
-        <Card>
-            <CardHeader>
-                <CardTitle class="flex items-center gap-2">
-                    <Activity class="size-4" />
-                    {{ t('qr.analytics.recentScans') }}
-                </CardTitle>
-            </CardHeader>
-            <CardContent class="p-0">
+        <div class="relative rounded-xl border border-border bg-card overflow-hidden">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+            <div class="p-4 md:p-5 pb-0">
+                <div class="flex items-center gap-2 mb-1">
+                    <div class="flex size-7 items-center justify-center rounded-md bg-cyan-400/10">
+                        <Activity class="size-4 text-cyan-400" />
+                    </div>
+                    <p class="text-sm font-semibold">{{ t('qr.analytics.recentScans') }}</p>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
                 <template v-if="recentScans.length">
                     <div
                         v-for="(scan, i) in recentScans"
                         :key="i"
-                        class="hover:bg-muted/50 flex items-center gap-4 px-6 py-3 text-sm transition-colors"
-                        :class="{ 'border-t': i > 0 }"
+                        class="flex items-center gap-4 px-4 md:px-5 py-3 text-sm transition-colors duration-100 hover:bg-muted/30 cursor-default"
+                        :class="{ 'border-t border-border/60': i > 0 }"
                     >
-                        <component
-                            :is="deviceIcon(scan.device_type)"
-                            class="text-muted-foreground size-4 shrink-0"
-                        />
+                        <div class="flex size-8 items-center justify-center rounded-md bg-muted shrink-0">
+                            <component
+                                :is="deviceIcon(scan.device_type)"
+                                class="text-muted-foreground size-4"
+                            />
+                        </div>
                         <div class="min-w-0 flex-1">
-                            <p class="truncate font-medium">
+                            <p class="truncate font-medium text-sm">
                                 {{ scan.city ?? scan.country ?? t('qr.analytics.unknownLocation') }}
                                 <span
                                     v-if="scan.country && scan.city"
@@ -569,15 +626,18 @@ onUnmounted(() => {
                                 {{ scan.browser ?? t('qr.analytics.unknownBrowser') }} · {{ scan.os ?? t('qr.analytics.unknownOs') }}
                             </p>
                         </div>
-                        <span class="text-muted-foreground shrink-0 text-xs">
+                        <span class="text-muted-foreground shrink-0 text-xs tabular-nums">
                             {{ formatDateTime(scan.scanned_at) }}
                         </span>
                     </div>
                 </template>
-                <div v-else class="text-muted-foreground px-6 py-8 text-center text-sm">
-                    {{ t('qr.analytics.noScansRecorded') }}
+                <div v-else class="flex flex-col items-center justify-center py-12 text-center px-6">
+                    <div class="flex size-12 items-center justify-center rounded-xl bg-muted ring-1 ring-border mb-3">
+                        <Activity class="size-6 text-muted-foreground" />
+                    </div>
+                    <p class="text-muted-foreground text-sm">{{ t('qr.analytics.noScansRecorded') }}</p>
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     </div>
 </template>
