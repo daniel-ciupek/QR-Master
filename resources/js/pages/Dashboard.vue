@@ -143,6 +143,27 @@ function formatNumber(n: number): string {
     return n >= 1000 ? (n / 1000).toFixed(1) + 'k' : n.toString()
 }
 
+interface QrTypeConfig { color: string; bg: string; ring: string; border: string }
+const QR_TYPE_COLORS: Record<string, QrTypeConfig> = {
+    url:      { color: 'text-violet-400',  bg: 'bg-violet-400/10',  ring: 'ring-violet-400/20',  border: 'hover:border-l-violet-400' },
+    vcard:    { color: 'text-cyan-400',    bg: 'bg-cyan-400/10',    ring: 'ring-cyan-400/20',    border: 'hover:border-l-cyan-400' },
+    wifi:     { color: 'text-sky-400',     bg: 'bg-sky-400/10',     ring: 'ring-sky-400/20',     border: 'hover:border-l-sky-400' },
+    geo:      { color: 'text-emerald-400', bg: 'bg-emerald-400/10', ring: 'ring-emerald-400/20', border: 'hover:border-l-emerald-400' },
+    email:    { color: 'text-gold-500',    bg: 'bg-gold-500/10',    ring: 'ring-gold-500/20',    border: 'hover:border-l-gold-500' },
+    phone:    { color: 'text-green-400',   bg: 'bg-green-400/10',   ring: 'ring-green-400/20',   border: 'hover:border-l-green-400' },
+    sms:      { color: 'text-teal-400',    bg: 'bg-teal-400/10',    ring: 'ring-teal-400/20',    border: 'hover:border-l-teal-400' },
+    pdf:      { color: 'text-red-400',     bg: 'bg-red-400/10',     ring: 'ring-red-400/20',     border: 'hover:border-l-red-400' },
+    app:      { color: 'text-indigo-400',  bg: 'bg-indigo-400/10',  ring: 'ring-indigo-400/20',  border: 'hover:border-l-indigo-400' },
+    calendar: { color: 'text-rose-400',    bg: 'bg-rose-400/10',    ring: 'ring-rose-400/20',    border: 'hover:border-l-rose-400' },
+    crypto:   { color: 'text-amber-400',   bg: 'bg-amber-400/10',   ring: 'ring-amber-400/20',   border: 'hover:border-l-amber-400' },
+    review:   { color: 'text-orange-400',  bg: 'bg-orange-400/10',  ring: 'ring-orange-400/20',  border: 'hover:border-l-orange-400' },
+    text:     { color: 'text-slate-400',   bg: 'bg-slate-400/10',   ring: 'ring-slate-400/20',   border: 'hover:border-l-slate-400' },
+    bio_link: { color: 'text-pink-400',    bg: 'bg-pink-400/10',    ring: 'ring-pink-400/20',    border: 'hover:border-l-pink-400' },
+}
+function getQrTypeConfig(type: string): QrTypeConfig {
+    return QR_TYPE_COLORS[type] ?? { color: 'text-primary', bg: 'bg-primary/10', ring: 'ring-primary/20', border: 'hover:border-l-primary' }
+}
+
 // Ziggy route() is injected via @routes blade directive — wrap for template use
 function r(name: string, params?: Record<string, string | number | boolean> | string | number): string {
     return route(name, params)
@@ -411,121 +432,128 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
             <!-- Recent QR + Plan Usage + Quick Actions -->
             <div class="grid gap-3 md:gap-4 lg:grid-cols-3">
                 <!-- Recent QR codes -->
-                <Card class="lg:col-span-2">
-                    <CardHeader class="pb-2">
-                        <div class="flex items-center justify-between">
-                            <CardTitle class="text-base">{{ t('dashboard.recentQr.title') }}</CardTitle>
-                            <Button variant="ghost" size="sm" as-child>
-                                <Link :href="r('qr.index')">{{ t('dashboard.recentQr.viewAll') }}</Link>
-                            </Button>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <div class="divide-y divide-border/60">
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card lg:col-span-2">
+                    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+                    <div class="flex items-center justify-between p-4 pb-2">
+                        <h3 class="text-base font-semibold">{{ t('dashboard.recentQr.title') }}</h3>
+                        <Button variant="ghost" size="sm" as-child class="hover:text-primary transition-colors duration-150">
+                            <Link :href="r('qr.index')">{{ t('dashboard.recentQr.viewAll') }}</Link>
+                        </Button>
+                    </div>
+                    <div class="divide-y divide-border/40 px-4 pb-4">
+                        <div
+                            v-for="qr in recentQrCodes"
+                            :key="qr.id"
+                            class="group flex items-center gap-3 py-2.5 border-l-2 border-l-transparent
+                                   hover:bg-gradient-to-r hover:from-muted/40 hover:to-transparent
+                                   -mx-4 px-4 transition-all duration-200"
+                            :class="getQrTypeConfig(qr.type).border"
+                        >
                             <div
-                                v-for="qr in recentQrCodes"
-                                :key="qr.id"
-                                class="flex items-center gap-3 py-3 transition-colors duration-100 hover:bg-muted/30 -mx-2 px-2 rounded-lg"
+                                class="flex size-8 shrink-0 items-center justify-center rounded-lg ring-1 group-hover:scale-110 transition-transform duration-200"
+                                :class="[getQrTypeConfig(qr.type).bg, getQrTypeConfig(qr.type).ring]"
                             >
-                                <div class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
-                                    <QrCode class="size-4 text-primary" />
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <Link
-                                        :href="r('qr.edit', qr.id)"
-                                        class="block truncate text-sm font-medium hover:text-primary"
-                                    >
-                                        {{ qr.title }}
-                                    </Link>
-                                    <p class="text-xs text-muted-foreground uppercase">{{ qr.type }}</p>
-                                </div>
-                                <div class="flex items-center gap-2 shrink-0">
-                                    <span class="text-xs text-muted-foreground">
-                                        {{ formatNumber(qr.scan_count) }} {{ t('dashboard.recentQr.scans') }}
-                                    </span>
-                                    <Badge :variant="qrBadgeVariant(qr)" class="text-xs">
-                                        {{ qrBadgeLabel(qr) }}
-                                    </Badge>
-                                </div>
+                                <QrCode class="size-4" :class="getQrTypeConfig(qr.type).color" />
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <Link
+                                    :href="r('qr.edit', qr.id)"
+                                    class="block truncate text-sm font-medium hover:text-primary transition-colors duration-150"
+                                >{{ qr.title }}</Link>
+                                <p class="text-xs font-medium uppercase tracking-wider" :class="getQrTypeConfig(qr.type).color">
+                                    {{ qr.type }}
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-xs text-muted-foreground tabular-nums">
+                                    {{ formatNumber(qr.scan_count) }} {{ t('dashboard.recentQr.scans') }}
+                                </span>
+                                <Badge :variant="qrBadgeVariant(qr)" class="text-xs">
+                                    {{ qrBadgeLabel(qr) }}
+                                </Badge>
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
 
                 <!-- Right column -->
                 <div class="space-y-4">
                     <!-- Plan Usage -->
-                    <Card>
-                        <CardHeader class="pb-2">
-                            <div class="flex items-center justify-between">
-                                <CardTitle class="text-base">{{ t('dashboard.planUsage.title') }}</CardTitle>
-                                <span
-                                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ring-1"
-                                    :class="planUsage.plan === 'free'
-                                        ? 'bg-muted text-muted-foreground ring-border'
-                                        : planUsage.plan === 'pro'
-                                            ? 'bg-primary/10 text-primary ring-primary/20'
-                                            : 'bg-gold-500/10 text-gold-500 ring-gold-500/20'"
-                                >
-                                    {{ planUsage.planName }}
-                                </span>
-                            </div>
-                        </CardHeader>
-                        <CardContent class="space-y-4">
+                    <div class="relative overflow-hidden rounded-xl border border-border bg-card">
+                        <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-500/50 to-transparent" />
+                        <div class="flex items-center justify-between p-4 pb-2">
+                            <h3 class="text-base font-semibold">{{ t('dashboard.planUsage.title') }}</h3>
+                            <span
+                                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ring-1"
+                                :class="planUsage.plan === 'free'
+                                    ? 'bg-muted text-muted-foreground ring-border'
+                                    : planUsage.plan === 'pro'
+                                        ? 'bg-primary/10 text-primary ring-primary/20'
+                                        : 'bg-gold-500/10 text-gold-500 ring-gold-500/20'"
+                            >{{ planUsage.planName }}</span>
+                        </div>
+                        <div class="space-y-4 px-4 pb-4">
                             <!-- QR codes usage -->
                             <div>
-                                <div class="mb-1 flex justify-between text-xs text-muted-foreground">
+                                <div class="mb-1.5 flex justify-between text-xs text-muted-foreground">
                                     <span>{{ t('dashboard.planUsage.qrCodes') }}</span>
-                                    <span>
+                                    <span class="tabular-nums">
                                         {{ planUsage.qrUsed }}
                                         {{ planUsage.qrMax !== null ? `${t('dashboard.planUsage.of')} ${planUsage.qrMax}` : t('dashboard.planUsage.unlimited') }}
                                     </span>
                                 </div>
                                 <div v-if="planUsage.qrMax !== null" class="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
                                     <div
-                                        class="h-full rounded-full bg-primary transition-all"
+                                        class="h-full rounded-full bg-gradient-to-r from-primary via-violet-400 to-cyan-400 transition-all duration-700"
                                         :style="{ width: `${usagePercent(planUsage.qrUsed, planUsage.qrMax)}%` }"
                                     />
                                 </div>
                             </div>
                             <!-- Scans usage -->
                             <div>
-                                <div class="mb-1 flex justify-between text-xs text-muted-foreground">
+                                <div class="mb-1.5 flex justify-between text-xs text-muted-foreground">
                                     <span>{{ t('dashboard.planUsage.scansMonth') }}</span>
-                                    <span>
+                                    <span class="tabular-nums">
                                         {{ formatNumber(planUsage.scansUsed) }}
                                         {{ planUsage.scansMax !== null ? `${t('dashboard.planUsage.of')} ${formatNumber(planUsage.scansMax)}` : t('dashboard.planUsage.unlimited') }}
                                     </span>
                                 </div>
                                 <div v-if="planUsage.scansMax !== null" class="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
                                     <div
-                                        class="h-full rounded-full bg-primary transition-all"
+                                        class="h-full rounded-full bg-gradient-to-r from-cyan-400 via-primary to-violet-400 transition-all duration-700"
                                         :style="{ width: `${usagePercent(planUsage.scansUsed, planUsage.scansMax)}%` }"
                                     />
                                 </div>
                             </div>
+                            <!-- Upgrade button -->
                             <Button
                                 v-if="planUsage.plan === 'free' || planUsage.plan === 'pro'"
                                 variant="outline"
                                 size="sm"
-                                class="w-full border-gold-500/30 text-gold-500 hover:bg-gold-500/10 hover:border-gold-500/50 transition-colors duration-150"
+                                class="w-full border-gold-500/30 text-gold-500
+                                       hover:border-gold-500/60 hover:shadow-[0_0_16px_oklch(0.78_0.15_85/0.2)]
+                                       transition-all duration-200"
                                 as-child
                             >
-                                <Link :href="r('pricing')">{{ t('dashboard.planUsage.upgrade') }}</Link>
+                                <Link :href="r('pricing')">
+                                    <span class="mr-1.5 text-gold-500">✦</span>
+                                    {{ t('dashboard.planUsage.upgrade') }}
+                                </Link>
                             </Button>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
 
                     <!-- Quick Actions -->
-                    <Card>
-                        <CardHeader class="pb-2">
-                            <CardTitle class="text-base">{{ t('dashboard.quickActions.title') }}</CardTitle>
-                        </CardHeader>
-                        <CardContent class="space-y-2">
+                    <div class="relative overflow-hidden rounded-xl border border-border bg-card">
+                        <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+                        <div class="p-4 pb-2">
+                            <h3 class="text-base font-semibold">{{ t('dashboard.quickActions.title') }}</h3>
+                        </div>
+                        <div class="space-y-2 px-4 pb-4">
                             <Button
                                 variant="outline"
                                 size="sm"
-                                class="w-full justify-start"
+                                class="w-full justify-start hover:border-primary/40 hover:text-primary transition-all duration-150"
                                 as-child
                             >
                                 <Link :href="r('qr.create')">
@@ -536,7 +564,7 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                             <Button
                                 variant="outline"
                                 size="sm"
-                                class="w-full justify-start"
+                                class="w-full justify-start hover:border-cyan-400/40 hover:text-cyan-400 transition-all duration-150"
                                 as-child
                             >
                                 <Link :href="r('qr.import')">
@@ -547,7 +575,7 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                             <Button
                                 variant="outline"
                                 size="sm"
-                                class="w-full justify-start"
+                                class="w-full justify-start hover:border-gold-500/40 hover:text-gold-500 transition-all duration-150"
                                 as-child
                             >
                                 <Link :href="r('analytics')">
@@ -555,8 +583,8 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                                     {{ t('dashboard.quickActions.viewAnalytics') }}
                                 </Link>
                             </Button>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </div>
             </div>
         </template>
