@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3'
-import { usePreferredDark } from '@vueuse/core'
 import {
     AlertTriangle,
     BarChart2,
@@ -17,14 +16,11 @@ import { useI18n } from 'vue-i18n'
 import VueApexCharts from 'vue3-apexcharts'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import AppLayout from '@/layouts/AppLayout.vue'
 
 defineOptions({ layout: AppLayout })
 
 const { t } = useI18n()
-const isDark = usePreferredDark()
-const themeMode = computed((): 'dark' | 'light' => (isDark.value ? 'dark' : 'light'))
 
 interface QrItem {
     id: number
@@ -77,28 +73,55 @@ const chartOptions = computed(() => ({
         height: 200,
         toolbar: { show: false },
         background: 'transparent',
-        animations: { enabled: true, easing: 'easeinout', speed: 400 },
+        animations: { enabled: true, easing: 'easeinout', speed: 600 },
+        dropShadow: {
+            enabled: true,
+            blur: 10,
+            color: '#7c3aed',
+            opacity: 0.18,
+        },
     },
-    theme: { mode: themeMode.value },
-    stroke: { curve: 'smooth' as const, width: 2 },
-    colors: ['#6366f1'],
+    theme: { mode: 'dark' as const },
+    stroke: { curve: 'smooth' as const, width: 2.5 },
+    colors: ['oklch(0.66 0.25 285)'],
     fill: {
         type: 'gradient',
-        gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0.02, stops: [0, 100] },
+        gradient: {
+            type: 'vertical',
+            colorStops: [
+                { offset: 0,   color: 'oklch(0.72 0.15 200)', opacity: 0.50 },
+                { offset: 50,  color: 'oklch(0.66 0.25 285)', opacity: 0.22 },
+                { offset: 100, color: 'oklch(0.66 0.25 285)', opacity: 0.00 },
+            ],
+        },
     },
     dataLabels: { enabled: false },
     xaxis: {
         type: 'datetime' as const,
-        labels: { style: { fontSize: '11px' }, datetimeUTC: false },
+        labels: { style: { fontSize: '11px', colors: '#94a3b8' }, datetimeUTC: false },
         axisBorder: { show: false },
         axisTicks: { show: false },
     },
     yaxis: {
         min: 0,
-        labels: { style: { fontSize: '11px' }, formatter: (v: number) => Math.floor(v).toString() },
+        labels: {
+            style: { fontSize: '11px', colors: '#94a3b8' },
+            formatter: (v: number) => Math.floor(v).toString(),
+        },
     },
-    grid: { strokeDashArray: 4, borderColor: isDark.value ? '#1e293b' : '#e2e8f0' },
-    tooltip: { x: { format: 'dd MMM' }, theme: themeMode.value },
+    grid: {
+        strokeDashArray: 4,
+        borderColor: 'oklch(0.28 0.028 272 / 0.6)',
+        xaxis: { lines: { show: false } },
+    },
+    tooltip: { x: { format: 'dd MMM' }, theme: 'dark' },
+    markers: {
+        size: 0,
+        hover: { size: 5 },
+        strokeColors: 'oklch(0.66 0.25 285)',
+        strokeWidth: 2,
+        fillColor: 'oklch(0.17 0.025 272)',
+    },
 }))
 
 function qrBadgeLabel(qr: QrItem): string {
@@ -322,14 +345,15 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
             <!-- Chart + Top QR -->
             <div class="grid gap-3 md:gap-4 lg:grid-cols-3">
                 <!-- Scan chart -->
-                <Card class="lg:col-span-2">
-                    <CardHeader class="pb-2">
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card lg:col-span-2 hover:border-primary/30 transition-colors duration-300">
+                    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 via-50% to-cyan-400/40 to-transparent" />
+                    <div class="p-4 pb-1">
                         <div class="flex items-center justify-between">
-                            <CardTitle class="text-base">{{ t('dashboard.chart.title') }}</CardTitle>
+                            <h3 class="text-base font-semibold">{{ t('dashboard.chart.title') }}</h3>
                             <span class="text-xs text-muted-foreground">{{ t('dashboard.chart.subtitle') }}</span>
                         </div>
-                    </CardHeader>
-                    <CardContent>
+                    </div>
+                    <div class="px-2 pb-3">
                         <VueApexCharts
                             v-if="scanTimeline.some(p => p.count > 0)"
                             type="area"
@@ -343,29 +367,36 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                         >
                             {{ t('dashboard.chart.noData') }}
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
 
                 <!-- Top QR codes -->
-                <Card>
-                    <CardHeader class="pb-2">
-                        <CardTitle class="text-base">{{ t('dashboard.topQr.title') }}</CardTitle>
-                    </CardHeader>
-                    <CardContent class="space-y-3">
+                <div class="relative overflow-hidden rounded-xl border border-border bg-card hover:border-cyan-400/30 transition-colors duration-300">
+                    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+                    <div class="p-4 pb-2">
+                        <h3 class="text-base font-semibold">{{ t('dashboard.topQr.title') }}</h3>
+                    </div>
+                    <div class="space-y-1 px-4 pb-4">
                         <div
                             v-for="(qr, idx) in topQrCodes"
                             :key="qr.id"
-                            class="flex items-center gap-3"
+                            class="group flex items-center gap-3 rounded-lg p-1.5 -mx-1.5 hover:bg-muted/30 transition-colors duration-150"
                         >
-                            <span class="w-4 text-center text-sm font-bold text-muted-foreground">{{ idx + 1 }}</span>
+                            <span
+                                class="flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                                :class="{
+                                    'bg-gold-500/20 text-gold-500 ring-1 ring-gold-500/30': idx === 0,
+                                    'bg-muted/60 text-muted-foreground ring-1 ring-border': idx === 1,
+                                    'bg-amber-700/20 text-amber-600 ring-1 ring-amber-700/30': idx === 2,
+                                    'bg-muted/30 text-muted-foreground/70': idx > 2,
+                                }"
+                            >{{ idx + 1 }}</span>
                             <div class="min-w-0 flex-1">
                                 <Link
                                     :href="r('qr.analytics', qr.id)"
-                                    class="block truncate text-sm font-medium hover:text-primary"
-                                >
-                                    {{ qr.title }}
-                                </Link>
-                                <p class="text-xs text-muted-foreground">
+                                    class="block truncate text-sm font-medium hover:text-primary transition-colors duration-150"
+                                >{{ qr.title }}</Link>
+                                <p class="text-xs text-muted-foreground tabular-nums">
                                     {{ formatNumber(qr.scan_count) }} {{ t('dashboard.topQr.scans') }}
                                 </p>
                             </div>
@@ -373,8 +404,8 @@ function r(name: string, params?: Record<string, string | number | boolean> | st
                         <div v-if="topQrCodes.length === 0" class="py-4 text-center text-sm text-muted-foreground">
                             {{ t('dashboard.recentQr.noQr') }}
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
 
             <!-- Recent QR + Plan Usage + Quick Actions -->
