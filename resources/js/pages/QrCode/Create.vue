@@ -40,6 +40,7 @@ import LogoUpload from '@/components/qr/LogoUpload.vue'
 import QrFrame from '@/components/qr/QrFrame.vue'
 import ExportModal from '@/components/qr/ExportModal.vue'
 import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { useContrastChecker } from '@/composables/useContrastChecker'
@@ -60,6 +61,7 @@ type TabId = 'url' | 'text' | 'email' | 'phone' | 'sms' | 'vcard' | 'wifi' | 'ge
 interface QrTypeItem {
     id: TabId
     labelKey: string
+    descKey: string
     icon: unknown
     iconColor: string
     iconBg: string
@@ -71,20 +73,20 @@ interface QrTypeItem {
 }
 
 const QR_TYPES: QrTypeItem[] = [
-    { id: 'url',      labelKey: 'qr.tabs.url',      icon: Globe,          iconColor: 'text-violet-400',  iconBg: 'bg-violet-400/10',  iconRing: 'ring-violet-400/30',  activeBorder: 'border-violet-400/50',  activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.22_292/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-violet-400/70 to-transparent',  labelColor: 'text-violet-400' },
-    { id: 'text',     labelKey: 'qr.tabs.text',     icon: AlignLeft,      iconColor: 'text-slate-300',   iconBg: 'bg-slate-400/10',   iconRing: 'ring-slate-400/30',   activeBorder: 'border-slate-400/50',   activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.01_272/0.2)]',   topBorder: 'bg-gradient-to-r from-transparent via-slate-400/70 to-transparent',   labelColor: 'text-slate-300' },
-    { id: 'email',    labelKey: 'qr.tabs.email',    icon: Mail,           iconColor: 'text-gold-500',    iconBg: 'bg-gold-500/10',    iconRing: 'ring-gold-500/30',    activeBorder: 'border-gold-500/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.78_0.15_85/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-gold-500/70 to-transparent',    labelColor: 'text-gold-500' },
-    { id: 'phone',    labelKey: 'qr.tabs.phone',    icon: Phone,          iconColor: 'text-green-400',   iconBg: 'bg-green-400/10',   iconRing: 'ring-green-400/30',   activeBorder: 'border-green-400/50',   activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.19_142/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-green-400/70 to-transparent',   labelColor: 'text-green-400' },
-    { id: 'sms',      labelKey: 'qr.tabs.sms',      icon: MessageSquare,  iconColor: 'text-teal-400',    iconBg: 'bg-teal-400/10',    iconRing: 'ring-teal-400/30',    activeBorder: 'border-teal-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.70_0.14_180/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-teal-400/70 to-transparent',    labelColor: 'text-teal-400' },
-    { id: 'vcard',    labelKey: 'qr.tabs.vcard',    icon: Contact,        iconColor: 'text-cyan-400',    iconBg: 'bg-cyan-400/10',    iconRing: 'ring-cyan-400/30',    activeBorder: 'border-cyan-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.72_0.15_200/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-cyan-400/70 to-transparent',    labelColor: 'text-cyan-400' },
-    { id: 'wifi',     labelKey: 'qr.tabs.wifi',     icon: Wifi,           iconColor: 'text-sky-400',     iconBg: 'bg-sky-400/10',     iconRing: 'ring-sky-400/30',     activeBorder: 'border-sky-400/50',     activeGlow: 'shadow-[0_0_16px_oklch(0.67_0.17_220/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-sky-400/70 to-transparent',     labelColor: 'text-sky-400' },
-    { id: 'geo',      labelKey: 'qr.tabs.geo',      icon: MapPin,         iconColor: 'text-emerald-400', iconBg: 'bg-emerald-400/10', iconRing: 'ring-emerald-400/30', activeBorder: 'border-emerald-400/50', activeGlow: 'shadow-[0_0_16px_oklch(0.69_0.17_162/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-emerald-400/70 to-transparent', labelColor: 'text-emerald-400' },
-    { id: 'pdf',      labelKey: 'qr.tabs.pdf',      icon: FileText,       iconColor: 'text-red-400',     iconBg: 'bg-red-400/10',     iconRing: 'ring-red-400/30',     activeBorder: 'border-red-400/50',     activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.22_25/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-red-400/70 to-transparent',     labelColor: 'text-red-400' },
-    { id: 'bio_link', labelKey: 'qr.tabs.bio_link', icon: Link2,          iconColor: 'text-pink-400',    iconBg: 'bg-pink-400/10',    iconRing: 'ring-pink-400/30',    activeBorder: 'border-pink-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.70_0.20_340/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-pink-400/70 to-transparent',    labelColor: 'text-pink-400' },
-    { id: 'app',      labelKey: 'qr.tabs.app',      icon: Smartphone,     iconColor: 'text-indigo-400',  iconBg: 'bg-indigo-400/10',  iconRing: 'ring-indigo-400/30',  activeBorder: 'border-indigo-400/50',  activeGlow: 'shadow-[0_0_16px_oklch(0.55_0.25_270/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-indigo-400/70 to-transparent',  labelColor: 'text-indigo-400' },
-    { id: 'calendar', labelKey: 'qr.tabs.calendar', icon: Calendar,       iconColor: 'text-rose-400',    iconBg: 'bg-rose-400/10',    iconRing: 'ring-rose-400/30',    activeBorder: 'border-rose-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.67_0.22_15/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-rose-400/70 to-transparent',    labelColor: 'text-rose-400' },
-    { id: 'crypto',   labelKey: 'qr.tabs.crypto',   icon: Bitcoin,        iconColor: 'text-amber-400',   iconBg: 'bg-amber-400/10',   iconRing: 'ring-amber-400/30',   activeBorder: 'border-amber-400/50',   activeGlow: 'shadow-[0_0_16px_oklch(0.76_0.17_70/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-amber-400/70 to-transparent',   labelColor: 'text-amber-400' },
-    { id: 'review',   labelKey: 'qr.tabs.review',   icon: Star,           iconColor: 'text-orange-400',  iconBg: 'bg-orange-400/10',  iconRing: 'ring-orange-400/30',  activeBorder: 'border-orange-400/50',  activeGlow: 'shadow-[0_0_16px_oklch(0.70_0.18_40/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-orange-400/70 to-transparent',  labelColor: 'text-orange-400' },
+    { id: 'url',      labelKey: 'qr.tabs.url',      descKey: 'qr.tabs.desc.url',      icon: Globe,          iconColor: 'text-violet-400',  iconBg: 'bg-violet-400/10',  iconRing: 'ring-violet-400/30',  activeBorder: 'border-violet-400/50',  activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.22_292/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-violet-400/70 to-transparent',  labelColor: 'text-violet-400' },
+    { id: 'text',     labelKey: 'qr.tabs.text',     descKey: 'qr.tabs.desc.text',     icon: AlignLeft,      iconColor: 'text-slate-300',   iconBg: 'bg-slate-400/10',   iconRing: 'ring-slate-400/30',   activeBorder: 'border-slate-400/50',   activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.01_272/0.2)]',   topBorder: 'bg-gradient-to-r from-transparent via-slate-400/70 to-transparent',   labelColor: 'text-slate-300' },
+    { id: 'email',    labelKey: 'qr.tabs.email',    descKey: 'qr.tabs.desc.email',    icon: Mail,           iconColor: 'text-gold-500',    iconBg: 'bg-gold-500/10',    iconRing: 'ring-gold-500/30',    activeBorder: 'border-gold-500/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.78_0.15_85/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-gold-500/70 to-transparent',    labelColor: 'text-gold-500' },
+    { id: 'phone',    labelKey: 'qr.tabs.phone',    descKey: 'qr.tabs.desc.phone',    icon: Phone,          iconColor: 'text-green-400',   iconBg: 'bg-green-400/10',   iconRing: 'ring-green-400/30',   activeBorder: 'border-green-400/50',   activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.19_142/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-green-400/70 to-transparent',   labelColor: 'text-green-400' },
+    { id: 'sms',      labelKey: 'qr.tabs.sms',      descKey: 'qr.tabs.desc.sms',      icon: MessageSquare,  iconColor: 'text-teal-400',    iconBg: 'bg-teal-400/10',    iconRing: 'ring-teal-400/30',    activeBorder: 'border-teal-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.70_0.14_180/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-teal-400/70 to-transparent',    labelColor: 'text-teal-400' },
+    { id: 'vcard',    labelKey: 'qr.tabs.vcard',    descKey: 'qr.tabs.desc.vcard',    icon: Contact,        iconColor: 'text-cyan-400',    iconBg: 'bg-cyan-400/10',    iconRing: 'ring-cyan-400/30',    activeBorder: 'border-cyan-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.72_0.15_200/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-cyan-400/70 to-transparent',    labelColor: 'text-cyan-400' },
+    { id: 'wifi',     labelKey: 'qr.tabs.wifi',     descKey: 'qr.tabs.desc.wifi',     icon: Wifi,           iconColor: 'text-sky-400',     iconBg: 'bg-sky-400/10',     iconRing: 'ring-sky-400/30',     activeBorder: 'border-sky-400/50',     activeGlow: 'shadow-[0_0_16px_oklch(0.67_0.17_220/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-sky-400/70 to-transparent',     labelColor: 'text-sky-400' },
+    { id: 'geo',      labelKey: 'qr.tabs.geo',      descKey: 'qr.tabs.desc.geo',      icon: MapPin,         iconColor: 'text-emerald-400', iconBg: 'bg-emerald-400/10', iconRing: 'ring-emerald-400/30', activeBorder: 'border-emerald-400/50', activeGlow: 'shadow-[0_0_16px_oklch(0.69_0.17_162/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-emerald-400/70 to-transparent', labelColor: 'text-emerald-400' },
+    { id: 'pdf',      labelKey: 'qr.tabs.pdf',      descKey: 'qr.tabs.desc.pdf',      icon: FileText,       iconColor: 'text-red-400',     iconBg: 'bg-red-400/10',     iconRing: 'ring-red-400/30',     activeBorder: 'border-red-400/50',     activeGlow: 'shadow-[0_0_16px_oklch(0.65_0.22_25/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-red-400/70 to-transparent',     labelColor: 'text-red-400' },
+    { id: 'bio_link', labelKey: 'qr.tabs.bio_link', descKey: 'qr.tabs.desc.bio_link', icon: Link2,          iconColor: 'text-pink-400',    iconBg: 'bg-pink-400/10',    iconRing: 'ring-pink-400/30',    activeBorder: 'border-pink-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.70_0.20_340/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-pink-400/70 to-transparent',    labelColor: 'text-pink-400' },
+    { id: 'app',      labelKey: 'qr.tabs.app',      descKey: 'qr.tabs.desc.app',      icon: Smartphone,     iconColor: 'text-indigo-400',  iconBg: 'bg-indigo-400/10',  iconRing: 'ring-indigo-400/30',  activeBorder: 'border-indigo-400/50',  activeGlow: 'shadow-[0_0_16px_oklch(0.55_0.25_270/0.18)]',  topBorder: 'bg-gradient-to-r from-transparent via-indigo-400/70 to-transparent',  labelColor: 'text-indigo-400' },
+    { id: 'calendar', labelKey: 'qr.tabs.calendar', descKey: 'qr.tabs.desc.calendar', icon: Calendar,       iconColor: 'text-rose-400',    iconBg: 'bg-rose-400/10',    iconRing: 'ring-rose-400/30',    activeBorder: 'border-rose-400/50',    activeGlow: 'shadow-[0_0_16px_oklch(0.67_0.22_15/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-rose-400/70 to-transparent',    labelColor: 'text-rose-400' },
+    { id: 'crypto',   labelKey: 'qr.tabs.crypto',   descKey: 'qr.tabs.desc.crypto',   icon: Bitcoin,        iconColor: 'text-amber-400',   iconBg: 'bg-amber-400/10',   iconRing: 'ring-amber-400/30',   activeBorder: 'border-amber-400/50',   activeGlow: 'shadow-[0_0_16px_oklch(0.76_0.17_70/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-amber-400/70 to-transparent',   labelColor: 'text-amber-400' },
+    { id: 'review',   labelKey: 'qr.tabs.review',   descKey: 'qr.tabs.desc.review',   icon: Star,           iconColor: 'text-orange-400',  iconBg: 'bg-orange-400/10',  iconRing: 'ring-orange-400/30',  activeBorder: 'border-orange-400/50',  activeGlow: 'shadow-[0_0_16px_oklch(0.70_0.18_40/0.18)]',   topBorder: 'bg-gradient-to-r from-transparent via-orange-400/70 to-transparent',  labelColor: 'text-orange-400' },
 ]
 
 const carouselRef = ref<HTMLDivElement | null>(null)
@@ -531,46 +533,57 @@ const exportOpen = ref(false)
                                 </div>
 
                                 <!-- Scrollable strip -->
-                                <div
-                                    ref="carouselRef"
-                                    class="flex gap-2 overflow-x-auto scroll-smooth px-9 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                                >
-                                    <button
-                                        v-for="type in QR_TYPES"
-                                        :key="type.id"
-                                        type="button"
-                                        class="group relative flex w-[68px] shrink-0 flex-col items-center gap-1.5 overflow-hidden rounded-xl border p-2.5 transition-all duration-200"
-                                        :class="activeTab === type.id
-                                            ? [type.activeBorder, type.activeGlow, 'bg-card']
-                                            : 'border-border bg-transparent hover:border-border/70 hover:bg-muted/25'"
-                                        @click="activeTab = type.id"
+                                <TooltipProvider :delay-duration="300">
+                                    <div
+                                        ref="carouselRef"
+                                        class="flex gap-2 overflow-x-auto scroll-smooth px-9 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                                     >
-                                        <!-- Gradient top-border (active only) -->
-                                        <div
-                                            v-if="activeTab === type.id"
-                                            class="absolute inset-x-0 top-0 h-px"
-                                            :class="type.topBorder"
-                                        />
-                                        <!-- Icon circle -->
-                                        <div
-                                            class="flex size-8 items-center justify-center rounded-full ring-1 transition-all duration-200"
-                                            :class="activeTab === type.id
-                                                ? [type.iconBg, type.iconRing, 'scale-110']
-                                                : 'bg-muted/50 ring-border group-hover:bg-muted'"
+                                        <Tooltip
+                                            v-for="type in QR_TYPES"
+                                            :key="type.id"
                                         >
-                                            <component
-                                                :is="type.icon"
-                                                class="size-4 transition-colors duration-200"
-                                                :class="activeTab === type.id ? type.iconColor : 'text-muted-foreground group-hover:text-foreground/70'"
-                                            />
-                                        </div>
-                                        <!-- Label -->
-                                        <span
-                                            class="text-center text-[10px] font-medium leading-tight transition-colors duration-200"
-                                            :class="activeTab === type.id ? type.labelColor : 'text-muted-foreground group-hover:text-foreground/70'"
-                                        >{{ t(type.labelKey) }}</span>
-                                    </button>
-                                </div>
+                                            <TooltipTrigger as-child>
+                                                <button
+                                                    type="button"
+                                                    class="group relative flex w-[68px] shrink-0 flex-col items-center gap-1.5 overflow-hidden rounded-xl border p-2.5 transition-all duration-200"
+                                                    :class="activeTab === type.id
+                                                        ? [type.activeBorder, type.activeGlow, 'bg-card']
+                                                        : 'border-border bg-transparent hover:border-border/70 hover:bg-muted/25'"
+                                                    @click="activeTab = type.id"
+                                                >
+                                                    <!-- Gradient top-border (active only) -->
+                                                    <div
+                                                        v-if="activeTab === type.id"
+                                                        class="absolute inset-x-0 top-0 h-px"
+                                                        :class="type.topBorder"
+                                                    />
+                                                    <!-- Icon circle -->
+                                                    <div
+                                                        class="flex size-8 items-center justify-center rounded-full ring-1 transition-all duration-200"
+                                                        :class="activeTab === type.id
+                                                            ? [type.iconBg, type.iconRing, 'scale-110']
+                                                            : 'bg-muted/50 ring-border group-hover:bg-muted'"
+                                                    >
+                                                        <component
+                                                            :is="type.icon"
+                                                            class="size-4 transition-colors duration-200"
+                                                            :class="activeTab === type.id ? type.iconColor : 'text-muted-foreground group-hover:text-foreground/70'"
+                                                        />
+                                                    </div>
+                                                    <!-- Label -->
+                                                    <span
+                                                        class="text-center text-[10px] font-medium leading-tight transition-colors duration-200"
+                                                        :class="activeTab === type.id ? type.labelColor : 'text-muted-foreground group-hover:text-foreground/70'"
+                                                    >{{ t(type.labelKey) }}</span>
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="bottom" class="max-w-[180px] text-center text-xs">
+                                                <p class="font-semibold" :class="type.labelColor">{{ t(type.labelKey) }}</p>
+                                                <p class="mt-0.5 text-muted-foreground">{{ t(type.descKey) }}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                </TooltipProvider>
 
                                 <!-- Right arrow + fade -->
                                 <div class="absolute right-0 top-0 bottom-1 z-10 flex items-center">
