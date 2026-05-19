@@ -29,6 +29,8 @@
 ## Spis treści
 
 - [O projekcie](#o-projekcie)
+- [Plany subskrypcji](#plany-subskrypcji)
+- [Sztuczna inteligencja](#sztuczna-inteligencja)
 - [Zrzuty ekranu](#zrzuty-ekranu)
 - [Funkcjonalności](#funkcjonalności)
 - [Stos technologiczny](#stos-technologiczny)
@@ -41,72 +43,165 @@
 
 ## O projekcie
 
-QR-Master to gotowa produkcyjnie platforma SaaS, która obsługuje pełny cykl życia kodów QR — od generowania i brandingu wizualnego, przez analitykę w czasie rzeczywistym, inteligentne przekierowania i testy A/B, aż po zarządzanie zespołami na poziomie enterprise. Projekt powstał jako showcase umiejętności full-stack w kontekście realnej aplikacji komercyjnej.
+QR-Master to gotowa produkcyjnie platforma SaaS, która obsługuje **pełny cykl życia kodów QR** — od momentu ich wygenerowania i zaprojektowania wizualnego, przez inteligentne przekierowania i testy A/B, aż po szczegółową analitykę w czasie rzeczywistym i zarządzanie zespołami na poziomie enterprise. Platforma integruje **sztuczną inteligencję** jako pełnoprawną warstwę produktu: AI wspiera użytkownika na każdym etapie pracy — od doboru kolorystyki i generowania treści, przez kontekstową analizę wydajności kampanii, po wykrywanie anomalii i wyszukiwanie semantyczne oparte na embeddingach wektorowych.
 
-**Skala projektu:**
-- **50+ stron frontendowych** (Vue 3 + TypeScript + Inertia.js)
-- **242 pliki PHP** — Actions, Services, Jobs, Models, Policies
-- **13 ukończonych etapów** deweloperskich, od zera do poziomu enterprise
+Projekt powstał jako portfolio showcase, demonstrując zaawansowane umiejętności inżynierskie w obszarze architektury aplikacji, integracji AI, bezpieczeństwa, wydajności i nowoczesnego UX. Każda warstwa aplikacji odzwierciedla podejście właściwe dla komercyjnego produktu SaaS: od analizy statycznej PHPStan poziomu 8, przez typowane DTO na wszystkich granicach systemu, po wieloproviderową abstrakcję modeli językowych (DeepSeek, Anthropic Claude, OpenAI, Gemini), zgodność z RODO i szyfrowanie danych wrażliwych w spoczynku.
+
+**Skala i zasięg projektu:**
+- **50+ stron frontendowych** zbudowanych w Vue 3 + TypeScript + Inertia.js
+- **242 pliki PHP** — Actions, Services, Jobs, Models, Policies, Middleware
+- **13 ukończonych etapów** deweloperskich według zaplanowanego roadmapu
 - **13 typów kodów QR** — URL, vCard, WiFi, SMS, E-mail, Telefon, Geo, PDF, Bio-Link, Kalendarz, Krypto, App, Recenzja
-- **4 plany subskrypcji** ze Stripe Checkout, śledzeniem użycia i bramkami dostępu
-- **Integracja AI** przez wieloproviderową abstrakcję (DeepSeek, Anthropic, OpenAI, Gemini)
+- **REST API** z autoryzacją tokenami Sanctum i specyfikacją OpenAPI
+
+**Model biznesowy i monetyzacja:**
+
+Platforma działa w modelu freemium z czterema planami subskrypcji rozliczanymi przez Stripe. Użytkownicy mogą zacząć bezpłatnie, a w miarę rosnących potrzeb (więcej kodów QR, zaawansowana analityka, AI, własne domeny, zarządzanie zespołem) przejść na wyższy plan — jednym kliknięciem, bez utraty danych. Każdy nowy użytkownik automatycznie otrzymuje **14-dniowy trial Pro**, by bez ryzyka przetestować pełne możliwości platformy.
+
+**Integracja ze sztuczną inteligencją:**
+
+AI jest wbudowane w rdzeń produktu, nie jest dodatkiem. Przez abstrakcję wieloproviderową (Prism) aplikacja komunikuje się z DeepSeek, Anthropic Claude, OpenAI lub Gemini — bez żadnej zmiany kodu aplikacji. Funkcje AI obejmują sugestię palet kolorystycznych po wgraniu logo, automatyczne generowanie nazw kampanii i CTA, analizę wydajności w języku naturalnym, wykrywanie anomalii (fraud/bot detection) oraz wyszukiwanie semantyczne kodów QR oparte na embeddingach pgvector.
+
+---
+
+## Plany subskrypcji
+
+| Plan | Cena | Kody QR | Skanowania/mies. | AI zapytania/mies. | Kluczowe funkcje |
+|---|---|---|---|---|---|
+| **Free** | 0 PLN | 5 | 500 | — | Podstawowe typy QR, PNG/SVG export |
+| **Pro** | 49 PLN/mies. | 100 | 50 000 | 50 | Analityka, smart redirect, A/B testy, własne logo, trial 14 dni |
+| **Business** | 199 PLN/mies. | Bez limitu | 500 000 | 500 | Własne domeny, webhooki, API, zarządzanie zespołem, white-label |
+| **Enterprise** | Wycena indywidualna | Bez limitu | Bez limitu | Bez limitu | SSO/SAML, SCIM, IP allowlist, rezydencja danych, DPA, SLA |
+
+Wszystkie plany płatne obsługują przełącznik **miesięczny / roczny** (oszczędność ~20% przy rocznej rozgrywce), automatyczne naliczanie podatku VAT z pobieraniem NIP przy kasie oraz kody promocyjne. Płatność realizowana jest przez **Stripe Checkout** — hostowaną, certyfikowaną stronę płatności zgodną z PCI DSS. Każda subskrypcja jest w pełni zarządzana: można ją anulować, zmienić plan lub pobrać faktury bezpośrednio z panelu użytkownika — bez kontaktu z supportem.
+
+---
+
+## Sztuczna inteligencja
+
+QR-Master integruje AI jako wbudowaną warstwę produktu, dostępną we wszystkich kluczowych przepływach pracy:
+
+### Abstrakcja wieloproviderowa (Prism)
+
+Cała logika AI przechodzi przez bibliotekę [Prism](https://prism.echolabs.dev/), która ujednolica interfejs do różnych dostawców modeli językowych. Dzięki temu możliwa jest podmiana providera (DeepSeek ↔ Anthropic Claude ↔ OpenAI ↔ Gemini ↔ Ollama) wyłącznie przez zmianę konfiguracji — bez modyfikacji kodu aplikacji. Pozwala to na optymalizację kosztów i elastyczne reagowanie na zmiany w ofercie dostawców.
+
+### Funkcje AI dostępne w produkcie
+
+| Funkcja | Opis | Dostępność |
+|---|---|---|
+| **Sugestia palet kolorów** | Wgraj logo — AI analizuje kolory i proponuje 5 harmonijnych palet dla QR | Pro+ |
+| **Generowanie nazwy kampanii** | Wklej URL, otrzymaj zwięzłe, chwytliwe nazwy do szybkiego oznaczenia kodu | Pro+ |
+| **Generowanie CTA** | 5 fraz call-to-action dopasowanych do treści i kontekstu kodu QR | Pro+ |
+| **Treść Bio-Link** | Automatyczne wygenerowanie tekstu bio i tytułów linków dla strony docelowej | Pro+ |
+| **Insights wydajności** | Naturalna analiza statystyk skanowania — trendy, wnioski, rekomendacje | Pro+ |
+| **Wykrywanie anomalii** | Analiza wzorców bot/fraud na podstawie skanowań z poziomem pewności | Business+ |
+| **Wyszukiwanie semantyczne** | Szukaj kodów QR po znaczeniu (pgvector 768-dim, Gemini embeddings) | Business+ |
+
+### Limity i model rozliczeniowy AI
+
+Zapytania AI są mierzone per plan (rate limiting przez middleware `EnsureAiRateLimit`) i naliczane w czasie rzeczywistym: Free — brak dostępu, Pro — 50 zapytań/mies., Business — 500/mies., Enterprise — bez limitu. Użytkownik widzi bieżące zużycie w widgecie planu na dashboardzie.
 
 ---
 
 ## Zrzuty ekranu
 
-<table>
-  <tr>
-    <td width="50%">
-      <img src="docs/screenshots/qr-list.png" alt="Lista kodów QR">
-      <p align="center"><em>Zarządzanie kodami — datatable z tagami, statusami i akcjami zbiorczymi</em></p>
-    </td>
-    <td width="50%">
-      <img src="docs/screenshots/create-qr.png" alt="Tworzenie kodu QR">
-      <p align="center"><em>Kreator kodu — 13 typów, podgląd na żywo, szablony stylów</em></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <img src="docs/screenshots/qr-designer.png" alt="Projektant QR">
-      <p align="center"><em>Projektant wizualny — styl kropek, gradienty, AI sugestie kolorów, podgląd live</em></p>
-    </td>
-    <td width="50%">
-      <img src="docs/screenshots/edit-qr.png" alt="Edycja kodu QR">
-      <p align="center"><em>Edytor kodu — podgląd QR na żywo, fallback URL, tagi, upload logo</em></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <img src="docs/screenshots/analytics.png" alt="Analityka">
-      <p align="center"><em>Analityka — ranking skanów, breakdown krajów, wykresy urządzeń i przeglądarek</em></p>
-    </td>
-    <td width="50%">
-      <img src="docs/screenshots/ai-assistant.png" alt="Asystent AI">
-      <p align="center"><em>Asystent AI — kontekstowy czat w aplikacji wspierający użytkownika</em></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <img src="docs/screenshots/pricing.png" alt="Cennik">
-      <p align="center"><em>Strona cennika — przełącznik miesięczny/roczny, tabela porównawcza planów</em></p>
-    </td>
-    <td width="50%">
-      <img src="docs/screenshots/download-modal.png" alt="Pobieranie kodu">
-      <p align="center"><em>Eksport — PNG (do 4096px), SVG, PDF, EPS</em></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <img src="docs/screenshots/dashboard-qr-list.png" alt="Dashboard — lista kodów">
-      <p align="center"><em>Dashboard — ostatnie kody QR, widget użycia planu, szybkie akcje</em></p>
-    </td>
-    <td width="50%">
-      <img src="docs/screenshots/stripe-checkout.png" alt="Stripe Checkout">
-      <p align="center"><em>Stripe Checkout — natywna strona płatności z obsługą kodów promocyjnych</em></p>
-    </td>
-  </tr>
-</table>
+### Panel główny (Dashboard)
+
+<p align="center">
+  <img src="docs/screenshots/dashboard-qr-list.png" alt="Dashboard — lista kodów QR" width="100%">
+</p>
+
+Dashboard to centralny punkt aplikacji: widać tu ostatnio utworzone kody QR, widget bieżącego zużycia planu (liczba kodów, skanowania, zapytania AI), szybkie akcje (utwórz nowy kod, przejdź do analityki) oraz powiadomienia systemowe. Liczniki użycia aktualizują się w czasie rzeczywistym przez WebSocket (Laravel Reverb), dzięki czemu użytkownik zawsze wie, ile zasobów planu pozostało.
+
+---
+
+### Lista kodów QR
+
+<p align="center">
+  <img src="docs/screenshots/qr-list.png" alt="Lista kodów QR z tagami i filtrami" width="100%">
+</p>
+
+Widok listy oparty na TanStack Table v5 oferuje sortowanie, filtrowanie po typie/statusie/tagu oraz akcje zbiorcze (dezaktywuj, eksportuj, usuń zaznaczone). Każdy wiersz pokazuje miniaturę kodu, typ, cel, liczbę skanów i status (aktywny / wygasły / limit wyczerpany). Filtry i stan paginacji zapisywane są w URL — linkiem można podzielić się z członkiem zespołu.
+
+---
+
+### Tworzenie kodu QR
+
+<p align="center">
+  <img src="docs/screenshots/create-qr.png" alt="Kreator nowego kodu QR — wybór typu" width="100%">
+</p>
+
+Kreator przeprowadza użytkownika przez wybór jednego z 13 typów kodu QR. Każdy typ ma dedykowany formularz z odpowiednią walidacją: URL (z weryfikacją schematu whitelist), vCard (pola PII szyfrowane w bazie), WiFi (SSID, hasło, typ zabezpieczenia), Geo (mapa z pineską), Bio-Link (edytor linków z sugestią AI) i inne. Podgląd kodu aktualizuje się live podczas wpisywania.
+
+---
+
+### Projektant wizualny QR
+
+<p align="center">
+  <img src="docs/screenshots/qr-designer.png" alt="Projektant wizualny — gradienty, style kropek, AI palety" width="100%">
+</p>
+
+Zaawansowany edytor stylu kodu QR zbudowany na bibliotece `qr-code-styling`. Użytkownik kontroluje styl modułów (klasyczny, okrągły, bardzo zaokrąglony, pikselowy), styl narożników, kolory lub gradienty (liniowy/radialny), tło oraz logo wgrane z dysku. Przycisk **"Sugestia AI"** analizuje wgrany logotyp i generuje 5 palet kolorystycznych — gotowych do zastosowania jednym kliknięciem. Wszystkie zmiany widoczne są natychmiastowo w canvasie podglądu.
+
+---
+
+### Edytor kodu QR
+
+<p align="center">
+  <img src="docs/screenshots/edit-qr.png" alt="Edytor kodu QR — podgląd live, fallback URL, tagi" width="100%">
+</p>
+
+Edytor pozwala zmienić treść dynamicznego kodu QR bez potrzeby drukowania od nowa. Widoczny jest podgląd QR na żywo, pole fallback URL (domyślny cel gdy żadna reguła smart redirect nie pasuje), zarządzanie tagami, ustawienia ochrony hasłem oraz limit skanów z datą wygaśnięcia. Formularz korzysta z dedykowanego `FormRequest` i Spatie Laravel Data DTO — żadne dane nie trafiają do akcji bez pełnej walidacji.
+
+---
+
+### Analityka
+
+<p align="center">
+  <img src="docs/screenshots/analytics.png" alt="Analityka — skanowania w czasie, breakdown krajów i urządzeń" width="100%">
+</p>
+
+Panel analityki pokazuje timeline skanowań (ApexCharts, zakres dat konfigurowalny), breakdown krajów (wykres słupkowy z flagami), podział na typy urządzeń (desktop / mobile / tablet) i przeglądarki (wykresy pierścieniowe). Dane agregowane są z miesięcznych partycji PostgreSQL, co zapewnia wydajność nawet przy milionach wierszy. Adresy IP nigdy nie są przechowywane — zamiast nich zapisywany jest jednorazowy hash HMAC-SHA256, spełniając wymogi RODO bez utraty wartości analitycznej.
+
+---
+
+### Asystent AI
+
+<p align="center">
+  <img src="docs/screenshots/ai-assistant.png" alt="Asystent AI — kontekstowy czat w aplikacji" width="100%">
+</p>
+
+Kontekstowy asystent AI dostępny z dowolnego miejsca w aplikacji. Zna aktualnie przeglądany kod QR, jego statystyki i konfigurację, co pozwala zadawać konkretne pytania: "Dlaczego ten kod ma mało skanowań?", "Napisz tekst CTA do tej kampanii", "Jakie trendy widzisz w skanowaniach z ostatnich 30 dni?". Pod spodem działa wieloproviderowa abstrakcja Prism — aktywny model AI wybierany jest przez konfigurację środowiska.
+
+---
+
+### Cennik i plany
+
+<p align="center">
+  <img src="docs/screenshots/pricing.png" alt="Strona cennika — przełącznik miesięczny/roczny i tabela porównawcza" width="100%">
+</p>
+
+Strona cennika zawiera przełącznik miesięczny/roczny (oszczędność ~20% przy rocznym rozliczeniu), karty planów z wyróżnionym planem Business jako rekomendowanym oraz szczegółową tabelę porównawczą wszystkich funkcji. Kliknięcie "Kup teraz" lub "Zacznij trial" kieruje bezpośrednio na Stripe Checkout. Użytkownicy zalogowani widzą swój bieżący plan wyróżniony — bez możliwości ponownego zakupu tego samego planu.
+
+---
+
+### Eksport kodu QR
+
+<p align="center">
+  <img src="docs/screenshots/download-modal.png" alt="Modal eksportu — PNG, SVG, PDF, EPS z wyborem rozdzielczości" width="100%">
+</p>
+
+Modal eksportu udostępnia cztery formaty wyjściowe: PNG (wybór rozdzielczości 512 px – 4096 px, gotowy na duże wydruki), SVG (w pełni wektorowy, skalowalny bez utraty jakości), PDF (bezpośrednio do druku) oraz EPS (profesjonalny format pre-press do agencji poligraficznych). Eksport SVG i EPS dostępny jest od planu Pro.
+
+---
+
+### Stripe Checkout
+
+<p align="center">
+  <img src="docs/screenshots/stripe-checkout.png" alt="Stripe Checkout — natywna strona płatności Stripe z kodem promocyjnym" width="100%">
+</p>
+
+Płatność odbywa się na hostowanej stronie Stripe Checkout — certyfikowanej zgodnie z PCI DSS, obsługującej karty, Apple Pay, Google Pay i przelewy lokalne. Przy kasie pobierany jest NIP/VAT dla firm (Stripe Tax oblicza stawkę automatycznie na podstawie kraju). Pole kodu promocyjnego pozwala zastosować rabat przed finalizacją. Po udanej płatności użytkownik wraca do aplikacji, a jego plan aktywowany jest natychmiastowo przez webhook Stripe.
 
 ---
 
@@ -140,16 +235,6 @@ QR-Master to gotowa produkcyjnie platforma SaaS, która obsługuje pełny cykl �
 - **Porównanie wielu kodów** — analityka side-by-side
 - **Partycjonowanie logów skanów** — miesięczne partycje PostgreSQL utrzymują analitykę sprawną w dużej skali
 - **Zgodność z RODO** — surowe adresy IP nigdy nie są zapisywane; przechowywany jest wyłącznie hash HMAC-SHA256
-
-### Funkcje wspierane przez AI
-- **Wieloproviderowa abstrakcja** przez [Prism](https://prism.echolabs.dev/) — podmień DeepSeek, Anthropic Claude, OpenAI, Gemini, Ollama bez zmiany kodu aplikacji
-- **Sugestia nazwy QR** — wklej URL, otrzymaj zwięzłą nazwę kampanii
-- **Generowanie CTA** — 5 fraz call-to-action dopasowanych do treści kodu QR
-- **Treść Bio-Link** — AI generuje tekst bio i tytuły linków dla stron docelowych
-- **Insights wydajności** — naturalna analiza statystyk skanowania w kilku zdaniach
-- **Wykrywanie anomalii** — analiza wzorców bot/fraud z poziomem pewności i rekomendacją
-- **Wyszukiwanie semantyczne** — znajdź kody QR po znaczeniu dzięki embeddingom pgvector (768 wymiarów, Gemini)
-- **Rate limiting per plan** — Free: 0, Pro: 50/mies., Business: 500/mies., Enterprise: bez limitu
 
 ### Płatności i subskrypcje
 - **Stripe Checkout** przez Laravel Cashier — hostowana strona płatności zgodna z PCI
@@ -262,7 +347,7 @@ app/
 **Kluczowe decyzje projektowe:**
 - Kontrolery są celowo cienkie — walidują input i wywołują jedną Akcję, nic więcej
 - Każdy przepływ danych przez granicę systemu używa typowanych DTO — żadnych `array` w publicznych sygnaturach
-- Każda operacja asynchroniczna (logowanie skanów, dostarczanie webhooków, embeddingii AI) jest przesyłana do kolejkowanych Jobów
+- Każda operacja asynchroniczna (logowanie skanów, dostarczanie webhooków, embeddingi AI) jest przesyłana do kolejkowanych Jobów
 - Dostęp do funkcji jest egzekwowany w middleware, a nie rozrzucony po kontrolerach
 
 ---
