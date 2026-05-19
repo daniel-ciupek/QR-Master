@@ -1,0 +1,295 @@
+
+@import 'tailwindcss';
+
+@import "tw-animate-css";
+
+/* ============================================================
+   Sources — Tailwind content detection
+   ============================================================ */
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.ts';
+@source '../**/*.vue';
+
+/* ============================================================
+   Dark mode — class strategy (.dark selector)
+   ============================================================ */
+@variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   Fonts — Geist Sans + Geist Mono (from npm geist package)
+   ============================================================ */
+@font-face {
+    font-family: 'Geist';
+    src: url('../fonts/Geist-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Geist';
+    src: url('../fonts/Geist-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Geist';
+    src: url('../fonts/Geist-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Geist';
+    src: url('../fonts/Geist-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Geist Mono';
+    src: url('../fonts/GeistMono-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Geist Mono';
+    src: url('../fonts/GeistMono-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ============================================================
+   Design Tokens — @theme inline
+   ============================================================ */
+@theme inline {
+
+    /* ---- Typography ---- */
+    --font-sans:    'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono:    'Geist Mono', ui-monospace, 'Cascadia Code', monospace;
+    --font-heading: var(--font-sans);
+
+    /* ---- Border radius (4px grid) ---- */
+    --radius-sm:  4px;
+    --radius-md:  8px;
+    --radius-lg:  12px;
+    --radius-xl:  16px;
+    --radius-2xl: 24px;
+
+    /* ---- shadcn-vue semantic colors (mapped from CSS variables) ---- */
+    --color-background:         var(--background);
+    --color-foreground:         var(--foreground);
+    --color-card:               var(--card);
+    --color-card-foreground:    var(--card-foreground);
+    --color-popover:            var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary:            var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary:          var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted:              var(--muted);
+    --color-muted-foreground:   var(--muted-foreground);
+    --color-accent:             var(--accent);
+    --color-accent-foreground:  var(--accent-foreground);
+    --color-destructive:        var(--destructive);
+    --color-border:             var(--border);
+    --color-input:              var(--input);
+    --color-ring:               var(--ring);
+    --color-sidebar:            var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary:    var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent:     var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border:     var(--sidebar-border);
+    --color-sidebar-ring:       var(--sidebar-ring);
+
+    /* ---- QR-Master brand colors: Primary (indigo) ---- */
+    --color-primary-50:  oklch(97% 0.02 264);
+    --color-primary-100: oklch(93% 0.04 264);
+    --color-primary-200: oklch(86% 0.09 264);
+    --color-primary-300: oklch(76% 0.14 264);
+    --color-primary-400: oklch(65% 0.19 264);
+    --color-primary-500: oklch(55% 0.23 264);
+    --color-primary-600: oklch(48% 0.22 264);
+    --color-primary-700: oklch(40% 0.19 264);
+    --color-primary-800: oklch(33% 0.15 264);
+    --color-primary-900: oklch(27% 0.11 264);
+    --color-primary-950: oklch(19% 0.07 264);
+
+    /* ---- QR-Master brand colors: Accent (violet) ---- */
+    --color-violet-50:  oklch(97% 0.02 292);
+    --color-violet-100: oklch(93% 0.05 292);
+    --color-violet-200: oklch(86% 0.10 292);
+    --color-violet-300: oklch(76% 0.16 292);
+    --color-violet-400: oklch(65% 0.22 292);
+    --color-violet-500: oklch(56% 0.26 292);
+    --color-violet-600: oklch(49% 0.24 292);
+    --color-violet-700: oklch(41% 0.20 292);
+    --color-violet-800: oklch(33% 0.15 292);
+    --color-violet-900: oklch(27% 0.11 292);
+    --color-violet-950: oklch(18% 0.07 292);
+
+    /* ---- Brand: Cyan / Turquoise ---- */
+    --color-cyan:             oklch(0.72 0.15 200);
+    --color-cyan-foreground:  oklch(0.14 0.02 272);
+    --color-cyan-50:   oklch(0.97 0.03 200);
+    --color-cyan-100:  oklch(0.93 0.06 200);
+    --color-cyan-200:  oklch(0.85 0.10 200);
+    --color-cyan-300:  oklch(0.76 0.14 200);
+    --color-cyan-400:  oklch(0.72 0.15 200);
+    --color-cyan-500:  oklch(0.65 0.15 200);
+    --color-cyan-600:  oklch(0.57 0.14 200);
+    --color-cyan-700:  oklch(0.48 0.12 200);
+
+    /* ---- Brand: Gold / Amber ---- */
+    --color-gold:             oklch(0.78 0.15 85);
+    --color-gold-foreground:  oklch(0.14 0.02 272);
+    --color-gold-50:   oklch(0.98 0.03 85);
+    --color-gold-100:  oklch(0.95 0.06 85);
+    --color-gold-200:  oklch(0.90 0.10 85);
+    --color-gold-300:  oklch(0.85 0.13 85);
+    --color-gold-400:  oklch(0.80 0.15 85);
+    --color-gold-500:  oklch(0.74 0.16 85);
+    --color-gold-600:  oklch(0.65 0.15 85);
+    --color-gold-700:  oklch(0.55 0.13 85);
+
+    /* ---- QR-Master brand colors: Status ---- */
+    --color-success-50:  oklch(97% 0.03 162);
+    --color-success-100: oklch(93% 0.06 162);
+    --color-success-500: oklch(56% 0.18 162);
+    --color-success-600: oklch(49% 0.16 162);
+    --color-success-700: oklch(40% 0.13 162);
+
+    --color-warning-50:  oklch(98% 0.03 85);
+    --color-warning-100: oklch(95% 0.06 85);
+    --color-warning-500: oklch(75% 0.18 85);
+    --color-warning-600: oklch(65% 0.17 85);
+    --color-warning-700: oklch(54% 0.14 85);
+
+    --color-danger-50:  oklch(97% 0.02 15);
+    --color-danger-100: oklch(93% 0.05 15);
+    --color-danger-500: oklch(60% 0.22 15);
+    --color-danger-600: oklch(53% 0.21 15);
+    --color-danger-700: oklch(44% 0.17 15);
+
+    /* ---- Shadows: standard elevation ---- */
+    --shadow-xs:  0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm:  0 1px 3px 0 rgb(0 0 0 / 0.10), 0 1px 2px -1px rgb(0 0 0 / 0.10);
+    --shadow-md:  0 4px 6px -1px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.10);
+    --shadow-lg:  0 10px 15px -3px rgb(0 0 0 / 0.10), 0 4px 6px -4px rgb(0 0 0 / 0.10);
+    --shadow-xl:  0 20px 25px -5px rgb(0 0 0 / 0.10), 0 8px 10px -6px rgb(0 0 0 / 0.10);
+
+    /* ---- Shadows: glassmorphism ---- */
+    --shadow-glass-sm: 0 2px 8px 0 rgb(0 0 0 / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.12);
+    --shadow-glass:    0 8px 32px 0 rgb(0 0 0 / 0.12), inset 0 1px 0 rgb(255 255 255 / 0.10);
+    --shadow-glass-lg: 0 16px 48px 0 rgb(0 0 0 / 0.16), inset 0 1px 0 rgb(255 255 255 / 0.08);
+}
+
+/* ============================================================
+   shadcn-vue CSS variables — light mode
+   ============================================================ */
+:root {
+    --background:           oklch(0.99 0.006 285);
+    --foreground:           oklch(0.14 0.02 272);
+    --card:                 oklch(1 0 0);
+    --card-foreground:      oklch(0.14 0.02 272);
+    --popover:              oklch(1 0 0);
+    --popover-foreground:   oklch(0.14 0.02 272);
+    --primary:              oklch(0.52 0.27 285);
+    --primary-foreground:   oklch(0.98 0 0);
+    --secondary:            oklch(0.96 0.008 285);
+    --secondary-foreground: oklch(0.14 0.02 272);
+    --muted:                oklch(0.96 0.008 285);
+    --muted-foreground:     oklch(0.50 0.015 272);
+    --accent:               oklch(0.96 0.008 285);
+    --accent-foreground:    oklch(0.14 0.02 272);
+    --destructive:          oklch(0.577 0.245 27.325);
+    --border:               oklch(0.88 0.012 285);
+    --input:                oklch(0.88 0.012 285);
+    --ring:                 oklch(0.52 0.27 285);
+    --sidebar:              oklch(0.97 0.010 285);
+    --sidebar-foreground:   oklch(0.14 0.02 272);
+    --sidebar-primary:      oklch(0.52 0.27 285);
+    --sidebar-primary-foreground: oklch(0.98 0 0);
+    --sidebar-accent:       oklch(0.93 0.012 285);
+    --sidebar-accent-foreground:  oklch(0.14 0.02 272);
+    --sidebar-border:       oklch(0.88 0.012 285);
+    --sidebar-ring:         oklch(0.52 0.27 285);
+}
+
+/* ============================================================
+   shadcn-vue CSS variables — dark mode
+   ============================================================ */
+.dark {
+    --background:           oklch(0.12 0.025 272);
+    --foreground:           oklch(0.96 0.008 280);
+    --card:                 oklch(0.17 0.025 272);
+    --card-foreground:      oklch(0.96 0.008 280);
+    --popover:              oklch(0.17 0.025 272);
+    --popover-foreground:   oklch(0.96 0.008 280);
+    --primary:              oklch(0.66 0.25 285);
+    --primary-foreground:   oklch(0.98 0 0);
+    --secondary:            oklch(0.22 0.025 272);
+    --secondary-foreground: oklch(0.96 0.008 280);
+    --muted:                oklch(0.22 0.025 272);
+    --muted-foreground:     oklch(0.60 0.015 272);
+    --accent:               oklch(0.22 0.025 272);
+    --accent-foreground:    oklch(0.96 0.008 280);
+    --destructive:          oklch(0.65 0.22 25);
+    --border:               oklch(0.28 0.028 272);
+    --input:                oklch(0.28 0.028 272);
+    --ring:                 oklch(0.66 0.25 285);
+    --sidebar:              oklch(0.10 0.030 272);
+    --sidebar-foreground:   oklch(0.96 0.008 280);
+    --sidebar-primary:      oklch(0.66 0.25 285);
+    --sidebar-primary-foreground: oklch(0.98 0 0);
+    --sidebar-accent:       oklch(0.18 0.028 272);
+    --sidebar-accent-foreground:  oklch(0.96 0.008 280);
+    --sidebar-border:       oklch(0.22 0.028 272);
+    --sidebar-ring:         oklch(0.66 0.25 285);
+}
+
+/* ============================================================
+   Custom animations — QR-Master visual upgrades
+   ============================================================ */
+
+@keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 8px oklch(0.66 0.25 285 / 0.25); }
+    50%       { box-shadow: 0 0 24px oklch(0.66 0.25 285 / 0.65), 0 0 48px oklch(0.66 0.25 285 / 0.25); }
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50%       { background-position: 100% 50%; }
+}
+
+.animate-shimmer        { animation: shimmer 2.2s linear infinite; }
+.animate-pulse-glow     { animation: pulse-glow 2.5s ease-in-out infinite; }
+.animate-gradient-shift { animation: gradient-shift 6s ease infinite; background-size: 200% 200%; }
+
+/* ============================================================
+   Base styles — shadcn-vue global resets
+   ============================================================ */
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}

@@ -1,0 +1,165 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, "feat/**", "fix/**", "chore/**"]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  # ============================================================
+  # PHP — Pint + PHPStan + Pest (coverage)
+  # ============================================================
+  php:
+    name: PHP Quality
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: qrmaster_test
+          POSTGRES_USER: qrmaster
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo, pdo_pgsql, pgsql, redis, pcov, intl, zip, bcmath
+          coverage: pcov
+          tools: composer:v2
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Copy .env
+        run: cp .env.example .env && php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate --force
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: qrmaster_test
+          DB_USERNAME: qrmaster
+          DB_PASSWORD: secret
+          REDIS_HOST: 127.0.0.1
+          SESSION_DRIVER: redis
+          CACHE_STORE: redis
+          QUEUE_CONNECTION: redis
+
+      - name: Code style (Pint)
+        run: ./vendor/bin/pint --test
+
+      - name: Static analysis (PHPStan level 8)
+        run: ./vendor/bin/phpstan analyse --memory-limit=512M --no-progress
+
+      - name: Tests with coverage (Pest)
+        # --min=80 zostanie dodane gdy mamy realne testy (Etap 1+)
+        run: ./vendor/bin/pest --coverage
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: qrmaster_test
+          DB_USERNAME: qrmaster
+          DB_PASSWORD: secret
+          REDIS_HOST: 127.0.0.1
+          SESSION_DRIVER: redis
+          CACHE_STORE: redis
+          QUEUE_CONNECTION: redis
+
+  # ============================================================
+  # JS — ESLint + vue-tsc + Vite build
+  # ============================================================
+  js:
+    name: JS Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: TypeScript (vue-tsc)
+        run: npm run typecheck
+
+      - name: Vite build
+        run: npm run build
+
+  # ============================================================
+  # Security — composer audit + npm audit
+  # ============================================================
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: composer:v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Composer security audit
+        run: composer audit
+
+      - name: NPM security audit
+        run: npm audit --audit-level=high

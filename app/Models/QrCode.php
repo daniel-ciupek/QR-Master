@@ -1,0 +1,198 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use App\Data\QrVisualSettings;
+use App\Enums\QrCodeType;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
+
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int|null $team_id
+ * @property QrCodeType $type
+ * @property string $title
+ * @property string $slug
+ * @property string $short_hash
+ * @property string|null $custom_slug
+ * @property string|null $destination_url
+ * @property string|null $fallback_url
+ * @property array<string, mixed> $settings
+ * @property bool $is_active
+ * @property Carbon|null $expires_at
+ * @property Carbon|null $activates_at
+ * @property array<int, string>|null $geo_allowed_countries
+ * @property int|null $scan_limit
+ * @property int $scan_count
+ * @property string|null $password_hash
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon|null $deleted_at
+ */
+class QrCode extends Model implements HasMedia
+{
+    use HasSlug;
+    use InteractsWithMedia;
+    use MassPrunable;
+    use SoftDeletes;
+
+    protected $guarded = ['id'];
+
+    /** @return array<string, mixed> */
+    protected function casts(): array
+    {
+        return [
+            'type' => QrCodeType::class,
+            'settings' => 'array',
+            'is_active' => 'boolean',
+            'expires_at' => 'datetime',
+            'activates_at' => 'datetime',
+            'geo_allowed_countries' => 'array',
+            // PII — encrypted at rest
+            'vcard_phone' => 'encrypted',
+            'vcard_email' => 'encrypted',
+            'wifi_password' => 'encrypted',
+        ];
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('title')
+            ->saveSlugsTo('slug')
+            ->slugsShouldBeNoLongerThan(100);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('logo')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp']);
+
+        $this->addMediaCollection('pdf_menu')
+            ->singleFile()
+            ->acceptsMimeTypes(['application/pdf']);
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(200)
+            ->height(200);
+    }
+
+    // ── Pruning ────────────────────────────────────────────────────────
+
+    /** @return Builder<QrCode> */
+    public function prunable(): Builder
+    {
+        return static::withTrashed()
+            ->whereNotNull('deleted_at')
+            ->where('deleted_at', '<=', now()->subDays(30));
+    }
+
+    // ── Relations ──────────────────────────────────────────────────────
+
+    /** @return BelongsTo<User, $this> */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /** @return BelongsTo<Team, $this> */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    /** @return HasMany<ScanLog, $this> */
+    public function scanLogs(): HasMany
+    {
+        return $this->hasMany(ScanLog::class);
+    }
+
+    /** @return HasOne<BioLink, $this> */
+    public function bioLink(): HasOne
+    {
+        return $this->hasOne(BioLink::class);
+    }
+
+    /** @return HasMany<RedirectRule, $this> */
+    public function redirectRules(): HasMany
+    {
+        return $this->hasMany(RedirectRule::class)->orderBy('priority');
+    }
+
+    /** @return HasOne<AbTest, $this> */
+    public function abTest(): HasOne
+    {
+        return $this->hasOne(AbTest::class);
+    }
+
+    /** @return BelongsToMany<Tag, $this> */
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
+    // ── Scopes ─────────────────────────────────────────────────────────
+
+    /** @param Builder<QrCode> $query */
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('is_active', true)
+            ->where(function (Builder $q) {
+                $q->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
+            ->where(function (Builder $q) {
+                $q->whereNull('activates_at')
+                    ->orWhere('activates_at', '<=', now());
+            });
+    }
+
+    /** Personal QRs — belongs to user and not in any team. */
+    /** @param Builder<QrCode> $query */
+    public function scopeForUser(Builder $query, int $userId): void
+    {
+        $query->where('user_id', $userId)->whereNull('team_id');
+    }
+
+    /** @param Builder<QrCode> $query */
+    public function scopeForTeam(Builder $query, int $teamId): void
+    {
+        $query->where('team_id', $teamId);
+    }
+
+    // ── Helpers ────────────────────────────────────────────────────────
+
+    public function isExpired(): bool
+    {
+        return $this->expires_at !== null && $this->expires_at->isPast();
+    }
+
+    public function isPasswordProtected(): bool
+    {
+        return $this->password_hash !== null;
+    }
+
+    public function visualSettings(): QrVisualSettings
+    {
+        return QrVisualSettings::from($this->settings ?? []);
+    }
+}

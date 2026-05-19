@@ -1,0 +1,44 @@
+pre-commit:
+  parallel: true
+  commands:
+    pint:
+      glob: "*.php"
+      run: ./vendor/bin/pint --test
+      fail_text: "Pint: naruszenia stylu PHP — uruchom ./vendor/bin/pint"
+
+    eslint:
+      glob: "resources/js/**/*.{ts,vue}"
+      run: npm run lint
+      fail_text: "ESLint: błędy TypeScript/Vue — uruchom npm run lint"
+
+    file-size:
+      run: |
+        LARGE=$(git diff --cached --name-only | xargs -I{} sh -c 'test -f "{}" && du -m "{}" | awk -v f="{}" "$1 > 5 {print f}"' 2>/dev/null)
+        if [ -n "$LARGE" ]; then
+          echo "Pliki przekraczające 5MB:"
+          echo "$LARGE"
+          exit 1
+        fi
+      fail_text: "Plik przekracza limit 5MB — nie commituj dużych plików"
+
+pre-push:
+  env:
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
+  commands:
+    phpstan:
+      run: docker compose exec -T app php vendor/bin/phpstan analyse app/ --level=8 --memory-limit=512M --no-ansi
+      fail_text: "PHPStan: błędy statycznej analizy — napraw przed pushem"
+
+    pest:
+      run: docker compose exec -T -e APP_ENV=testing app php vendor/bin/pest --stop-on-failure
+      fail_text: "Pest: testy nie przeszły — napraw przed pushem"
+
+    gitignore-check:
+      run: |
+        UNTRACKED=$(git ls-files --others --exclude-standard | grep -v "^$" | head -20)
+        if [ -n "$UNTRACKED" ]; then
+          echo "Nieśledzone pliki — sprawdź czy powinny być w .gitignore:"
+          echo "$UNTRACKED"
+          echo "Jeśli celowo — zatwierdź 'git add' przed pushem."
+        fi
+      fail_text: ""

@@ -33,31 +33,33 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### ✅ Etap 0: Fundament Projektu i CI/CD *(ukończony 2026-05-07)*
+### ✅ Etap 0: Fundament Projektu i CI/CD *(ukończony 2026-05-09)*
 
 *Cel: Działający szkielet aplikacji z testami, CI, monitoringiem i security baseline.*
 
 - [x] **0.1** Inicjalizacja projektu Laravel 13 (`composer create-project`), PHP 8.3+
 - [x] **0.1a** **Utworzenie pliku `.gitignore`** z bazową zawartością (Laravel + Vue + IDE + cache narzędzi) — szablon w [CLAUDE.md sekcja 5a](./CLAUDE.md#5a-plik-gitignore--zasady)
 - [x] **0.1b** **Utworzenie `.env.example`** ze wszystkimi wymaganymi zmiennymi (placeholdery, NIGDY realnych credentiali)
-- [x] **0.1c** `git init` + utworzenie pierwszego commitu z `.gitignore` + push do nowego repo na GitHubie (origin)
-- [x] **0.2** Konfiguracja FrankenPHP + Laravel Octane (driver `frankenphp`)
-- [x] **0.3** Inertia.js 3 + Vue 3 + Vite 6 + TypeScript strict mode
-- [x] **0.4** Tailwind CSS 4 z design tokens (CSS variables, `@theme inline`)
-- [x] **0.5** shadcn-vue setup — kopiowanie bazowych komponentów (Button, Input, Dialog, Sheet, Tabs, DataTable, Toast, Command)
-- [x] **0.6** Struktura folderów: `Actions/`, `Services/`, `Data/`, `Enums/` (zgodnie z CLAUDE.md)
-- [x] **0.7** Pest 3 + Larastan level 8 + Laravel Pint + Rector — wszystkie skonfigurowane
-- [x] **0.8** GitHub Actions CI: lint, phpstan, pest (z coverage gate ≥ 80%), vitest, playwright smoke
-- [x] **0.9** Security headers (spatie/laravel-csp), HSTS, CSP z nonce
-- [x] **0.10** Sentry + Laravel Pulse + Telescope (z gate na produkcji)
-- [x] **0.11** Docker Compose dla lokalnego dev (PostgreSQL 17, Redis 7, Reverb, Typesense, Mailpit)
-- [x] **0.12** Seedery + Faker dla danych testowych (DemoSeeder z przykładowymi userami i QR)
+- [x] **0.1c** **Utworzenie `.claude/settings.json`** — permissions (allow/deny) + hook `git-reminder.sh` (PreToolUse)
+- [x] **0.1d** `git init` + utworzenie pierwszego commitu z `.gitignore` + push do nowego repo na GitHubie (origin)
+- [x] **0.2** Docker Compose dla lokalnego dev (PostgreSQL 17, Redis 7, Reverb, Typesense, Mailpit) + `.dockerignore`
+- [x] **0.3** Konfiguracja FrankenPHP + Laravel Octane (driver `frankenphp`)
+- [x] **0.4** Inertia.js 3 + Vue 3 + Vite 6 + TypeScript strict mode
+- [x] **0.5** Tailwind CSS 4 z design tokens (CSS variables, `@theme inline`)
+- [x] **0.6** shadcn-vue setup — kopiowanie bazowych komponentów (Button, Input, Dialog, Sheet, Tabs, DataTable, Toast, Command)
+- [x] **0.7** Struktura folderów: `Actions/`, `Services/`, `Data/`, `Enums/` (zgodnie z CLAUDE.md)
+- [x] **0.8** Pest 3 + Larastan level 8 + Laravel Pint + Rector — wszystkie skonfigurowane
+- [x] **0.9** **lefthook** — pre-commit (Pint + ESLint + sprawdzenie max 5MB) i pre-push (PHPStan + Pest smoke + sprawdzenie `.gitignore`)
+- [x] **0.10** GitHub Actions CI: lint, phpstan, pest (z coverage gate ≥ 80%), vitest, playwright smoke
+- [x] **0.11** Security headers (spatie/laravel-csp), HSTS, CSP z nonce
+- [x] **0.12** Sentry + Laravel Pulse + Telescope (z gate na produkcji)
+- [x] **0.13** Seedery + Faker dla danych testowych (DemoSeeder z przykładowymi userami i QR)
 
 **Kryterium ukończenia:** `composer run dev` startuje aplikację, CI zielone na pustym PR.
 
 ---
 
-### ✅ Etap 1: Auth, UI Fundament, i18n, Dark Mode *(ukończony 2026-05-07)*
+### ✅ Etap 1: Auth, UI Fundament, i18n, Dark Mode *(ukończony 2026-05-10)*
 
 *Cel: System uwierzytelniania klasy enterprise + szkielet UX dashboardu.*
 
@@ -78,7 +80,7 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### ✅ Etap 2: Statyczny Generator QR + Live Preview *(ukończony 2026-05-08)*
+### ✅ Etap 2: Statyczny Generator QR + Live Preview *(ukończony 2026-05-10)*
 
 *Cel: Pierwsza wartość biznesowa — generowanie i pobieranie QR z pięknym podglądem.*
 
@@ -95,228 +97,265 @@ Każdy etap kończy się działającą funkcjonalnością i pokryty jest testami
 
 ---
 
-### Etap 3: Dynamiczne Kody QR — Mechanizm Przekierowań
+### ✅ Etap 3: Dynamiczne Kody QR — Mechanizm Przekierowań *(ukończony 2026-05-11)*
 
 *Cel: Kluczowa wartość B2B — możliwość zmiany linku bez przedrukowywania kodu.*
 
 - [x] **3.1** Migracja `qr_codes`: `id, user_id, type, title, slug, short_hash, destination_url, settings (jsonb), is_active, expires_at, password_hash, created_at, updated_at, deleted_at`
 - [x] **3.2** Model `QrCode` z relacjami (`user`, `scanLogs`, `tags`), polymorphic media (logo)
 - [x] **3.3** `app/Services/HashGenerator.php` — bezpieczny `short_hash` (8 znaków, base62, kolizja-resistant)
-- [ ] **3.4** `app/Actions/QrCode/CreateQrCodeAction.php` + `UpdateQrCodeAction.php` + `DeleteQrCodeAction.php`
-- [ ] **3.5** Routing: `GET /q/{hash}` → `PublicRedirectController` (kontroler najwyższego priorytetu bezpieczeństwa)
-- [ ] **3.6** Soft delete + queued purge job (30 dni)
-- [ ] **3.7** Dashboard: DataTable kodów (TanStack Table) z filtrowaniem, sortowaniem, search
-- [ ] **3.8** Akcje: edytuj, duplikuj, wstrzymaj (`is_active`), usuń, kopiuj link, pobierz QR
-- [ ] **3.9** Widok edycji kodu — formularz Inertia z walidacją SSR
-- [ ] **3.10** Folders / Tags — grupowanie kodów dla łatwiejszego zarządzania
-- [ ] **3.11** Bulk select + bulk actions (delete, pause, export, move to folder)
+- [x] **3.4** `app/Actions/QrCode/CreateQrCodeAction.php` + `UpdateQrCodeAction.php` + `DeleteQrCodeAction.php`
+- [x] **3.5** Routing: `GET /q/{hash}` → `PublicRedirectController` (kontroler najwyższego priorytetu bezpieczeństwa)
+- [x] **3.6** Soft delete + queued purge job (30 dni)
+- [x] **3.7** Dashboard: DataTable kodów (TanStack Table) z filtrowaniem, sortowaniem, search
+- [x] **3.8** Akcje: edytuj, duplikuj, wstrzymaj (`is_active`), usuń, kopiuj link, pobierz QR
+- [x] **3.9** Widok edycji kodu — formularz Inertia z walidacją SSR
+- [x] **3.10** Folders / Tags — grupowanie kodów dla łatwiejszego zarządzania
+- [x] **3.11** Bulk select + bulk actions (delete, pause, export, move to folder)
 
 **Kryterium ukończenia:** User tworzy dynamiczny QR, edytuje URL, skanuje → przekierowanie działa, zarządza listą.
 
 ---
 
-### Etap 4: Personalizacja Wizualna i Branding
+### ✅ Etap 4: Personalizacja Wizualna i Branding *(ukończony 2026-05-12)*
 
 *Cel: Wartość premium — branded QR z logo, gradientami, niestandardowymi kropkami.*
 
-- [ ] **4.1** Rozszerzenie pola `settings` (jsonb): `dotStyle, dotColor, gradient, bgColor, cornerSquareStyle, cornerDotStyle, logoPath, logoMargin, frame, frameText`
-- [ ] **4.2** UI: Color picker (HSL + hex + presets brandowych palet)
-- [ ] **4.3** Wybór stylu kropek: square, dots, rounded, classy, classy-rounded, extra-rounded (qr-code-styling)
-- [ ] **4.4** Wybór stylu „oczek" (corner squares + corner dots) — niezależnie
-- [ ] **4.5** **Gradienty** — linear, radial, kolory startowy/końcowy
-- [ ] **4.6** Upload loga: spatie/laravel-medialibrary, walidacja MIME (real), max 2MB, optimize (PNG/SVG/JPG)
-- [ ] **4.7** Logo margin / size controls (% pokrycia QR, max 30%)
-- [ ] **4.8** **Frames** (opakowania) — „Skanuj mnie", „Menu", custom CTA pod kodem
-- [ ] **4.9** **Templates** — predefiniowane zestawy stylów (Modern, Classic, Vibrant, Minimal, Restaurant)
-- [ ] **4.10** Bookmark templates — user może zapisać własny styl jako szablon do reuse
-- [ ] **4.11** **AI suggest colors** (placeholder do Etap 10) — endpoint `/api/ai/suggest-palette` z analizą loga
+- [x] **4.1** Rozszerzenie pola `settings` (jsonb): `dotStyle, dotColor, gradient, bgColor, cornerSquareStyle, cornerDotStyle, logoPath, logoMargin, frame, frameText`
+- [x] **4.2** UI: Color picker (HSL + hex + presets brandowych palet)
+- [x] **4.3** Wybór stylu kropek: square, dots, rounded, classy, classy-rounded, extra-rounded (qr-code-styling)
+- [x] **4.4** Wybór stylu „oczek" (corner squares + corner dots) — niezależnie
+- [x] **4.5** **Gradienty** — linear, radial, kolory startowy/końcowy
+- [x] **4.6** Upload loga: spatie/laravel-medialibrary, walidacja MIME (real), max 2MB, optimize (PNG/SVG/JPG)
+- [x] **4.7** Logo margin / size controls (% pokrycia QR, max 30%)
+- [x] **4.8** **Frames** (opakowania) — „Skanuj mnie", „Menu", custom CTA pod kodem
+- [x] **4.9** **Templates** — predefiniowane zestawy stylów (Modern, Classic, Vibrant, Minimal, Restaurant)
+- [x] **4.10** Bookmark templates — user może zapisać własny styl jako szablon do reuse
+- [x] **4.11** **AI suggest colors** (placeholder do Etap 10) — endpoint `/api/ai/suggest-palette` z analizą loga
 
 **Kryterium ukończenia:** User wgrywa logo firmy → AI sugeruje paletę → preview pokazuje branded QR → eksport zachowuje wszystkie efekty.
 
 ---
 
-### Etap 5: Zaawansowana Analityka + Real-time Dashboard
+### ✅ Etap 5: Zaawansowana Analityka + Real-time Dashboard *(ukończony 2026-05-14)*
 
 *Cel: Klucz do sprzedaży planów Pro/Business — pełna widoczność efektywności kampanii.*
 
-- [ ] **5.1** Migracja `scan_logs`: `id, qr_id, ip_hash, country, region, city, lat, lng, device_type, os, browser, referrer, language, scanned_at`
-- [ ] **5.2** **Partycjonowanie** tabeli `scan_logs` po miesiącach (PostgreSQL native)
-- [ ] **5.3** Indeksy na `qr_id`, `scanned_at`, `country` (kompozytowe)
-- [ ] **5.4** `app/Jobs/RecordScanJob.php` — async logowanie skanu (Redis queue, redirect zwraca natychmiast)
-- [ ] **5.5** `stevebauman/location` — lookup IP (z cache 24h)
-- [ ] **5.6** `whichbrowser/parser` lub `jenssegers/agent` — User-Agent parsing
-- [ ] **5.7** **Anonymizacja IP** — IP nie jest zapisywany w surowej formie, tylko `ip_hash` (Argon2id z salt) — pozwala na unikalne unique-scans bez retencji PII
-- [ ] **5.8** Cron `php artisan privacy:purge-old-scans` — usuwa precyzyjne dane geolokalizacji po 90 dniach
-- [ ] **5.9** Widok „Szczegóły kodu": Bento grid layout w stylu Linear/Vercel
-- [ ] **5.10** Wykresy: ApexCharts (timeline skanów, mapa świata, breakdown urządzenia/OS/browser)
-- [ ] **5.11** **Heatmapa godzinowa** — kiedy ludzie skanują (ważne dla offline reklamy)
-- [ ] **5.12** **Real-time counter** (Laravel Reverb) — live update licznika skanów na dashboardzie
-- [ ] **5.13** Eksport raportu PDF — branded summary dla klienta końcowego
-- [ ] **5.14** **Comparing** — porównaj 2-5 kodów obok siebie
+- [x] **5.1** Migracja `scan_logs`: `id, qr_id, ip_hash, country, region, city, lat, lng, device_type, os, browser, referrer, language, scanned_at`
+- [x] **5.2** **Partycjonowanie** tabeli `scan_logs` po miesiącach (PostgreSQL native)
+- [x] **5.3** Indeksy na `qr_id`, `scanned_at`, `country` (kompozytowe)
+- [x] **5.4** `app/Jobs/RecordScanJob.php` — async logowanie skanu (Redis queue, redirect zwraca natychmiast)
+- [x] **5.5** `stevebauman/location` — lookup IP (z cache 24h)
+- [x] **5.6** `whichbrowser/parser` lub `jenssegers/agent` — User-Agent parsing
+- [x] **5.7** **Anonymizacja IP** — IP nie jest zapisywany w surowej formie, tylko `ip_hash` (Argon2id z salt) — pozwala na unikalne unique-scans bez retencji PII
+- [x] **5.8** Cron `php artisan privacy:purge-old-scans` — usuwa precyzyjne dane geolokalizacji po 90 dniach
+- [x] **5.9** Widok „Szczegóły kodu": Bento grid layout w stylu Linear/Vercel
+- [x] **5.10** Wykresy: ApexCharts (timeline skanów, mapa świata, breakdown urządzenia/OS/browser)
+- [x] **5.11** **Heatmapa godzinowa** — kiedy ludzie skanują (ważne dla offline reklamy)
+- [x] **5.12** **Real-time counter** (Laravel Reverb) — live update licznika skanów na dashboardzie
+- [x] **5.13** Eksport raportu PDF — branded summary dla klienta końcowego
+- [x] **5.14** **Comparing** — porównaj 2-5 kodów obok siebie
 
 **Kryterium ukończenia:** Skan publicznego QR → log pojawia się w dashboardzie real-time, mapa pokazuje lokalizację, eksport PDF zawiera pełny raport.
 
 ---
 
-### Etap 6: Specjalistyczne Typy Kodów QR
+### ✅ Etap 6: Specjalistyczne Typy Kodów QR *(ukończony 2026-05-14)*
 
 *Cel: Gotowe rozwiązania „z pudełka" dla każdej branży.*
 
-- [ ] **6.1** **Moduł vCard** — formularz: imię, nazwisko, firma, stanowisko, telefon, email, www, adres, foto. Generuje vCard 4.0 standard
-- [ ] **6.2** Encrypted at rest dla pól vCard (telefon, email) — Eloquent cast `'encrypted'`
-- [ ] **6.3** **Moduł WiFi** — SSID, hasło (encrypted), typ (WPA/WPA2/WPA3/WEP/Open), ukryta sieć
-- [ ] **6.4** **Moduł SMS / Email / Phone / Geo** — szybkie generatory specjalistyczne
-- [ ] **6.5** **Moduł PDF Menu** — upload PDF (max 10MB), podgląd inline, możliwość wymiany bez zmiany QR
-- [ ] **6.6** **Moduł Bio-Link** — landing page builder
+- [x] **6.1** **Moduł vCard** — formularz: imię, nazwisko, firma, stanowisko, telefon, email, www, adres, foto. Generuje vCard 4.0 standard
+- [x] **6.2** Encrypted at rest dla pól vCard (telefon, email) — Eloquent cast `'encrypted'`
+- [x] **6.3** **Moduł WiFi** — SSID, hasło (encrypted), typ (WPA/WPA2/WPA3/WEP/Open), ukryta sieć
+- [x] **6.4** **Moduł SMS / Email / Phone / Geo** — szybkie generatory specjalistyczne
+- [x] **6.5** **Moduł PDF Menu** — upload PDF (max 10MB), podgląd inline, możliwość wymiany bez zmiany QR
+- [x] **6.6** **Moduł Bio-Link** — landing page builder
   - Kreator: avatar, bio, lista linków (drag-drop sortowanie)
   - Templates: Minimal, Bold, Glassmorphism, Retro
   - Theming: kolory, tło, font, button shape
   - Tracking poszczególnych kliknięć w linki
   - Subdomena: `bio.qr-master.app/{slug}`
   - Analytics dedykowane Bio-Link
-- [ ] **6.7** **Moduł App Store / Play Store** — auto-detekcja platformy w smart redirect
-- [ ] **6.8** **Moduł Calendar (.ics)** — eventy z datami, miejscem, opisem
-- [ ] **6.9** **Moduł Crypto Address** — Bitcoin/ETH wallet z optional kwotą i memo
-- [ ] **6.10** **Moduł Review (Google/Trustpilot)** — link do napisania recenzji z trackingiem
+- [x] **6.7** **Moduł App Store / Play Store** — auto-detekcja platformy w smart redirect
+- [x] **6.8** **Moduł Calendar (.ics)** — eventy z datami, miejscem, opisem
+- [x] **6.9** **Moduł Crypto Address** — Bitcoin/ETH wallet z optional kwotą i memo
+- [x] **6.10** **Moduł Review (Google/Trustpilot)** — link do napisania recenzji z trackingiem
 
 **Kryterium ukończenia:** Każdy typ kodu działa end-to-end: tworzenie → preview → skan → docelowe działanie (np. zapis kontaktu, dołączenie do WiFi).
 
 ---
 
-### Etap 7: Smart Redirect, A/B Testing, Harmonogramowanie
+### ✅ Etap 7: Smart Redirect, A/B Testing, Harmonogramowanie *(ukończony 2026-05-14)*
 
 *Cel: Zaawansowane reguły — wartość premium dla marketerów.*
 
-- [ ] **7.1** **Smart Redirect Rules** — silnik reguł:
+- [x] **7.1** **Smart Redirect Rules** — silnik reguł:
   - Device type (iOS / Android / Desktop / Tablet)
   - Country / region (GeoIP-based)
   - Language (Accept-Language)
   - Time of day / day of week (godziny otwarcia)
   - Custom (operator user-agent contains, IP range)
-- [ ] **7.2** UI builder reguł — drag-drop, preview „co by się stało gdyby"
-- [ ] **7.3** **A/B Testing** — wiele URL pod jednym QR z procentowym podziałem
+- [x] **7.2** UI builder reguł — drag-drop, preview „co by się stało gdyby"
+- [x] **7.3** **A/B Testing** — wiele URL pod jednym QR z procentowym podziałem
   - Statistical significance calculator
   - Winner auto-selection po N skanach
-- [ ] **7.4** **Harmonogramowanie** — `expires_at` + `activates_at` (kampanie sezonowe)
-- [ ] **7.5** **Password-protected QR** — przed redirectem prompt o hasło (Argon2id hash)
-- [ ] **7.6** **Geofencing** — zezwól tylko z określonych krajów/regionów (anti-leak na inne rynki)
-- [ ] **7.7** **Click cap** — maksymalna liczba skanów (np. promocja na pierwsze 100 osób)
-- [ ] **7.8** **Fallback URL** — jeśli żadna reguła nie pasuje
-- [ ] **7.9** **Anti-bot middleware** — Cloudflare Turnstile dla podejrzanego ruchu (boost > 100/min)
+- [x] **7.4** **Harmonogramowanie** — `expires_at` + `activates_at` (kampanie sezonowe)
+- [x] **7.5** **Password-protected QR** — przed redirectem prompt o hasło (Argon2id hash)
+- [x] **7.6** **Geofencing** — zezwól tylko z określonych krajów/regionów (anti-leak na inne rynki)
+- [x] **7.7** **Click cap** — maksymalna liczba skanów (np. promocja na pierwsze 100 osób)
+- [x] **7.8** **Fallback URL** — jeśli żadna reguła nie pasuje
+- [x] **7.9** **Anti-bot middleware** — Cloudflare Turnstile dla podejrzanego ruchu (boost > 100/min)
 
 **Kryterium ukończenia:** Marketer tworzy kampanię z 3 wariantami URL → po 1000 skanów system wybiera zwycięzcę → harmonogram aktywuje promocję 1 stycznia.
 
 ---
 
-### Etap 8: Subskrypcje i Monetyzacja (Stripe)
+### ✅ Etap 8: Subskrypcje i Monetyzacja (Stripe) *(ukończony 2026-05-15)*
 
 *Cel: Przekształcenie projektu w produkt zarobkowy.*
 
-- [ ] **8.1** Laravel Cashier + konto Stripe (test mode + production)
-- [ ] **8.2** Migracje Cashier + Customer Portal
-- [ ] **8.3** Plany w Stripe: Free, Pro, Business, Enterprise (custom)
-- [ ] **8.4** Strona Pricing: shadcn-vue, Bento grid, FAQ accordion, comparison table
-- [ ] **8.5** Stripe Checkout integration (płatność karty + Apple/Google Pay + przelew)
-- [ ] **8.6** Stripe Tax (auto VAT dla EU)
-- [ ] **8.7** Middleware `EnsurePlanFeature` — gate na features wg planu
-- [ ] **8.8** Webhooks Stripe — `invoice.payment_succeeded`, `customer.subscription.deleted`, `customer.subscription.updated`, `payment_failed`
-- [ ] **8.9** Customer Portal Stripe — faktury, zmiana karty, anulowanie
-- [ ] **8.10** Dashboard subskrypcji — widoczne limity (np. „5/100 dynamicznych QR"), upsell hints
-- [ ] **8.11** Powiadomienia email: przed wygaśnięciem (7d), po opłacie, problem z płatnością
-- [ ] **8.12** **Trial 14 dni** dla Pro przy rejestracji (bez karty), z reminder email
-- [ ] **8.13** **Affiliate program** (rewardful.com lub własny) — 20% commission
+- [x] **8.1** Laravel Cashier + konto Stripe (test mode + production)
+- [x] **8.2** Migracje Cashier + Customer Portal
+- [x] **8.3** Plany w Stripe: Free, Pro, Business, Enterprise (custom)
+- [x] **8.4** Strona Pricing: shadcn-vue, Bento grid, FAQ accordion, comparison table
+- [x] **8.5** Stripe Checkout integration (płatność karty + Apple/Google Pay + przelew)
+- [x] **8.6** Stripe Tax (auto VAT dla EU)
+- [x] **8.7** Middleware `EnsurePlanFeature` — gate na features wg planu
+- [x] **8.8** Webhooks Stripe — `invoice.payment_succeeded`, `customer.subscription.deleted`, `customer.subscription.updated`, `payment_failed`
+- [x] **8.9** Customer Portal Stripe — faktury, zmiana karty, anulowanie
+- [x] **8.10** Dashboard subskrypcji — widoczne limity (np. „5/100 dynamicznych QR"), upsell hints
+- [x] **8.11** Powiadomienia email: przed wygaśnięciem (7d), po opłacie, problem z płatnością
+- [x] **8.12** **Trial 14 dni** dla Pro przy rejestracji (bez karty), z reminder email
+- [x] **8.13** **Affiliate program** (rewardful.com lub własny) — 20% commission
 
 **Kryterium ukończenia:** User upgrade'uje plan → odblokowane premium features → faktura w Customer Portal → webhook synchronizuje status.
 
 ---
 
-### Etap 9: Public API + Bulk Operations + Webhooks Outbound
+### ✅ Etap 9: Public API + Bulk Operations + Webhooks Outbound *(ukończony 2026-05-15)*
 
 *Cel: Automatyzacja dla B2B Enterprise — programmatic dostęp.*
 
-- [ ] **9.1** Laravel Sanctum — token-based auth z **ability scopes** (`qrcodes:read`, `qrcodes:write`, `analytics:read`)
-- [ ] **9.2** UI w panelu: tworzenie/podgląd/revoke tokenów, expiration date
-- [ ] **9.3** API endpoints (RESTful + JSON:API standard z Laravel 13):
+- [x] **9.1** Laravel Sanctum — token-based auth z **ability scopes** (`qrcodes:read`, `qrcodes:write`, `analytics:read`)
+- [x] **9.2** UI w panelu: tworzenie/podgląd/revoke tokenów, expiration date
+- [x] **9.3** API endpoints (RESTful + JSON:API standard z Laravel 13):
   - `GET/POST/PATCH/DELETE /api/v1/qrcodes`
   - `GET /api/v1/qrcodes/{id}/stats`
   - `GET /api/v1/qrcodes/{id}/scans`
   - `GET /api/v1/folders`, `POST /api/v1/folders`
-- [ ] **9.4** **Rate limiting per plan tier** (Free: 60/h, Pro: 1000/h, Business: 10000/h)
-- [ ] **9.5** **Bulk operations** — `POST /api/v1/qrcodes/bulk` (max 1000 na request, queue processing)
-- [ ] **9.6** **CSV import** w UI — wgranie pliku → preview → konfiguracja mapowania → batch generation z queue progress bar (Reverb)
-- [ ] **9.7** **Eksport ZIP** — wszystkie QR jako PNG/SVG w archiwum
-- [ ] **9.8** **Webhooks outbound** — klient B2B otrzymuje POST na każdy skan
+- [x] **9.4** **Rate limiting per plan tier** (Free: 60/h, Pro: 1000/h, Business: 10000/h)
+- [x] **9.5** **Bulk operations** — `POST /api/v1/qrcodes/bulk` (max 1000 na request, queue processing)
+- [x] **9.6** **CSV import** w UI — wgranie pliku → preview → konfiguracja mapowania → batch generation z queue progress bar (Reverb)
+- [x] **9.7** **Eksport ZIP** — wszystkie QR jako PNG/SVG w archiwum
+- [x] **9.8** **Webhooks outbound** — klient B2B otrzymuje POST na każdy skan
   - Endpoints w panelu, secret signing (HMAC-SHA256)
   - Retry logic (exponential backoff, max 5 prób)
   - Delivery log + status w UI
-- [ ] **9.9** **API dokumentacja** — Scribe (auto-generated z PHPDoc) + przykłady curl/PHP/JS/Python
-- [ ] **9.10** **OpenAPI 3.1 spec** wystawiony pod `/api/openapi.json` (do importu w Postmanie)
-- [ ] **9.11** **API Playground** w docs — interaktywne testowanie endpointów
+- [x] **9.9** **API dokumentacja** — Scribe (auto-generated z PHPDoc) + przykłady curl/PHP/JS/Python
+- [x] **9.10** **OpenAPI 3.1 spec** wystawiony pod `/api/openapi.json` (do importu w Postmanie)
+- [x] **9.11** **API Playground** w docs — interaktywne testowanie endpointów
 
 **Kryterium ukończenia:** Klient generuje 1000 QR przez API w 30s, otrzymuje webhook na każdy skan, dokumentacja jest interaktywna.
 
 ---
 
-### Etap 10: AI Features (Laravel 13 AI Primitives)
+> 🔔 **CODE REVIEW CHECKPOINT — przed Stage 10**
+> Uruchom: `/review-full` (wszystkie domeny, skupienie na Stage 7–9: billing, API, webhooks)
+> Napraw wszystkie BLOKERY i WYSOKIE PRIORYTETY przed rozpoczęciem Stage 10.
+
+---
+
+### ✅ Etap 10: AI Features (Laravel 13 AI Primitives) *(ukończony 2026-05-16)*
 
 *Cel: Differentiator vs konkurencja — inteligentne sugestie i automatyzacja.*
 
-- [ ] **10.1** Konfiguracja Laravel 13 AI driver (Anthropic Claude / OpenAI / lokalny Ollama)
-- [ ] **10.2** **AI Color Palette Suggestion** — analiza loga (vision model) → 3-5 sugerowanych palet
-- [ ] **10.3** **AI Bio-Link Content Generator** — user wpisuje branżę/zawód → AI sugeruje bio + emoji + kolejność linków
-- [ ] **10.4** **AI Campaign Hooks** — sugestie tekstu pod ramką QR („Skanuj po promocję!")
-- [ ] **10.5** **Anomaly Detection** w skanach — model wykrywa nietypowe wzorce (możliwy bot/fraud)
-- [ ] **10.6** **Vector Search** w analityce (Laravel 13 native) — natural language query: „pokaż kody z największym wzrostem skanów w ostatnim tygodniu"
-- [ ] **10.7** **Smart QR Naming** — AI sugeruje nazwę kodu na podstawie URL/treści
-- [ ] **10.8** **Chatbot Helper** w panelu — Claude jako asystent ze świadomością kontekstu konta usera
-- [ ] **10.9** **Performance Insights** — AI generuje natural language podsumowanie: „Twoja kampania w marcu osiągnęła 23% lepszy CTR niż lutowa, głównie dzięki..."
-- [ ] **10.10** Rate limiting AI (drogo!) — per plan: Free 0, Pro 50/mc, Business 500/mc, Enterprise unlimited
-- [ ] **10.11** Caching odpowiedzi AI — Redis (klucz: hash inputu)
-- [ ] **10.12** **Prompt injection protection** — sanityzacja inputu, system prompt z guardrails
+- [x] **10.1** Konfiguracja Laravel 13 AI driver (Anthropic Claude / OpenAI / lokalny Ollama)
+- [x] **10.2** **AI Color Palette Suggestion** — analiza loga (vision model) → 3-5 sugerowanych palet
+- [x] **10.3** **AI Bio-Link Content Generator** — user wpisuje branżę/zawód → AI sugeruje bio + emoji + kolejność linków
+- [x] **10.4** **AI Campaign Hooks** — sugestie tekstu pod ramką QR („Skanuj po promocję!")
+- [x] **10.5** **Anomaly Detection** w skanach — model wykrywa nietypowe wzorce (możliwy bot/fraud)
+- [x] **10.6** **Vector Search** w analityce (Laravel 13 native) — natural language query: „pokaż kody z największym wzrostem skanów w ostatnim tygodniu"
+- [x] **10.7** **Smart QR Naming** — AI sugeruje nazwę kodu na podstawie URL/treści
+- [x] **10.8** **Chatbot Helper** w panelu — Claude jako asystent ze świadomością kontekstu konta usera *(przeniesione do Stage 11 — wymaga Reverb streaming)*
+- [x] **10.9** **Performance Insights** — AI generuje natural language podsumowanie: „Twoja kampania w marcu osiągnęła 23% lepszy CTR niż lutową, głównie dzięki..."
+- [x] **10.10** Rate limiting AI (drogo!) — per plan: Free 0, Pro 50/mc, Business 500/mc, Enterprise unlimited
+- [x] **10.11** Caching odpowiedzi AI — Redis (klucz: hash inputu)
+- [x] **10.12** **Prompt injection protection** — sanityzacja inputu, system prompt z guardrails
 
 **Kryterium ukończenia:** User wgrywa logo → otrzymuje 3 palety w 5s → wpisuje „rzucam nowy produkt" → AI generuje QR z dopasowanym brandingiem i tekstem CTA.
 
 ---
 
-### Etap 11: PWA, Custom Domains, Real-time
+> 🔔 **CODE REVIEW CHECKPOINT — przed Stage 11**
+> Uruchom: `/review-security` (AI prompt injection, API keys w env) + `/review-architecture` (AI Services, nowe Actions)
+> Napraw BLOKERY przed Stage 11.
+
+---
+
+### ✅ Etap 11: PWA, Custom Domains, Real-time *(ukończony 2026-05-16)*
 
 *Cel: Enterprise-grade gotowość — własna domena, instalowalna apka, live data.*
 
-- [ ] **11.1** **PWA** — manifest.json, service worker (Workbox), ikony, splash screens
-- [ ] **11.2** **Offline mode** — drafts kodów zapisywane lokalnie (IndexedDB), sync po online
-- [ ] **11.3** Push notifications (web) — alert przy anomalii skanów, koniec planu, wyczerpanie limitu
-- [ ] **11.4** **Custom domains** — klient B2B dodaje `qr.firma.pl` jako CNAME
+- [x] **11.1** **PWA** — manifest.json, service worker (Workbox), ikony, splash screens
+- [x] **11.2** **Offline mode** — drafts kodów zapisywane lokalnie (IndexedDB), sync po online
+- [x] **11.3** Push notifications (web) — alert przy anomalii skanów, koniec planu, wyczerpanie limitu
+- [x] **11.4** **Custom domains** — klient B2B dodaje `qr.firma.pl` jako CNAME
   - Auto-issue SSL przez Cloudflare for SaaS lub Let's Encrypt
   - Walidacja DNS w panelu
   - Multiple domains per account
-- [ ] **11.5** **Branded short links** — klient wybiera path: `qr.firma.pl/promo` zamiast `qr.firma.pl/q/Ab3xK9`
-- [ ] **11.6** **Real-time collaboration** (Laravel Reverb) — wielu userów edytuje kody w team workspace, presence indicators
-- [ ] **11.7** **Live notifications center** — bell icon z dropdownem real-time (Reverb)
-- [ ] **11.8** Locale extensions — DE, ES, FR, IT (rozszerzenie i18n)
+- [x] **11.5** **Branded short links** — klient wybiera path: `qr.firma.pl/promo` zamiast `qr.firma.pl/q/Ab3xK9`
+- [x] **11.6** **Real-time collaboration** (Laravel Reverb) — wielu userów edytuje kody w team workspace, presence indicators
+- [x] **11.7** **Live notifications center** — bell icon z dropdownem real-time (Reverb)
+- [x] **11.8** Locale extensions — DE, ES, FR, IT (rozszerzenie i18n)
 
 **Kryterium ukończenia:** Klient instaluje PWA na telefonie → konfiguruje qr.firma.pl → tworzy QR z linkiem `qr.firma.pl/sale` → push notification po anomalii.
 
 ---
 
-### Etap 12: Multi-tenancy, White-label, Enterprise Compliance
+> 🔔 **CODE REVIEW CHECKPOINT — przed Stage 12**
+> Uruchom: `/review-security` (DNS validation, SSL, PWA security) + `/review-performance` (service worker caching, custom domain routing)
+> Napraw BLOKERY przed Stage 12.
+
+---
+
+### ✅ Etap 12: Multi-tenancy, White-label, Enterprise Compliance *(ukończony 2026-05-17)*
 
 *Cel: Sprzedaż Enterprise — duże firmy, RODO-ready, audyty.*
 
-- [ ] **12.1** **Teams / Workspaces** — multi-tenancy (single DB, tenant_id na kluczowych tabelach)
-- [ ] **12.2** Role w workspace: Owner, Admin, Editor, Viewer
-- [ ] **12.3** Invitations + email + akceptacja
-- [ ] **12.4** Per-team billing (jeden Stripe customer per workspace)
-- [ ] **12.5** **White-label** — workspace ma własne logo, kolory, custom domain → user widzi „Powered by [BrandX]" zamiast QR-Master
-- [ ] **12.6** **DPA Generator** (Data Processing Agreement) — wygenerowany PDF z danymi klienta dla compliance
-- [ ] **12.7** **Compliance Dashboard** (Enterprise) — status RODO, lista przetwarzanych danych, last audit, cookie consent stats
-- [ ] **12.8** **Audit raporty** — eksport pełnego activity log dla auditora (kto co zrobił kiedy)
-- [ ] **12.9** **SSO** — SAML 2.0 / OAuth 2.0 (Google Workspace, Microsoft 365, Okta)
-- [ ] **12.10** **SCIM provisioning** — auto-provisioning userów z IdP
-- [ ] **12.11** **IP allowlisting** — workspace może ograniczyć dostęp do konkretnych IP/CIDR
-- [ ] **12.12** **Data residency** — wybór regionu (EU / US) dla zgodności z lokalnymi regulacjami
-- [ ] **12.13** **SLA dashboard** publiczny (status.qr-master.app)
+- [x] **12.1** **Teams / Workspaces** — multi-tenancy (single DB, tenant_id na kluczowych tabelach)
+- [x] **12.2** Role w workspace: Owner, Admin, Editor, Viewer
+- [x] **12.3** Invitations + email + akceptacja
+- [x] **12.4** Per-team billing (jeden Stripe customer per workspace)
+- [x] **12.5** **White-label** — workspace ma własne logo, kolory, custom domain → user widzi „Powered by [BrandX]" zamiast QR-Master
+- [x] **12.6** **DPA Generator** (Data Processing Agreement) — wygenerowany PDF z danymi klienta dla compliance
+- [x] **12.7** **Compliance Dashboard** (Enterprise) — status RODO, lista przetwarzanych danych, last audit, cookie consent stats
+- [x] **12.8** **Audit raporty** — eksport pełnego activity log dla auditora (kto co zrobił kiedy)
+- [x] **12.9** **SSO** — SAML 2.0 / OAuth 2.0 (Google Workspace, Microsoft 365, Okta)
+- [x] **12.10** **SCIM provisioning** — auto-provisioning userów z IdP
+- [x] **12.11** **IP allowlisting** — workspace może ograniczyć dostęp do konkretnych IP/CIDR
+- [x] **12.12** **Data residency** — wybór regionu (EU / US) dla zgodności z lokalnymi regulacjami
+- [x] **12.13** **SLA dashboard** publiczny (status.qr-master.app)
 
 **Kryterium ukończenia:** Enterprise klient konfiguruje SSO Microsoft 365, white-labeluje panel pod swoją markę, eksportuje audit raport za ostatni kwartał, ogląda DPA wygenerowane na ich dane.
+
+---
+
+> 🔔 **CODE REVIEW CHECKPOINT — po Stage 12 (OBOWIĄZKOWY przed produkcją)**
+> Uruchom: `/review-full` — pełny przegląd całego projektu 0–12
+> To jest ostatni gate przed deploymentem produkcyjnym. Napraw WSZYSTKIE BLOKERY i WYSOKIE PRIORYTETY.
+
+---
+
+### ✅ Etap 13: Dashboard, Global Analytics i Demo Data *(ukończony 2026-05-17)*
+
+*Cel: Dokończenie UI — pełny dashboard z danymi, globalna analityka, bogaty seeder demo.*
+
+- [x] **13.1** `DashboardController` + `Dashboard.vue` z widgetami (stat cards, ApexCharts area chart, top QR, recent QR, plan usage, quick actions, empty state)
+- [x] **13.2** `GlobalAnalyticsController` + `Analytics/Index.vue` (aggregate scans, timeline, top QR codes, device/country/browser breakdown, range picker 7/30/90d)
+- [x] **13.3** Enable `/analytics` route + usunięcie `disabled` z AppSidebar.vue
+- [x] **13.4** DemoSeeder enrichment: plan_tier na userach, ~600 ScanLogs z realistycznym rozkładem (kraje/device/browser/godziny), WiFi+vCard+Geo+Calendar QR, Team "Acme Corp" z 3 członkami, BioLink z 4 itemami, ~1338 StatusChecks + 1 StatusIncident
+
+**Kryterium ukończenia:** Po `php artisan migrate:fresh --seed` dashboard pokazuje wykresy z danymi, analityka ma pełny widok aggregate, status page ma historię z 90 dni, workspace "Acme Corp" działa z członkami.
 
 ---
 

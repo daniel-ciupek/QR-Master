@@ -1,0 +1,170 @@
+services:
+
+  # ============================================================
+  # App — Laravel Octane (FrankenPHP)
+  # ============================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "composer install --no-interaction --prefer-dist &&
+             php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8000 --watch"
+    environment:
+      APP_ENV: local
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: qrmaster
+      DB_USERNAME: qrmaster
+      DB_PASSWORD: secret
+      REDIS_HOST: redis
+      SESSION_DRIVER: redis
+      CACHE_STORE: redis
+      QUEUE_CONNECTION: sync
+      TYPESENSE_HOST: typesense
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      REVERB_HOST: "0.0.0.0"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - qrmaster
+
+  # ============================================================
+  # Horizon — Queue worker
+  # ============================================================
+  horizon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - .:/app
+    command: php artisan horizon
+    environment:
+      APP_ENV: local
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: qrmaster
+      DB_USERNAME: qrmaster
+      DB_PASSWORD: secret
+      REDIS_HOST: redis
+      QUEUE_CONNECTION: redis
+    depends_on:
+      - app
+    networks:
+      - qrmaster
+    restart: unless-stopped
+
+  # ============================================================
+  # Reverb — WebSocket server
+  # ============================================================
+  reverb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    environment:
+      APP_ENV: local
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: qrmaster
+      DB_USERNAME: qrmaster
+      DB_PASSWORD: secret
+      REDIS_HOST: redis
+    depends_on:
+      - app
+    networks:
+      - qrmaster
+    restart: unless-stopped
+
+  # ============================================================
+  # PostgreSQL 17
+  # ============================================================
+  postgres:
+    image: pgvector/pgvector:pg17
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: qrmaster
+      POSTGRES_USER: qrmaster
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qrmaster -d qrmaster"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - qrmaster
+
+  # ============================================================
+  # Redis 7
+  # ============================================================
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - qrmaster
+
+  # ============================================================
+  # Typesense — Laravel Scout
+  # ============================================================
+  typesense:
+    image: typesense/typesense:26.0
+    ports:
+      - "8108:8108"
+    environment:
+      TYPESENSE_API_KEY: local_dev_key
+      TYPESENSE_DATA_DIR: /data
+      TYPESENSE_ENABLE_CORS: "true"
+    volumes:
+      - typesense_data:/data
+    networks:
+      - qrmaster
+    restart: unless-stopped
+
+  # ============================================================
+  # Mailpit — lokalne testowanie maili (UI: http://localhost:8025)
+  # ============================================================
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - qrmaster
+
+volumes:
+  postgres_data:
+  redis_data:
+  typesense_data:
+
+networks:
+  qrmaster:
+    driver: bridge

@@ -89,7 +89,15 @@ Każda zmiana musi przejść te bramki:
 
 **ZASADA MIKRO-COMMITÓW (BARDZO WAŻNE):** Bezwzględnie nie czekaj na ukończenie pełnego etapu z PROJECT.md. Musisz pytać o zgodę na commit po KAŻDYM pojedynczym podpunkcie (np. po 2.1, po 2.2, po 3.1 itd.). Każda najmniejsza logiczna zmiana musi być osobnym commitem zatwierdzonym przez usera. Zasada ta obowiązuje we wszystkich etapach projektu.
 
-**Weryfikacja testów:** Po zakończeniu każdego najmniejszego etapu prac bezwzględnie uruchamiamy pełną suitę testów (Pest + Vitest + Playwright), aby potwierdzić stabilność systemu przed wykonaniem commita.
+**ODZNACZANIE ZADAŃ (OBOWIĄZKOWE):** Po ukończeniu każdego podpunktu natychmiast zaktualizuj `PROJECT.md` — zmień `- [ ]` na `- [x]` przy wykonanym zadaniu. Rób to przed każdym commitem, tak aby stan checkboxów w repo zawsze odzwierciedlał rzeczywisty postęp.
+
+**ZAKAZ COMMITA I PUSHA BEZ ZIELONYCH TESTÓW (BEZWZGLĘDNE):** Przed każdym `git commit` i `git push` uruchamiamy pełną suitę testów. Jeśli choćby jeden test failuje — STOP, najpierw napraw, dopiero potem commit. Nie ma wyjątków. Kolejność weryfikacji:
+1. `php artisan test --parallel` (Pest) — zero failów
+2. `npm run test` (Vitest) — zero failów
+3. `./vendor/bin/phpstan analyse` — zero błędów
+4. `./vendor/bin/pint --test` — zero naruszeń stylu
+
+Playwright (e2e) uruchamiamy przed każdym push na `develop` i obowiązkowo przed merge do `main`.
 
 **ZAKAZ SAMOWOLNEGO STARTU (BARDZO WAŻNE):** Po każdym commicie (lub gdy kończysz logiczną część pracy), musisz ZATRZYMAĆ SIĘ i zapytać o zgodę na rozpoczęcie kolejnego podpunkta (np. "Czy mogę zacząć pracę nad zadaniem 2.2?"). Nie wykonuj żadnych tool-calls ani nie pisz kodu dla nowego zadania bez wyraźnego "tak" od usera.
 
@@ -171,12 +179,38 @@ git diff --cached | grep -iE "(api[_-]?key|secret|password|token|bearer|sk_live|
 
 Projekt ma skonfigurowany folder `.claude/` z gotowymi narzędziami. **Używaj ich automatycznie gdy pasuje kontekst — nie czekaj na prośbę usera.**
 
+### Narzędzia ogólne
+
 | Narzędzie | Kiedy używać |
 |---|---|
 | `/close-stage <N>` | Po ukończeniu wszystkich zadań w etapie N — automatyzuje testy, aktualizację PROJECT.md, commit i push (z wymaganymi pytaniami o zgodę) |
 | `/check-gitignore` | Przed każdym commitem, po dodaniu nowych plików, po instalacji nowych narzędzi |
 | Agent `security-redirect-reviewer` | Przy każdej zmianie `PublicRedirectController.php`, `RecordScanJob.php` lub powiązanych middleware — wywołaj proaktywnie |
 | Agent `rodo-pii-auditor` | Przy każdej nowej migracji lub modelu zawierającym PII (email, phone, address, ip) — wywołaj proaktywnie |
+
+### Agenty Code Review (`.claude/commands/`)
+
+Wywoływane komendą `/review-<nazwa>`. Każdy uruchamia 2–3 równoległe agenty Explore i zwraca skonsolidowany raport.
+
+| Komenda | Zakres | Kiedy uruchamiać |
+|---|---|---|
+| `/review-security` | Auth, rate limiting, CSRF, PII, HMAC, injection | Przy każdej zmianie bezpieczeństwa lub **po zamknięciu Stage 9, 10, 11, 12** |
+| `/review-architecture` | Action/Service/DTO, cienkie kontrolery, Jobs | Po każdym etapie z nowymi komponentami backendowymi |
+| `/review-api` | REST conventions, status codes, tokenCan, Scribe | Po zmianach w `routes/api.php` lub kontrolerach API |
+| `/review-frontend` | TypeScript strict, i18n kompletność, Vue 3 patterns | **Po zamknięciu Stage 9** i każdym etapie z nowymi stronami Vue |
+| `/review-performance` | N+1, indeksy, cache, queue | **Po zamknięciu Stage 12** (przed deploymentem) |
+| `/review-full` | Wszystkie 5 domen równolegle | **Checkpoint Stage 9 (teraz)**, **Stage 12 (przed produkcją)** |
+
+### Harmonogram przeglądów kodu
+
+```
+✅ TERAZ (po Stage 9)    → /review-full  [wszystkie domeny, Stage 7–9 szczególnie]
+🔜 PO STAGE 10 (AI)     → /review-security + /review-architecture
+🔜 PO STAGE 11 (PWA)    → /review-security + /review-performance
+🔜 PO STAGE 12 (Enterprise) → /review-full  [OBOWIĄZKOWY przed produkcją]
+```
+
+**WAŻNE:** Gdy zamykamy etap 10, 11 lub 12 — przypomnij userowi o właściwym review z powyższej listy.
 
 `settings.json` w `.claude/` definiuje permissions (co auto-allow, co pyta, co deny) i hook `git-reminder.sh` (PreToolUse przypomnienia dla `git commit/push/tag/pr create`).
 

@@ -40,7 +40,6 @@ app/
 - `declare(strict_types=1);` w każdym pliku PHP.
 - `final` dla Actions/Services. `readonly` dla pól DTO.
 - Nazwy po angielsku (kod, klasy, komentarze). Polski tylko w UI/translations.
-- **Weryfikacja:** Po każdym, nawet najmniejszym, etapie pracy wykonujemy pełną weryfikację testów (Pest + Vitest + Playwright), aby mieć pewność, że wszystko działa zgodnie z założeniami.
 
 **Nazewnictwo:** Modele PascalCase singular (`QrCode`), tabele snake_case plural (`qr_codes`), Akcje `VerbNounAction`, Joby `VerbNounJob`, Eventy past tense (`QrCodeScanned`), Vue komponenty PascalCase (`LivePreview.vue`), Inertia pages `resources/js/Pages/QrCode/Index.vue`.
 
@@ -84,13 +83,25 @@ Każda zmiana musi przejść te bramki:
 
 **Branche:** `main` (prod, chroniony, fast-forward z `develop` + tag), `develop` (default dla feature'ów), `feat/<nazwa>`, `fix/<nazwa>`, `chore/<nazwa>`.
 
+**Branch roboczy (BEZWZGLĘDNE):** Pracujesz wyłącznie na branchu `gemini`. Wszystkie commity i pushe trafiają na `origin/gemini`. Nigdy nie pushuj bezpośrednio na `develop` ani `main`. Merge do `develop` wykonuje wyłącznie owner repozytorium po code review. Wyjątek: jeśli user wyraźnie poprosi o działanie na innym branchu i jawnie zatwierdzi — dopiero wtedy możesz zmienić branch.
+
 **Commit messages — Conventional Commits:** `<type>(<scope>): <subject>`. Typy: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `perf`, `style`, `ci`, `build`. Format heredoc dla wieloliniowych.
 
 ### ❗ Zgoda usera przed KAŻDYM `git commit` i `git push`
 
 **ZASADA MIKRO-COMMITÓW (BARDZO WAŻNE):** Bezwzględnie nie czekaj na ukończenie pełnego etapu z PROJECT.md. Musisz pytać o zgodę na commit po KAŻDYM pojedynczym podpunkcie (np. po 2.1, po 2.2, po 3.1 itd.). Każda najmniejsza logiczna zmiana musi być osobnym commitem zatwierdzonym przez usera. Zasada ta obowiązuje we wszystkich etapach projektu.
 
-**ZAKAZ SAMOWOLNEGO STARTU (BARDZO WAŻNE):** Po każdym commicie (lub gdy kończysz logiczną część pracy), musisz ZATRZYMAĆ SIĘ i zapytać o zgodę na rozpoczęcie kolejnego podpunktu (np. "Czy mogę zacząć pracę nad zadaniem 2.2?"). Nie wykonuj żadnych tool-calls ani nie pisz kodu dla nowego zadania bez wyraźnego "tak" od usera.
+**ODZNACZANIE ZADAŃ (OBOWIĄZKOWE):** Po ukończeniu każdego podpunktu natychmiast zaktualizuj `PROJECT.md` — zmień `- [ ]` na `- [x x]` przy wykonanym zadaniu. Rób to przed każdym commitem, tak aby stan checkboxów w repo zawsze odzwierciedlał rzeczywisty postęp.
+
+**ZAKAZ COMMITA I PUSHA BEZ ZIELONYCH TESTÓW (BEZWZGLĘDNE):** Przed każdym `git commit` i `git push` uruchamiamy pełną suitę testów. Jeśli choćby jeden test failuje — STOP, najpierw napraw, dopiero potem commit. Nie ma wyjątków. Kolejność weryfikacji:
+1. `php artisan test --parallel` (Pest) — zero failów
+2. `npm run test` (Vitest) — zero failów
+3. `./vendor/bin/phpstan analyse` — zero błędów
+4. `./vendor/bin/pint --test` — zero naruszeń stylu
+
+Playwright (e2e) uruchamiamy przed każdym push na `develop` i obowiązkowo przed merge do `main`.
+
+**ZAKAZ SAMOWOLNEGO STARTU (BARDZO WAŻNE):** Po każdym commicie (lub gdy kończysz logiczną część pracy), musisz ZATRZYMAĆ SIĘ i zapytać o zgodę na rozpoczęcie kolejnego podpunkta (np. "Czy mogę zacząć pracę nad zadaniem 2.2?"). Nie wykonuj żadnych tool-calls ani nie pisz kodu dla nowego zadania bez wyraźnego "tak" od usera.
 
 Przed `git commit`:
 1. `git add` zmiany.
@@ -165,6 +176,19 @@ git diff --cached | grep -iE "(api[_-]?key|secret|password|token|bearer|sk_live|
 | RBAC / CSP / rate limiters | `config/permission.php`, `config/csp.php`, `app/Providers/RouteServiceProvider.php` |
 | Encrypted cast (przykład) | `app/Models/QrCode.php` (`wifi_password`) |
 | Polityki dostępu | `app/Policies/QrCodePolicy.php` |
+
+## 9. Automatyzacje — folder `.claude/`
+
+Projekt ma skonfigurowany folder `.claude/` z gotowymi narzędziami. **Używaj ich automatycznie gdy pasuje kontekst — nie czekaj na prośbę usera.**
+
+| Narzędzie | Kiedy używać |
+|---|---|
+| `/close-stage <N>` | Po ukończeniu wszystkich zadań w etapie N — automatyzuje testy, aktualizację PROJECT.md, commit i push (z wymaganymi pytaniami o zgodę) |
+| `/check-gitignore` | Przed każdym commitem, po dodaniu nowych plików, po instalacji nowych narzędzi |
+| Agent `security-redirect-reviewer` | Przy każdej zmianie `PublicRedirectController.php`, `RecordScanJob.php` lub powiązanych middleware — wywołaj proaktywnie |
+| Agent `rodo-pii-auditor` | Przy każdej nowej migracji lub modelu zawierającym PII (email, phone, address, ip) — wywołaj proaktywnie |
+
+`settings.json` w `.claude/` definiuje permissions (co auto-allow, co pyta, co deny) i hook `git-reminder.sh` (PreToolUse przypomnienia dla `git commit/push/tag/pr create`).
 
 ## 8. Co NIE robić
 
