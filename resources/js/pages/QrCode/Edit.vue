@@ -143,7 +143,7 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
 <template>
     <Head :title="t('qr.edit.headTitle')" />
 
-    <div class="space-y-6">
+    <div class="space-y-6 min-w-0">
         <!-- Header -->
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-3">
@@ -601,7 +601,7 @@ const redirectUrl = computed(() => `${window.location.origin}/q/${props.qrCode.s
             </div>
 
             <!-- QR Preview sidebar -->
-            <div class="w-full lg:w-72 xl:w-80 shrink-0 lg:sticky lg:top-6">
+            <div class="w-full lg:w-72 xl:w-80 shrink-0 lg:sticky lg:top-[calc(3.5rem+1.5rem)]">
                 <div class="relative rounded-xl border border-border bg-card overflow-hidden hover:border-primary/30 hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.08)] transition-all duration-200">
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-400/60 to-transparent" />
                     <div class="p-4 md:p-5">

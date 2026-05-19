@@ -27,9 +27,9 @@ const { locale, setLocale } = useLocale()
     <SidebarProvider>
         <AppSidebar />
 
-        <SidebarInset>
+        <SidebarInset class="min-w-0 h-svh overflow-x-hidden overflow-y-auto">
             <!-- Topbar -->
-            <header class="relative flex h-14 shrink-0 items-center gap-2 border-b border-border/40 bg-background/85 px-4 backdrop-blur-md">
+            <header class="sticky top-0 z-10 relative flex h-14 shrink-0 items-center gap-2 border-b border-border/40 bg-background/85 px-4 backdrop-blur-md">
                 <!-- Stronger gradient bottom border -->
                 <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 via-50% to-cyan-400/20 to-transparent" />
                 <!-- Ambient top glow -->
@@ -72,7 +72,7 @@ const { locale, setLocale } = useLocale()
             </header>
 
             <!-- Page content -->
-            <main class="flex flex-1 flex-col gap-4 overflow-x-hidden p-4 md:p-6">
+            <main class="flex flex-1 flex-col gap-4 min-w-0 p-4 md:p-6">
                 <slot />
             </main>
         </SidebarInset>

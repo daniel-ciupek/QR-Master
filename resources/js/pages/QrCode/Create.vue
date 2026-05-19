@@ -471,7 +471,7 @@ const exportOpen = ref(false)
 <template>
     <Head :title="t('qr.create.headTitle')" />
 
-    <div class="space-y-6">
+    <div class="space-y-6 min-w-0">
         <OfflineBanner
             :is-online="isOnline"
             :drafts="drafts"
@@ -1135,7 +1135,7 @@ const exportOpen = ref(false)
             </div>
 
             <!-- Preview panel (sticky on desktop) -->
-            <div class="w-full lg:w-80 xl:w-96 shrink-0 lg:sticky lg:top-6">
+            <div class="w-full lg:w-80 xl:w-96 shrink-0 lg:sticky lg:top-[calc(3.5rem+1.5rem)]">
                 <div class="relative rounded-xl border border-border bg-card overflow-hidden hover:border-primary/30 hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.08)] transition-all duration-200">
                     <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-400/60 to-transparent" />
                     <div class="p-4 md:p-5">
