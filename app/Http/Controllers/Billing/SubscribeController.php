@@ -32,8 +32,10 @@ final class SubscribeController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        if ($user->subscribed('default')) {
-            $user->subscription('default')->swap($priceId);
+        $subscription = $user->subscription('default');
+
+        if ($subscription !== null) {
+            $subscription->swap($priceId);
 
             return redirect()->route('billing.dashboard')->with('success', 'Plan updated successfully.');
         }
