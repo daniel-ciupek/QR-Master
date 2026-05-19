@@ -30,7 +30,7 @@ pre-push:
       fail_text: "PHPStan: błędy statycznej analizy — napraw przed pushem"
 
     pest:
-      run: docker compose exec -T app php vendor/bin/pest --stop-on-failure
+      run: docker compose exec -T -e APP_ENV=testing app php vendor/bin/pest --stop-on-failure
       fail_text: "Pest: testy nie przeszły — napraw przed pushem"
 
     gitignore-check:
