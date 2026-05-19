@@ -32,6 +32,12 @@ final class SubscribeController extends Controller
         /** @var User $user */
         $user = $request->user();
 
+        if ($user->subscribed('default')) {
+            $user->subscription('default')->swap($priceId);
+
+            return redirect()->route('billing.dashboard')->with('success', 'Plan updated successfully.');
+        }
+
         $checkout = $user
             ->newSubscription('default', $priceId)
             ->allowPromotionCodes()

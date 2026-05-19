@@ -107,7 +107,7 @@ function handleCta(plan: Plan): void {
         router.visit('/register')
         return
     }
-    router.visit('/billing/subscribe/' + plan.id)
+    window.location.href = '/billing/subscribe/' + plan.id
 }
 </script>
 
