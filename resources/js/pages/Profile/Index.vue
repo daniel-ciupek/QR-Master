@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm, usePage } from '@inertiajs/vue3'
+import { AlertTriangle, Download, KeyRound, User } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
@@ -66,13 +67,29 @@ function deleteAccount() {
 <template>
     <Head :title="t('profile.index.headTitle')" />
 
-    <div class="mx-auto max-w-2xl space-y-8">
+    <div class="mx-auto w-full max-w-2xl space-y-6">
+        <!-- Header -->
+        <div>
+            <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
+                {{ t('profile.index.headTitle') }}
+            </h1>
+            <p class="mt-1 text-sm text-muted-foreground">{{ t('profile.index.personalInfo.subtitle') }}</p>
+        </div>
+
         <!-- Personal information -->
-        <section class="rounded-lg border p-6 space-y-4">
-            <div>
-                <h2 class="font-semibold text-lg">{{ t('profile.index.personalInfo.title') }}</h2>
-                <p class="text-sm text-muted-foreground mt-1">{{ t('profile.index.personalInfo.subtitle') }}</p>
+        <section class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-6 space-y-4 hover:border-primary/30 transition-colors duration-200">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+            <div class="flex items-center gap-3">
+                <div class="flex size-9 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
+                    <User class="size-4 text-primary" />
+                </div>
+                <div>
+                    <h2 class="font-semibold text-base">{{ t('profile.index.personalInfo.title') }}</h2>
+                    <p class="text-xs text-muted-foreground">{{ t('profile.index.personalInfo.subtitle') }}</p>
+                </div>
             </div>
+            <!-- Section divider -->
+            <div class="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
 
             <form
                 class="space-y-4"
@@ -88,6 +105,7 @@ function deleteAccount() {
                         v-model="profileForm.name"
                         autocomplete="name"
                         :class="{ 'border-destructive': profileForm.errors.name }"
+                        class="focus-visible:ring-primary/50 focus-visible:border-primary/50 transition-colors duration-150"
                         type="text"
                     />
                     <p
@@ -106,6 +124,7 @@ function deleteAccount() {
                         v-model="profileForm.email"
                         autocomplete="email"
                         :class="{ 'border-destructive': profileForm.errors.email }"
+                        class="focus-visible:ring-primary/50 focus-visible:border-primary/50 transition-colors duration-150"
                         type="email"
                     />
                     <p
@@ -135,11 +154,19 @@ function deleteAccount() {
         </section>
 
         <!-- Change password -->
-        <section class="rounded-lg border p-6 space-y-4">
-            <div>
-                <h2 class="font-semibold text-lg">{{ t('profile.index.password.title') }}</h2>
-                <p class="text-sm text-muted-foreground mt-1">{{ t('profile.index.password.subtitle') }}</p>
+        <section class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-6 space-y-4 hover:border-cyan-400/30 transition-colors duration-200">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
+            <div class="flex items-center gap-3">
+                <div class="flex size-9 items-center justify-center rounded-full bg-cyan-400/10 ring-1 ring-cyan-400/20">
+                    <KeyRound class="size-4 text-cyan-400" />
+                </div>
+                <div>
+                    <h2 class="font-semibold text-base">{{ t('profile.index.password.title') }}</h2>
+                    <p class="text-xs text-muted-foreground">{{ t('profile.index.password.subtitle') }}</p>
+                </div>
             </div>
+            <!-- Section divider -->
+            <div class="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
 
             <form
                 class="space-y-4"
@@ -210,27 +237,44 @@ function deleteAccount() {
         </section>
 
         <!-- GDPR export -->
-        <section class="rounded-lg border p-6 space-y-4">
-            <div>
-                <h2 class="font-semibold text-lg">{{ t('profile.index.gdpr.title') }}</h2>
-                <p class="text-sm text-muted-foreground mt-1">{{ t('profile.index.gdpr.subtitle') }}</p>
+        <section class="relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-6 space-y-4 hover:border-gold-500/30 transition-colors duration-200">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-500/40 to-transparent" />
+            <div class="flex items-center gap-3">
+                <div class="flex size-9 items-center justify-center rounded-full bg-gold-500/10 ring-1 ring-gold-500/20">
+                    <Download class="size-4 text-gold-500" />
+                </div>
+                <div>
+                    <h2 class="font-semibold text-base">{{ t('profile.index.gdpr.title') }}</h2>
+                    <p class="text-xs text-muted-foreground">{{ t('profile.index.gdpr.subtitle') }}</p>
+                </div>
             </div>
+            <!-- Section divider -->
+            <div class="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
 
             <Button
                 as="a"
                 href="/profile/export-data"
                 variant="outline"
+                class="transition-colors duration-150 hover:border-gold-500/40 hover:text-gold-500"
             >
                 {{ t('profile.index.gdpr.download') }}
             </Button>
         </section>
 
         <!-- Danger zone -->
-        <section class="rounded-lg border border-destructive/40 p-6 space-y-4">
-            <div>
-                <h2 class="font-semibold text-lg text-destructive">{{ t('profile.index.danger.title') }}</h2>
-                <p class="text-sm text-muted-foreground mt-1">{{ t('profile.index.danger.subtitle') }}</p>
+        <section class="relative overflow-hidden rounded-xl border border-destructive/30 bg-card p-4 md:p-6 space-y-4">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-destructive/50 to-transparent" />
+            <div class="flex items-center gap-3">
+                <div class="flex size-9 items-center justify-center rounded-full bg-destructive/10 ring-1 ring-destructive/20">
+                    <AlertTriangle class="size-4 text-destructive" />
+                </div>
+                <div>
+                    <h2 class="font-semibold text-base text-destructive">{{ t('profile.index.danger.title') }}</h2>
+                    <p class="text-xs text-muted-foreground">{{ t('profile.index.danger.subtitle') }}</p>
+                </div>
             </div>
+            <!-- Section divider -->
+            <div class="h-px bg-gradient-to-r from-transparent via-destructive/20 to-transparent" />
 
             <Button
                 variant="destructive"

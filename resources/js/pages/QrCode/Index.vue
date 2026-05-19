@@ -290,28 +290,39 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
 <template>
     <Head :title="t('qr.index.headTitle')" />
 
-    <div class="space-y-6">
+    <div class="space-y-4 md:space-y-6">
         <!-- Header -->
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-2xl font-bold">{{ t('qr.index.title') }}</h1>
-                <p class="text-sm text-muted-foreground mt-1">{{ t('qr.index.subtitle') }}</p>
+                <h1 class="bg-gradient-to-r from-violet-400 via-primary to-cyan-400 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
+                    {{ t('qr.index.title') }}
+                </h1>
+                <p class="mt-1 text-sm text-muted-foreground">{{ t('qr.index.subtitle') }}</p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 self-start sm:self-auto">
                 <!-- Import CSV -->
-                <Button variant="outline" as-child :title="t('csvImport.subtitle')">
+                <Button
+                    variant="outline"
+                    as-child
+                    :title="t('csvImport.subtitle')"
+                    class="transition-colors duration-150 hover:border-primary/40 hover:text-primary"
+                >
                     <Link href="/qr/import">
-                        <Upload class="mr-2 size-4" />
-                        {{ t('csvImport.title').split(' ').slice(0, 2).join(' ') }}
+                        <Upload class="size-4 sm:mr-2" />
+                        <span class="hidden sm:inline">{{ t('csvImport.title').split(' ').slice(0, 2).join(' ') }}</span>
                     </Link>
                 </Button>
 
                 <!-- Export ZIP dropdown -->
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>
-                        <Button variant="outline" :title="t('zipExport.tooltip')">
-                            <Archive class="mr-2 size-4" />
-                            {{ t('zipExport.btnLabel') }}
+                        <Button
+                            variant="outline"
+                            :title="t('zipExport.tooltip')"
+                            class="transition-colors duration-150 hover:border-primary/40 hover:text-primary"
+                        >
+                            <Archive class="size-4 sm:mr-2" />
+                            <span class="hidden sm:inline">{{ t('zipExport.btnLabel') }}</span>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -329,21 +340,25 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
                 </DropdownMenu>
 
                 <!-- New QR -->
-                <Button as-child>
+                <Button
+                    as-child
+                    class="shadow-[0_0_16px_oklch(0.66_0.25_285/0.3)] hover:shadow-[0_0_24px_oklch(0.66_0.25_285/0.5)] transition-shadow duration-200"
+                >
                     <Link href="/qr/create">
-                        <Plus class="mr-2 size-4" />
-                        {{ t('qr.index.createBtn') }}
+                        <Plus class="size-4 sm:mr-2" />
+                        <span class="hidden sm:inline">{{ t('qr.index.createBtn') }}</span>
                     </Link>
                 </Button>
             </div>
         </div>
 
         <!-- Search -->
-        <div class="max-w-sm">
+        <div class="w-full max-w-sm">
             <Input
                 v-model="search"
                 :placeholder="t('qr.index.searchPlaceholder')"
                 autocomplete="off"
+                class="focus-visible:ring-primary/50 focus-visible:border-primary/50 transition-colors duration-150"
             />
         </div>
 
@@ -433,7 +448,7 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
         </div>
 
         <!-- Table -->
-        <div class="rounded-md border border-border overflow-hidden">
+        <div class="rounded-md border border-border overflow-x-auto">
             <Table>
                 <TableHeader>
                     <TableRow
@@ -575,7 +590,7 @@ const sortableCols = ['title', 'type', 'is_active', 'created_at', 'expires_at']
         </div>
 
         <!-- Pagination -->
-        <div v-if="qrCodes.last_page > 1" class="flex items-center justify-between text-sm text-muted-foreground">
+        <div v-if="qrCodes.last_page > 1" class="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <span>{{ qrCodes.from }}–{{ qrCodes.to }} / {{ qrCodes.total }}</span>
             <div class="flex gap-2">
                 <Button

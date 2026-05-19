@@ -2,6 +2,7 @@
 import { Head, router, useForm } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ArrowLeft, Plus, X, Pencil, Trash2, GripVertical, GitBranch, FlaskConical, CheckCircle2, XCircle } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import AppLayout from '@/layouts/AppLayout.vue'
@@ -301,39 +302,63 @@ function condAt(idx: number): Condition {
 <template>
     <Head :title="t('rules.pageTitle', { title: props.qrCode.title })" />
 
-    <div class="mx-auto max-w-2xl space-y-6 p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-lg font-semibold">{{ t('rules.pageTitle', { title: props.qrCode.title }) }}</h1>
-                <p class="text-sm text-muted-foreground">{{ t('rules.description') }}</p>
+    <div class="mx-auto max-w-2xl space-y-6 p-4 md:p-6">
+
+        <!-- Header -->
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-3">
+                <div class="flex size-10 items-center justify-center rounded-full bg-cyan-400/10 ring-1 ring-cyan-400/20">
+                    <GitBranch class="size-5 text-cyan-400" />
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold sm:text-3xl bg-gradient-to-r from-cyan-400 via-primary to-violet-400 bg-clip-text text-transparent">
+                        {{ t('rules.pageTitle', { title: props.qrCode.title }) }}
+                    </h1>
+                    <p class="text-sm text-muted-foreground">{{ t('rules.description') }}</p>
+                </div>
             </div>
             <Button
                 variant="outline"
                 size="sm"
                 as="a"
                 :href="`/qr/${props.qrCode.id}/edit`"
+                class="shrink-0 hover:border-primary/40 transition-colors duration-150"
             >
-                ← {{ t('rules.backToEdit') }}
+                <ArrowLeft class="size-4 mr-1.5" />
+                <span class="hidden sm:inline">{{ t('rules.backToEdit') }}</span>
+                <span class="sm:hidden">{{ t('common.back') }}</span>
             </Button>
         </div>
 
         <!-- Default URL info -->
-        <div class="rounded-lg border border-border bg-muted/30 px-4 py-3">
-            <p class="text-xs text-muted-foreground">{{ t('rules.defaultUrl') }}</p>
-            <p class="truncate text-sm font-mono">{{ props.qrCode.destination_url ?? '—' }}</p>
+        <div class="relative rounded-xl border border-border bg-card/50 px-4 py-3 overflow-hidden">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+            <p class="text-xs text-muted-foreground mb-1">{{ t('rules.defaultUrl') }}</p>
+            <p class="truncate text-sm font-mono text-foreground">{{ props.qrCode.destination_url ?? '—' }}</p>
         </div>
 
         <!-- Simulator panel -->
-        <details class="rounded-lg border border-border" :open="showSim" @toggle="showSim = ($event.target as HTMLDetailsElement).open">
-            <summary class="cursor-pointer select-none px-4 py-3 text-sm font-medium">
-                🔍 {{ t('rules.simulate.title') }}
-            </summary>
-            <div class="space-y-3 px-4 pb-4">
+        <div class="relative rounded-xl border border-border bg-card overflow-hidden">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
+            <button
+                class="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium hover:bg-muted/40 transition-colors duration-150 cursor-pointer"
+                @click="showSim = !showSim"
+            >
+                <FlaskConical class="size-4 text-cyan-400" />
+                {{ t('rules.simulate.title') }}
+                <span class="ml-auto text-muted-foreground text-xs">{{ showSim ? '▲' : '▼' }}</span>
+            </button>
+
+            <div v-if="showSim" class="space-y-3 px-4 pb-4">
+                <div class="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
                 <p class="text-xs text-muted-foreground">{{ t('rules.simulate.hint') }}</p>
                 <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
                     <div class="space-y-1">
                         <label class="text-xs text-muted-foreground">{{ t('rules.simulate.device') }}</label>
-                        <select v-model="simParams.device" class="w-full rounded border border-input bg-background px-2 py-1 text-sm">
+                        <select
+                            v-model="simParams.device"
+                            class="w-full rounded-lg border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow duration-150"
+                        >
                             <option v-for="dv in DEVICE_VALUES" :key="dv" :value="dv">{{ t('rules.deviceValues.' + dv) }}</option>
                         </select>
                     </div>
@@ -343,57 +368,79 @@ function condAt(idx: number): Condition {
                             v-model="simParams.country"
                             placeholder="PL"
                             maxlength="2"
-                            class="uppercase"
+                            class="uppercase focus-visible:ring-primary/50 focus-visible:border-primary/50"
                         />
                     </div>
                     <div class="space-y-1">
                         <label class="text-xs text-muted-foreground">{{ t('rules.simulate.language') }}</label>
-                        <Input v-model="simParams.language" placeholder="pl-PL" />
+                        <Input
+                            v-model="simParams.language"
+                            placeholder="pl-PL"
+                            class="focus-visible:ring-primary/50 focus-visible:border-primary/50"
+                        />
                     </div>
                     <div class="space-y-1">
                         <label class="text-xs text-muted-foreground">{{ t('rules.simulate.time') }}</label>
-                        <Input v-model="simParams.time" type="time" />
+                        <Input
+                            v-model="simParams.time"
+                            type="time"
+                            class="focus-visible:ring-primary/50 focus-visible:border-primary/50"
+                        />
                     </div>
                     <div class="space-y-1">
                         <label class="text-xs text-muted-foreground">{{ t('rules.simulate.day') }}</label>
-                        <select v-model.number="simParams.day" class="w-full rounded border border-input bg-background px-2 py-1 text-sm">
+                        <select
+                            v-model.number="simParams.day"
+                            class="w-full rounded-lg border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow duration-150"
+                        >
                             <option v-for="d in DAYS_ISO" :key="d.value" :value="d.value">{{ d.label }}</option>
                         </select>
                     </div>
                     <div class="space-y-1">
                         <label class="text-xs text-muted-foreground">{{ t('rules.simulate.ua') }}</label>
-                        <Input v-model="simParams.userAgent" placeholder="Mozilla/5.0…" />
+                        <Input
+                            v-model="simParams.userAgent"
+                            placeholder="Mozilla/5.0…"
+                            class="focus-visible:ring-primary/50 focus-visible:border-primary/50"
+                        />
                     </div>
                 </div>
 
                 <!-- Result -->
                 <div
                     v-if="simResult !== null"
-                    class="rounded-md px-3 py-2 text-sm"
-                    :class="simResult.ruleId !== null ? 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-muted text-muted-foreground'"
+                    class="rounded-lg px-3 py-2.5 text-sm"
+                    :class="simResult.ruleId !== null ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-muted/50 text-muted-foreground border border-border'"
                 >
-                    <span v-if="simResult.ruleId !== null">
-                        ✓ {{ t('rules.simulate.matchedRule') }}: <strong>{{ simResult.ruleName ?? t('rules.unnamed', { n: props.rules.findIndex(r => r.id === simResult!.ruleId) + 1 }) }}</strong>
-                    </span>
-                    <span v-else>{{ t('rules.simulate.noMatch') }}</span>
-                    <br>
-                    → <span class="font-mono break-all">{{ simResult.url }}</span>
+                    <div class="flex items-center gap-1.5 font-medium">
+                        <CheckCircle2 v-if="simResult.ruleId !== null" class="size-4" />
+                        <XCircle v-else class="size-4" />
+                        <span v-if="simResult.ruleId !== null">
+                            {{ t('rules.simulate.matchedRule') }}: <strong>{{ simResult.ruleName ?? t('rules.unnamed', { n: props.rules.findIndex(r => r.id === simResult!.ruleId) + 1 }) }}</strong>
+                        </span>
+                        <span v-else>{{ t('rules.simulate.noMatch') }}</span>
+                    </div>
+                    <p class="mt-1 font-mono text-xs break-all opacity-80">→ {{ simResult.url }}</p>
                 </div>
             </div>
-        </details>
+        </div>
 
         <!-- Rules list -->
-        <div v-if="props.rules.length === 0 && !showForm" class="rounded-lg border border-dashed border-border p-8 text-center">
-            <p class="text-sm text-muted-foreground">{{ t('rules.empty') }}</p>
+        <div v-if="props.rules.length === 0 && !showForm" class="rounded-xl border border-dashed border-border p-10 text-center">
+            <div class="flex size-14 items-center justify-center rounded-2xl bg-cyan-400/10 ring-1 ring-cyan-400/20 mx-auto mb-3">
+                <GitBranch class="size-7 text-cyan-400" />
+            </div>
+            <p class="text-sm font-medium mb-1">{{ t('rules.empty') }}</p>
+            <p class="text-xs text-muted-foreground">{{ t('rules.description') }}</p>
         </div>
 
         <div
             v-for="(rule, idx) in props.rules"
             :key="rule.id"
-            class="rounded-lg border bg-card transition-opacity"
+            class="relative rounded-xl border bg-card transition-all duration-150 cursor-grab active:cursor-grabbing"
             :class="[
-                draggedId === rule.id ? 'opacity-40' : 'opacity-100',
-                dragOverId === rule.id && draggedId !== rule.id ? 'border-primary' : 'border-border',
+                draggedId === rule.id ? 'opacity-40 scale-[0.98]' : 'opacity-100',
+                dragOverId === rule.id && draggedId !== rule.id ? 'border-primary shadow-[0_0_16px_oklch(0.66_0.25_285/0.2)]' : 'border-border hover:border-primary/30',
             ]"
             draggable="true"
             @dragstart="onDragStart(rule.id)"
@@ -403,19 +450,22 @@ function condAt(idx: number): Condition {
             @dragend="onDragEnd"
         >
             <div class="flex items-start gap-3 p-4">
-                <!-- Drag handle -->
-                <span
-                    class="mt-0.5 shrink-0 cursor-grab text-muted-foreground/50 hover:text-muted-foreground select-none"
-                    title="Drag to reorder"
-                >⠿</span>
+                <!-- Priority badge + drag handle -->
+                <div class="flex flex-col items-center gap-1 pt-0.5 shrink-0">
+                    <span class="flex size-5 items-center justify-center rounded-full bg-muted text-[10px] font-bold text-muted-foreground">{{ idx + 1 }}</span>
+                    <GripVertical class="size-4 text-muted-foreground/40 hover:text-muted-foreground transition-colors duration-100" />
+                </div>
 
                 <div class="min-w-0 flex-1 space-y-2">
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm font-medium">{{ rule.name ?? t('rules.unnamed', { n: idx + 1 }) }}</span>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-sm font-semibold">{{ rule.name ?? t('rules.unnamed', { n: idx + 1 }) }}</span>
                         <span
-                            class="rounded px-1.5 py-0.5 text-xs"
-                            :class="rule.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-muted text-muted-foreground'"
+                            class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ring-1"
+                            :class="rule.is_active
+                                ? 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/20'
+                                : 'bg-muted text-muted-foreground ring-border'"
                         >
+                            <span class="size-1.5 rounded-full inline-block" :class="rule.is_active ? 'bg-emerald-400' : 'bg-muted-foreground'" />
                             {{ rule.is_active ? t('rules.active') : t('rules.inactive') }}
                         </span>
                     </div>
@@ -425,61 +475,82 @@ function condAt(idx: number): Condition {
                         <span
                             v-for="(cond, ci) in rule.conditions"
                             :key="ci"
-                            class="rounded bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground"
+                            class="rounded-full bg-primary/10 px-2.5 py-0.5 font-mono text-xs text-primary/80 ring-1 ring-primary/20"
                         >
                             {{ conditionLabel(cond) }}
                         </span>
                     </div>
 
-                    <p class="truncate text-xs text-muted-foreground">→ {{ rule.destination_url }}</p>
+                    <p class="truncate text-xs text-muted-foreground font-mono">→ {{ rule.destination_url }}</p>
                 </div>
 
                 <div class="flex shrink-0 gap-1">
-                    <Button variant="ghost" size="sm" @click="openEdit(rule)">{{ t('common.edit') }}</Button>
                     <Button
                         variant="ghost"
                         size="sm"
-                        class="text-destructive"
+                        class="hover:bg-primary/10 hover:text-primary transition-colors duration-150"
+                        @click="openEdit(rule)"
+                    >
+                        <Pencil class="size-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        class="text-destructive hover:bg-destructive/10 transition-colors duration-150"
                         @click="deleteRule(rule)"
-                    >{{ t('common.delete') }}</Button>
+                    >
+                        <Trash2 class="size-4" />
+                    </Button>
                 </div>
             </div>
         </div>
 
         <!-- Add/Edit form -->
-        <div v-if="showForm" class="rounded-lg border border-primary/30 bg-card p-4 space-y-4">
-            <h2 class="text-sm font-semibold">{{ editingId !== null ? t('rules.editRule') : t('rules.addRule') }}</h2>
+        <div v-if="showForm" class="relative rounded-xl border border-primary/40 bg-card p-5 space-y-4 overflow-hidden">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+            <h2 class="text-sm font-semibold text-primary">
+                {{ editingId !== null ? t('rules.editRule') : t('rules.addRule') }}
+            </h2>
 
             <div class="space-y-1">
                 <label class="text-xs text-muted-foreground">{{ t('rules.ruleName') }}</label>
-                <Input v-model="ruleForm.name" :placeholder="t('rules.ruleNamePlaceholder')" />
+                <Input
+                    v-model="ruleForm.name"
+                    :placeholder="t('rules.ruleNamePlaceholder')"
+                    class="focus-visible:ring-primary/50 focus-visible:border-primary/50"
+                />
             </div>
 
             <div class="space-y-1">
                 <label class="text-xs text-muted-foreground">{{ t('rules.ruleUrl') }} *</label>
-                <Input v-model="ruleForm.destination_url" type="url" placeholder="https://example.com" />
+                <Input
+                    v-model="ruleForm.destination_url"
+                    type="url"
+                    placeholder="https://example.com"
+                    class="focus-visible:ring-primary/50 focus-visible:border-primary/50"
+                />
             </div>
 
-            <div class="flex items-center gap-2">
+            <label class="flex items-center gap-2 cursor-pointer select-none group">
                 <input
                     id="rule-active"
                     v-model="ruleForm.is_active"
                     type="checkbox"
-                    class="rounded"
+                    class="rounded accent-primary"
                 >
-                <label for="rule-active" class="text-sm">{{ t('rules.ruleActive') }}</label>
-            </div>
+                <span class="text-sm group-hover:text-foreground transition-colors duration-150">{{ t('rules.ruleActive') }}</span>
+            </label>
 
             <!-- Conditions -->
             <div class="space-y-3">
-                <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">{{ t('rules.conditions') }}</p>
+                <p class="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{{ t('rules.conditions') }}</p>
 
-                <div v-for="(cond, idx) in ruleForm.conditions" :key="idx" class="rounded-md border border-border bg-muted/30 p-3 space-y-2">
+                <div v-for="(cond, idx) in ruleForm.conditions" :key="idx" class="rounded-lg border border-border bg-muted/20 p-3 space-y-2">
                     <div class="flex items-center gap-2">
                         <!-- Type selector -->
                         <select
                             v-model="condAt(idx).type"
-                            class="rounded border border-input bg-background px-2 py-1 text-sm"
+                            class="rounded-lg border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow duration-150"
                             @change="onConditionTypeChange(idx)"
                         >
                             <option v-for="type in CONDITION_TYPES" :key="type" :value="type">
@@ -489,60 +560,92 @@ function condAt(idx: number): Condition {
                         <Button
                             variant="ghost"
                             size="sm"
-                            class="ml-auto text-destructive"
+                            class="ml-auto text-destructive hover:bg-destructive/10 transition-colors duration-150"
                             @click="removeCondition(idx)"
-                        >×</Button>
+                        >
+                            <X class="size-4" />
+                        </Button>
                     </div>
 
                     <!-- Device condition -->
                     <div v-if="cond.type === 'device'" class="flex gap-2">
-                        <select v-model="condAt(idx).operator" class="rounded border border-input bg-background px-2 py-1 text-sm">
+                        <select
+                            v-model="condAt(idx).operator"
+                            class="rounded-lg border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow duration-150"
+                        >
                             <option value="is">{{ t('rules.operators.is') }}</option>
                             <option value="is_not">{{ t('rules.operators.is_not') }}</option>
                         </select>
-                        <select v-model="condAt(idx).value" class="rounded border border-input bg-background px-2 py-1 text-sm">
+                        <select
+                            v-model="condAt(idx).value"
+                            class="rounded-lg border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow duration-150"
+                        >
                             <option v-for="dv in DEVICE_VALUES" :key="dv" :value="dv">{{ t('rules.deviceValues.' + dv) }}</option>
                         </select>
                     </div>
 
                     <!-- Country condition -->
                     <div v-else-if="cond.type === 'country'" class="flex gap-2">
-                        <select v-model="condAt(idx).operator" class="rounded border border-input bg-background px-2 py-1 text-sm">
+                        <select
+                            v-model="condAt(idx).operator"
+                            class="rounded-lg border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow duration-150"
+                        >
                             <option value="in">{{ t('rules.operators.in') }}</option>
                             <option value="not_in">{{ t('rules.operators.not_in') }}</option>
                         </select>
                         <Input
                             :model-value="conditionCountryValue(cond)"
                             placeholder="PL, DE, FR"
-                            class="flex-1"
+                            class="flex-1 focus-visible:ring-primary/50 focus-visible:border-primary/50"
                             @update:model-value="(v) => setConditionCountryValue(idx, String(v))"
                         />
                     </div>
 
                     <!-- Language condition -->
                     <div v-else-if="cond.type === 'language'" class="flex gap-2">
-                        <select v-model="condAt(idx).operator" class="rounded border border-input bg-background px-2 py-1 text-sm">
+                        <select
+                            v-model="condAt(idx).operator"
+                            class="rounded-lg border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow duration-150"
+                        >
                             <option value="starts_with">{{ t('rules.operators.starts_with') }}</option>
                             <option value="is">{{ t('rules.operators.is') }}</option>
                         </select>
-                        <Input v-model="condAt(idx).value as string" placeholder="pl" class="w-24" />
+                        <Input
+                            v-model="condAt(idx).value as string"
+                            placeholder="pl"
+                            class="w-24 focus-visible:ring-primary/50 focus-visible:border-primary/50"
+                        />
                     </div>
 
                     <!-- Time range condition -->
                     <div v-else-if="cond.type === 'time_range'" class="space-y-2">
                         <div class="flex flex-wrap gap-2 items-center">
-                            <Input v-model="condAt(idx).from" type="time" class="w-32" />
+                            <Input
+                                v-model="condAt(idx).from"
+                                type="time"
+                                class="w-32 focus-visible:ring-primary/50 focus-visible:border-primary/50"
+                            />
                             <span class="text-sm text-muted-foreground">–</span>
-                            <Input v-model="condAt(idx).to" type="time" class="w-32" />
-                            <Input v-model="condAt(idx).timezone" placeholder="UTC" class="w-36" />
+                            <Input
+                                v-model="condAt(idx).to"
+                                type="time"
+                                class="w-32 focus-visible:ring-primary/50 focus-visible:border-primary/50"
+                            />
+                            <Input
+                                v-model="condAt(idx).timezone"
+                                placeholder="UTC"
+                                class="w-36 focus-visible:ring-primary/50 focus-visible:border-primary/50"
+                            />
                         </div>
                         <div class="flex flex-wrap gap-1">
                             <button
                                 v-for="day in DAYS_ISO"
                                 :key="day.value"
                                 type="button"
-                                class="rounded px-2 py-1 text-xs transition-colors"
-                                :class="(cond.days ?? []).includes(day.value) ? 'bg-primary text-primary-foreground' : 'border border-border hover:border-muted-foreground'"
+                                class="rounded-full px-2.5 py-1 text-xs font-medium transition-all duration-150"
+                                :class="(cond.days ?? []).includes(day.value)
+                                    ? 'bg-primary text-primary-foreground shadow-[0_0_8px_oklch(0.66_0.25_285/0.4)]'
+                                    : 'border border-border hover:border-primary/40 hover:text-primary'"
                                 @click="toggleDay(idx, day.value)"
                             >
                                 {{ day.label }}
@@ -552,28 +655,54 @@ function condAt(idx: number): Condition {
 
                     <!-- User-agent condition -->
                     <div v-else-if="cond.type === 'user_agent'" class="flex gap-2">
-                        <select v-model="condAt(idx).operator" class="rounded border border-input bg-background px-2 py-1 text-sm">
+                        <select
+                            v-model="condAt(idx).operator"
+                            class="rounded-lg border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow duration-150"
+                        >
                             <option value="contains">{{ t('rules.operators.contains') }}</option>
                             <option value="not_contains">{{ t('rules.operators.not_contains') }}</option>
                         </select>
-                        <Input v-model="condAt(idx).value as string" placeholder="Chrome" class="flex-1" />
+                        <Input
+                            v-model="condAt(idx).value as string"
+                            placeholder="Chrome"
+                            class="flex-1 focus-visible:ring-primary/50 focus-visible:border-primary/50"
+                        />
                     </div>
                 </div>
 
-                <Button variant="outline" size="sm" @click="addCondition">+ {{ t('rules.addCondition') }}</Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    class="hover:border-primary/40 hover:text-primary transition-colors duration-150"
+                    @click="addCondition"
+                >
+                    <Plus class="size-4 mr-1.5" />
+                    {{ t('rules.addCondition') }}
+                </Button>
             </div>
 
             <div class="flex gap-2">
                 <Button
                     :disabled="!ruleForm.destination_url || ruleForm.conditions.length === 0 || ruleForm.processing"
+                    class="shadow-[0_0_12px_oklch(0.66_0.25_285/0.25)] hover:shadow-[0_0_20px_oklch(0.66_0.25_285/0.4)] transition-shadow duration-200"
                     @click="submitForm"
                 >
                     {{ ruleForm.processing ? t('common.saving') : t('common.save') }}
                 </Button>
-                <Button variant="ghost" @click="cancelForm">{{ t('common.cancel') }}</Button>
+                <Button variant="ghost" @click="cancelForm">
+                    <X class="size-4 mr-1.5" />
+                    {{ t('common.cancel') }}
+                </Button>
             </div>
         </div>
 
-        <Button v-if="!showForm" @click="openAdd">+ {{ t('rules.addRule') }}</Button>
+        <Button
+            v-if="!showForm"
+            class="shadow-[0_0_12px_oklch(0.66_0.25_285/0.2)] hover:shadow-[0_0_20px_oklch(0.66_0.25_285/0.35)] transition-shadow duration-200"
+            @click="openAdd"
+        >
+            <Plus class="size-4 mr-1.5" />
+            {{ t('rules.addRule') }}
+        </Button>
     </div>
 </template>

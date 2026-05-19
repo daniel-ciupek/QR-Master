@@ -27,13 +27,18 @@ const { locale, setLocale } = useLocale()
     <SidebarProvider>
         <AppSidebar />
 
-        <SidebarInset>
+        <SidebarInset class="min-w-0 h-svh overflow-x-hidden overflow-y-auto">
             <!-- Topbar -->
-            <header class="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-                <SidebarTrigger class="-ml-1" />
+            <header class="sticky top-0 z-10 relative flex h-14 shrink-0 items-center gap-2 border-b border-border/40 bg-background/85 px-4 backdrop-blur-md">
+                <!-- Stronger gradient bottom border -->
+                <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 via-50% to-cyan-400/20 to-transparent" />
+                <!-- Ambient top glow -->
+                <div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-primary/[0.04] to-transparent pointer-events-none" />
+
+                <SidebarTrigger class="-ml-1 transition-all duration-150 hover:text-primary hover:scale-110" />
                 <Separator
                     orientation="vertical"
-                    class="mr-2 h-4"
+                    class="mr-2 h-4 opacity-50"
                 />
 
                 <div class="flex-1" />
@@ -47,7 +52,7 @@ const { locale, setLocale } = useLocale()
                         <Button
                             variant="ghost"
                             size="icon"
-                            class="size-8"
+                            class="size-8 transition-all duration-150 hover:text-primary hover:bg-primary/10"
                         >
                             <Globe class="size-4" />
                         </Button>
@@ -56,7 +61,7 @@ const { locale, setLocale } = useLocale()
                         <DropdownMenuItem
                             v-for="lang in ['pl', 'en'] as const"
                             :key="lang"
-                            :class="{ 'font-semibold': locale === lang }"
+                            :class="{ 'font-semibold text-primary': locale === lang }"
                             @click="setLocale(lang)"
                         >
                             {{ t(`lang.${lang}`) }}
@@ -67,7 +72,7 @@ const { locale, setLocale } = useLocale()
             </header>
 
             <!-- Page content -->
-            <main class="flex flex-1 flex-col gap-4 p-6">
+            <main class="flex flex-1 flex-col gap-4 min-w-0 p-4 md:p-6">
                 <slot />
             </main>
         </SidebarInset>
